@@ -40,7 +40,7 @@ jobs:
           claude_args: >-
             --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
             --max-turns 60
-            --allowedTools "Bash(npm run build),Bash(npm test),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
+            --allowedTools "Bash(npm run build),Bash(npm test),Bash(npm install *),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
       - name: Commit the agent's work if tests and build pass
         if: always()
         run: |

@@ -26,8 +26,12 @@ const jsonld = [
   <h1>{page.h1}</h1>
   <p class="lede">{page.lede}</p>
   <Tool mode={page.mode} preset={page.preset} />
-  <h2>How it works</h2>
-  <ol class="steps">{page.steps.map((s) => <li>{s}</li>)}</ol>
-  <h2>Questions</h2>
-  {page.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+  <section class="block">
+    <h2>How it works</h2>
+    <ol class="steps">{page.steps.map((s) => <li>{s}</li>)}</ol>
+  </section>
+  <section class="block">
+    <h2>Questions</h2>
+    <div class="faq">{page.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+  </section>
 </Base>

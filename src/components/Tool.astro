@@ -25,9 +25,10 @@ const to = String(preset.to ?? 24000 / 1001);
 
 <section class="tool" data-mode={mode} data-out={preset.out ?? ''}>
   <label class="drop" id="drop">
-    <input type="file" id="file" accept=".srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.txt" hidden />
-    <span class="drop-main">Drop a subtitle file here, or <u>choose one</u></span>
-    <span class="drop-sub">SRT, VTT, ASS, SSA, SUB, SBV · stays on your device</span>
+    <input type="file" id="file" class="visually-hidden" accept=".srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.txt" />
+    <span class="drop-main">Drop a subtitle file here</span>
+    <span class="drop-sub">SRT, VTT, ASS, SSA, SUB or SBV. The file stays on your device.</span>
+    <span class="drop-btn" aria-hidden="true">Choose a file</span>
   </label>
 
   <div class="loaded" id="loaded" hidden>

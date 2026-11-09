@@ -287,3 +287,45 @@ test('sup: PGS images round trip with timing and ink', async () => {
   assert.deepEqual([...out[0].ink], [...imgs[0].ink]);
   assert.deepEqual([...out[1].ink], [...imgs[1].ink]);
 });
+
+test('tidy: timing, reading speed, reflow, find and replace, numbering, duplicates', async () => {
+  const { fixTiming, reflowText, compileRules, findReplace, cps } = await import('../src/lib/tidy.ts');
+  const caps = [
+    { start: 1000, end: 3000, text: 'One' },
+    { start: 2900, end: 4000, text: 'Overlap here' },
+    { start: 4020, end: 4300, text: 'This line is far too quick to read in time' },
+    { start: 9000, end: 30000, text: 'Hangs on' },
+  ];
+  const { captions: t, report } = fixTiming(caps, { fixOverlaps: true, minGapMs: 83, minDurMs: 1000, maxDurMs: 7000, cps: 17 });
+  assert.equal(t[0].end, 2900 - 83);
+  assert.equal(report.overlaps, 1);
+  assert.equal(t[1].end, 4020 - 83);
+  assert.ok(t[2].end > 6000 && t[2].end <= 9000 - 83, String(t[2].end));
+  assert.ok(cps(t[2]) <= 17.01);
+  assert.equal(t[3].end, 16000);
+  assert.equal(caps[0].end, 3000, 'input untouched');
+
+  assert.equal(reflowText('Short one', 42), 'Short one');
+  const r = reflowText('I never said I would be there at ten o clock tonight, did I?', 42);
+  assert.equal(r.split('\n').length, 2);
+  assert.ok(r.split('\n').every((l) => l.length <= 42));
+  assert.equal(reflowText('- Who is it?\n- Me.', 42), '- Who is it?\n- Me.');
+  assert.equal(reflowText('<i>Over\nhere</i>', 42), '<i>Over here</i>');
+
+  const rules = compileRules([{ find: 'colour', replace: 'color' }, { find: 'jon', replace: 'John' }], { regex: false, matchCase: false, wholeWord: true });
+  const fr = findReplace([{ start: 0, end: 1, text: 'Jon likes Colour.\nJonathan too.' }], rules);
+  assert.equal(fr.captions[0].text, 'John likes color.\nJonathan too.');
+  assert.equal(fr.hits, 2);
+  const re = compileRules([{ find: '^(\\w+):\\s*', replace: '' }, { find: '\\s*\\|\\s*', replace: '\\n' }], { regex: true, matchCase: true, wholeWord: false });
+  assert.equal(findReplace([{ start: 0, end: 1, text: 'BOB: Hi | there' }], re).captions[0].text, 'Hi\nthere');
+  assert.throws(() => compileRules([{ find: '(', replace: '' }], { regex: true, matchCase: false, wholeWord: false }), /not a pattern/);
+  assert.equal(findReplace([{ start: 0, end: 1, text: '[MUSIC]' }], compileRules([{ find: '[MUSIC]', replace: '' }], { regex: false, matchCase: true, wholeWord: false })).emptied, 1);
+  assert.equal(findReplace([{ start: 0, end: 1, text: 'cost' }], compileRules([{ find: 'cost', replace: '$5' }], { regex: false, matchCase: true, wholeWord: false })).captions[0].text, '$5');
+
+  assert.match(build([{ start: 0, end: 1000, text: 'a' }, { start: 1000, end: 2000, text: 'b' }], 'srt', 25, 101), /^101\r\n[\s\S]*\r\n102\r\n/);
+  const dup = fixCommon([
+    { start: 0, end: 4000, text: 'Same' }, { start: 1000, end: 2000, text: 'Other' }, { start: 1500, end: 3000, text: 'Same' },
+  ], { removeDuplicates: true });
+  assert.equal(dup.captions.length, 2);
+  assert.equal(dup.report.merged, 1);
+});

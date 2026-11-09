@@ -5,20 +5,23 @@ import { DOC_FORMATS } from '../lib/export';
 import { OCR_LANGS } from '../lib/ocr';
 interface Props {
   mode: Mode;
-  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string };
+  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string; clean?: 'dupes' | 'renumber'; video?: boolean };
   home?: boolean;
   h1: string;
   lede: string;
 }
 const { mode, preset = {}, home = false, h1, lede } = Astro.props;
 type Group = 'timing' | 'text' | 'convert';
-const GROUP_OF: Record<Mode, Group> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert', merge: 'convert' };
+const GROUP_OF: Record<Mode, Group> = { shift: 'timing', fps: 'timing', sync: 'timing', timing: 'timing', encoding: 'text', clean: 'text', reading: 'text', replace: 'text', edit: 'text', convert: 'convert', merge: 'convert' };
 const tabs: { id: Mode; label: string }[] = [
   { id: 'shift', label: 'Shift timing' },
   { id: 'fps', label: 'Change frame rate' },
   { id: 'sync', label: 'Sync two points' },
+  { id: 'timing', label: 'Fix timing' },
   { id: 'encoding', label: 'Fix characters' },
   { id: 'clean', label: 'Clean up' },
+  { id: 'reading', label: 'Reading speed' },
+  { id: 'replace', label: 'Find and replace' },
   { id: 'edit', label: 'Check and edit' },
   { id: 'convert', label: 'Convert format' },
   { id: 'merge', label: 'Merge files' },
@@ -29,8 +32,11 @@ const symptoms: { id: string; go: Mode; text: string }[] = [
   { id: 'early-late', go: 'shift', text: 'Early or late by the same amount the whole way through' },
   { id: 'one-scene', go: 'shift', text: 'Fine at first, then off from one scene onward' },
   { id: 'drift', go: 'fps', text: 'A little off at the start and worse as the video goes on' },
+  { id: 'flicker', go: 'timing', text: 'Lines overlap, flash past or hang on screen too long' },
   { id: 'garbled', go: 'encoding', text: 'Letters show up as Ã©, Ð¿ or question marks' },
   { id: 'sdh', go: 'clean', text: 'Full of [MUSIC], (laughs) and speaker names' },
+  { id: 'too-fast', go: 'reading', text: 'Too many words to read before the line is gone' },
+  { id: 'typo', go: 'replace', text: 'The same name or typo is wrong all the way through' },
   { id: 'broken', go: 'edit', text: 'The player skips lines or will not open the file' },
   { id: 'format', go: 'convert', text: 'Wrong format for my player, website or editor' },
   { id: 'transcript', go: 'convert', text: 'All I have is a text transcript with no timings' },
@@ -49,6 +55,8 @@ const fps = [
   { v: String(30000 / 1001), l: '29.97' },
   { v: '30', l: '30' },
 ];
+const cleanOnly = preset.clean;
+const cleanOn = (k: string) => (cleanOnly ? cleanOnly === 'dupes' && k === 'dupes' : !['tags'].includes(k));
 const from = String(preset.from ?? 25);
 const to = String(preset.to ?? 24000 / 1001);
 const FORMATS = ['SRT', 'VTT', 'ASS', 'SSA', 'SUB', 'SBV', 'SMI', 'TTML', 'DFXP', 'XML', 'STL', 'SUP', 'LRC', 'TXT'];
@@ -73,6 +81,9 @@ const ART: Record<string, string> = {
   'early-late': shifted([24, 24, 24]) + wave(),
   'one-scene': `<path class="cut" d="M86 6V60"/>` + shifted([0, 24, 24]) + wave(),
   drift: shifted([0, 10, 24]) + wave(),
+  flicker: cue(20, 80) + `<rect class="cu ov" x="68" y="14" width="56" height="14" rx="3"/>` + cue(146, 150) + cue(176, 236) + `<path class="arrow" d="M176 40h60"/>` + wave([[20, 120], [146, 160], [176, 200]]),
+  'too-fast': cue(96, 200, true) + cue(96, 124) + `<text x="20" y="25">0.4 s</text><text x="206" y="25" class="warn">!</text>` + wave([[96, 200]]),
+  typo: `<text x="20" y="25">Jon</text><path class="strike" d="M18 21H50"/><path class="arrow" d="M60 21h28m-7-6 7 6-7 6"/><text x="98" y="25" class="keep">John</text><text x="150" y="25">every line</text>` + wave(),
   garbled: `<rect class="cu" x="20" y="10" width="205" height="22" rx="3"/><text class="inv" x="122" y="25.5" text-anchor="middle">CafÃ© Ð¿Ñ€Ð¸</text>` + wave(),
   sdh: `<text x="20" y="25">[MUSIC]</text><path class="strike" d="M18 21H82"/><text x="92" y="25">JOHN:</text><path class="strike" d="M90 21H138"/><text x="148" y="25" class="keep">Hello?</text>` + wave(),
   broken: `<rect class="cu" x="20" y="14" width="80" height="14" rx="3"/><rect class="cu ov" x="78" y="14" width="72" height="14" rx="3"/><text class="inv" x="40" y="25">3</text><text class="inv" x="122" y="25">2</text><text x="168" y="25" class="warn">2 before 3</text>` + wave(),
@@ -193,9 +204,20 @@ const ART: Record<string, string> = {
     </div>
 
     <div class="viewer" id="viewer">
-      <div class="vscreen"><p class="vsub" id="vsub"></p></div>
+      <div class="vscreen" id="vscreen"><video id="video" playsinline controls hidden></video><p class="vsub" id="vsub"></p></div>
+      <div class="vctl" id="vctl" hidden>
+        <span class="vnudge" role="group" aria-label="Move the subtitles">
+          <span>Subtitles</span>
+          <button type="button" data-vnudge="-1000">−1 s</button><button type="button" data-vnudge="-100">−0.1 s</button>
+          <button type="button" data-vnudge="100">+0.1 s</button><button type="button" data-vnudge="1000">+1 s</button>
+        </span>
+        <span class="voff" id="vOff" aria-live="polite"></span>
+        <button type="button" class="vlink" id="vClose">Close video</button>
+      </div>
+      <p class="vnote" id="vNote" hidden></p>
       <div class="vbar">
         <span class="vtime" id="vtime"></span>
+        <label class={`vlink vpick${preset.video ? ' lead' : ''}`} id="vPick">Watch with your video<input type="file" id="videoFile" class="visually-hidden" accept="video/*,.mkv,.mov,.m4v" /></label>
         <span class="vkey"><i class="k-before"></i>Before <i class="k-after"></i>After</span>
       </div>
       <svg class="cuemap" id="cuemap" tabindex="0" role="slider" aria-label="Position in the subtitles. Arrow keys step through lines." aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" preserveAspectRatio="none">
@@ -264,14 +286,60 @@ const ART: Record<string, string> = {
     </div>
 
     <div class="panel stack" data-panel="clean">
-      <label class="check"><input type="checkbox" id="brackets" checked /> Sound descriptions in brackets: [door slams], (laughs)</label>
-      <label class="check"><input type="checkbox" id="speakers" checked /> Speaker names at the start of a line: JOHN:</label>
-      <label class="check"><input type="checkbox" id="music" checked /> Music and song lines: ♪ la la ♪</label>
-      <label class="check"><input type="checkbox" id="tags" /> Formatting tags: &lt;i&gt;, &lt;font&gt;, {'{\\an8}'}</label>
-      <label class="check"><input type="checkbox" id="dupes" checked /> The same line repeated back to back</label>
-      <label class="check"><input type="checkbox" id="overlaps" checked /> Fix overlapping lines</label>
-      <label class="check"><input type="checkbox" id="mindur" checked /> Keep each line on screen at least 0.7 s</label>
+      <label class="check"><input type="checkbox" id="brackets" checked={cleanOn('brackets')} /> Sound descriptions in brackets: [door slams], (laughs)</label>
+      <label class="check"><input type="checkbox" id="speakers" checked={cleanOn('speakers')} /> Speaker names at the start of a line: JOHN:</label>
+      <label class="check"><input type="checkbox" id="music" checked={cleanOn('music')} /> Music and song lines: ♪ la la ♪</label>
+      <label class="check"><input type="checkbox" id="tags" checked={cleanOn('tags')} /> Formatting tags: &lt;i&gt;, &lt;font&gt;, {'{\\an8}'}</label>
+      <label class="check"><input type="checkbox" id="dupes" checked={cleanOn('dupes')} /> The same line repeated back to back</label>
+      <label class="check"><input type="checkbox" id="overlaps" checked={cleanOn('overlaps')} /> Fix overlapping lines</label>
+      <label class="check"><input type="checkbox" id="mindur" checked={cleanOn('mindur')} /> Keep each line on screen at least 0.7 s</label>
       <p class="hint" id="cleanReport"></p>
+      <p class="hint">Lines are put back in time order and numbered again from the first one. To start at another number, change it next to Save as.</p>
+    </div>
+
+    <div class="panel stack" data-panel="timing">
+      <label class="check"><input type="checkbox" id="tOverlap" checked /> Fix lines that overlap</label>
+      <div class="optrow">
+        <label>Gap between lines
+          <select id="tGap"><option value="0">None</option><option value="42">1 frame</option><option value="83" selected>2 frames</option><option value="125">3 frames</option></select>
+        </label>
+        <label>Shortest time on screen
+          <select id="tMin"><option value="0">No minimum</option><option value="700">0.7 s</option><option value="1000" selected>1 s</option><option value="1500">1.5 s</option></select>
+        </label>
+        <label>Longest time on screen
+          <select id="tMax"><option value="0">No limit</option><option value="5000">5 s</option><option value="7000" selected>7 s</option><option value="10000">10 s</option></select>
+        </label>
+      </div>
+      <label class="check"><input type="checkbox" id="tRead" checked /> Give lines too wordy for their time a little longer, where the next line allows</label>
+      <p class="hint" id="timingReport"></p>
+    </div>
+
+    <div class="panel stack" data-panel="reading">
+      <div class="optrow">
+        <label>Reading speed limit
+          <select id="rCps"><option value="15">15 characters a second (relaxed)</option><option value="17" selected>17 characters a second</option><option value="20">20 characters a second</option><option value="25">25 characters a second (quick)</option></select>
+        </label>
+        <label>Longest row
+          <select id="rLen"><option value="32">32 characters</option><option value="37">37 characters</option><option value="42" selected>42 characters</option><option value="47">47 characters</option></select>
+        </label>
+      </div>
+      <label class="check"><input type="checkbox" id="rWrap" checked /> Rewrap long lines into at most two even rows</label>
+      <label class="check"><input type="checkbox" id="rTime" checked /> Give fast lines more time, where the next line allows</label>
+      <p class="hint" id="readReport"></p>
+      <ol class="slow" id="slowList"></ol>
+    </div>
+
+    <div class="panel stack" data-panel="replace">
+      <div class="rules" id="rules">
+        <div class="rule"><label>Find <input data-find spellcheck="false" autocomplete="off" /></label><label>Replace with <input data-repl spellcheck="false" autocomplete="off" /></label></div>
+      </div>
+      <button type="button" class="link" id="addRule">Add another</button>
+      <div class="optrow checks-row">
+        <label class="check"><input type="checkbox" id="rCase" /> Match case</label>
+        <label class="check"><input type="checkbox" id="rWord" checked /> Whole words only</label>
+        <label class="check"><input type="checkbox" id="rRegex" /> Use patterns (regular expressions)</label>
+      </div>
+      <p class="hint" id="replReport">Leave "Replace with" empty to delete what you find. Every loaded file gets the same changes.</p>
     </div>
 
     <div class="panel stack" data-panel="edit">
@@ -323,6 +391,9 @@ const ART: Record<string, string> = {
           </optgroup>
         </select>
       </label>
+      <label id="numWrap">Number from
+        <input id="firstNum" value="1" inputmode="numeric" size="6" />
+      </label>
       <label id="outFpsWrap" hidden>At
         <select id="outFps">{fps.map((f) => <option value={f.v} selected={f.l === '23.976'}>{f.l} fps</option>)}</select>
       </label>
@@ -333,6 +404,10 @@ const ART: Record<string, string> = {
     <p class="error" id="opError" hidden></p>
 
     <div class="preview" id="preview">
+      <div class="pvhead">
+        <p class="pvsum" id="pvSum" aria-live="polite"></p>
+        <label class="check"><input type="checkbox" id="onlyChanged" checked /> Only lines that change</label>
+      </div>
       <table>
         <thead><tr><th>#</th><th>Before</th><th>After</th><th>Text</th></tr></thead>
         <tbody id="rows"></tbody>
@@ -350,6 +425,7 @@ const ART: Record<string, string> = {
   import { DOC_FORMATS, isDocFormat, exportDoc, zipFiles, type DocFormat } from '../lib/export';
   import { isEbuStl, parseEbuStl, mergeStack, mergeTop, mergeParts, autoOffsets } from '../lib/formats';
   import { isSup, isVobSub, parseSup, type SupImage } from '../lib/sup';
+  import { fixTiming, reflow, compileRules, findReplace, cps, longestLine } from '../lib/tidy';
 
   type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[]; track?: string; sup?: SupImage[]; ocrLang?: string };
 
@@ -361,7 +437,9 @@ const ART: Record<string, string> = {
   const outFmt = $<HTMLSelectElement>('outFmt');
   for (const e of [...ENCODINGS, REPAIR_UTF8]) encSel.add(new Option(e, e));
 
-  const BATCH_MODES = new Set(['shift', 'fps', 'encoding', 'clean', 'convert']);
+  const BATCH_MODES = new Set(['shift', 'fps', 'timing', 'encoding', 'clean', 'reading', 'replace', 'convert']);
+  /** Modes that change more than the times, so ASS files are rebuilt instead of retimed in place. */
+  const REBUILD = new Set(['clean', 'merge', 'timing', 'reading', 'replace']);
   const SUB_FORMATS = ['srt', 'vtt', 'ass', 'ssa', 'sbv', 'sub', 'smi', 'ttml', 'dfxp'];
   const EDITOR_PAGE = 200;
 
@@ -378,7 +456,7 @@ const ART: Record<string, string> = {
 
   // ---------- tabs and symptoms ----------
 
-  const GROUP_OF: Record<string, string> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert', merge: 'convert' };
+  const GROUP_OF: Record<string, string> = { shift: 'timing', fps: 'timing', sync: 'timing', timing: 'timing', encoding: 'text', clean: 'text', reading: 'text', replace: 'text', edit: 'text', convert: 'convert', merge: 'convert' };
   function setTab(id: string) {
     mode = id;
     root.dataset.group = GROUP_OF[id] ?? 'timing';
@@ -677,12 +755,30 @@ const ART: Record<string, string> = {
     };
   }
 
+  function timingOpts() {
+    return {
+      fixOverlaps: $<HTMLInputElement>('tOverlap').checked, minGapMs: +$<HTMLSelectElement>('tGap').value,
+      minDurMs: +$<HTMLSelectElement>('tMin').value, maxDurMs: +$<HTMLSelectElement>('tMax').value,
+      cps: $<HTMLInputElement>('tRead').checked ? +$<HTMLSelectElement>('rCps').value : 0,
+    };
+  }
+  function replaceRules() {
+    const rules = [...document.querySelectorAll<HTMLElement>('#rules .rule')].map((r) => ({
+      find: r.querySelector<HTMLInputElement>('[data-find]')!.value, replace: r.querySelector<HTMLInputElement>('[data-repl]')!.value,
+    }));
+    return compileRules(rules, { regex: $<HTMLInputElement>('rRegex').checked, matchCase: $<HTMLInputElement>('rCase').checked, wholeWord: $<HTMLInputElement>('rWord').checked });
+  }
+  const firstNum = () => Math.max(0, Math.floor(+$<HTMLInputElement>('firstNum').value) || 1);
+  const sec = (ms: number) => `${(ms / 1000).toFixed(1).replace(/\.0$/, '')} s`;
+  const sentence = (parts: string[], none: string) => (parts.length ? (parts.join(' · ') + '.').replace(/^./, (c) => c.toUpperCase()) : none);
+
   function compute(f: Entry, report = false): { caps: Caption[]; text: string | null } {
     const d = f.doc!;
     const fmt = outFmt.value;
     const fn = timeFn(d);
     const from = fromMs();
-    let caps = mode === 'merge' ? mergeCaps() : d.captions;
+    // Each line carries its original index (_i) so the preview can pair it with its before.
+    let caps: Caption[] = mode === 'merge' ? mergeCaps() : d.captions.map((c, i) => ({ ...c, _i: i }) as Caption);
     if (fn) caps = retime(caps, fn, from);
     if (mode === 'clean') {
       const { captions, report: r } = fixCommon(caps, cleanOpts());
@@ -698,13 +794,57 @@ const ART: Record<string, string> = {
         $('cleanReport').textContent = parts.length ? (parts.join(' · ') + '.').replace(/^./, (c) => c.toUpperCase()) : 'Nothing needed fixing with these options.';
       }
     }
+    if (mode === 'timing') {
+      const { captions, report: r } = fixTiming(caps, timingOpts());
+      caps = captions;
+      if (report) {
+        const parts = [];
+        if (r.overlaps) parts.push(`${n(r.overlaps, 'overlap')} fixed`);
+        if (r.gaps) parts.push(`${n(r.gaps, 'gap')} opened up`);
+        if (r.lengthened) parts.push(`${n(r.lengthened, 'line')} kept up longer`);
+        if (r.shortened) parts.push(`${n(r.shortened, 'line')} cut shorter`);
+        if (r.sorted) parts.push('lines put back in time order');
+        $('timingReport').textContent = sentence(parts, 'The timing already fits these settings.');
+      }
+    }
+    if (mode === 'reading') {
+      const limit = +$<HTMLSelectElement>('rCps').value, len = +$<HTMLSelectElement>('rLen').value;
+      const fastBefore = caps.filter((c) => cps(c) > limit).length;
+      const longBefore = caps.filter((c) => longestLine(c.text) > len).length;
+      let wrapped = 0;
+      if ($<HTMLInputElement>('rWrap').checked) ({ captions: caps, changed: wrapped } = reflow(caps, len));
+      if ($<HTMLInputElement>('rTime').checked) caps = fixTiming(caps, { fixOverlaps: false, minGapMs: 0, minDurMs: 0, maxDurMs: 0, cps: limit }).captions;
+      if (report) {
+        const slow = caps.map((c, i) => ({ c, i, v: cps(c) })).filter((x) => x.v > limit);
+        const long = caps.filter((c) => longestLine(c.text) > len).length;
+        const parts = [`${n(fastBefore, 'line')} faster than ${limit} characters a second`, `${n(longBefore, 'line')} with a row over ${len} characters`];
+        let after = '';
+        if (wrapped) after += ` ${n(wrapped, 'line')} rewrapped.`;
+        if (slow.length !== fastBefore || long !== longBefore) after += ` After the fix: ${slow.length} too fast, ${long} too long.`;
+        if (slow.length) after += slow.length === fastBefore ? '' : ' The rest have no room before the next line, so shorten their words in "Check and edit".';
+        $('readReport').textContent = `Before: ${parts.join(', ')}.${after}`;
+        $('slowList').innerHTML = slow.sort((a, b) => b.v - a.v).slice(0, 6).map((x) =>
+          `<li><span class="mono">${x.v.toFixed(0)}/s</span> <span class="mono">${fmtTime(x.c.start)}</span> ${esc(stripTags(x.c.text).replace(/\n/g, ' '))}</li>`).join('');
+      }
+    }
+    if (mode === 'replace') {
+      const rules = replaceRules();
+      const r = findReplace(caps, rules);
+      caps = r.captions;
+      if (report)
+        $('replReport').textContent = !rules.length
+          ? 'Type what to find. Leave "Replace with" empty to delete it. Every loaded file gets the same changes.'
+          : r.hits
+            ? `${n(r.hits, 'match', 'matches')} in ${n(r.lines, 'line')} of this file.${r.emptied ? ` ${n(r.emptied, 'line')} left empty will be deleted.` : ''}`
+            : 'No matches in this file.';
+    }
     if (isDocFormat(fmt)) return { caps, text: null };
     const ass = d.format === 'ass' || d.format === 'ssa';
     // Same ASS/SSA format and a timing-only change: rewrite in place so styling survives.
-    if (ass && fmt === d.format && mode !== 'clean' && mode !== 'merge' && !f.edited) return { caps, text: fn ? retimeAssRaw(d.raw, fn, from) : d.raw };
+    if (ass && fmt === d.format && !REBUILD.has(mode) && !f.edited) return { caps, text: fn ? retimeAssRaw(d.raw, fn, from) : d.raw };
     // Only the characters were wrong: keep the file exactly as it was, now in UTF-8.
     if (mode === 'encoding' && fmt === d.format && !f.edited) return { caps, text: d.raw };
-    return { caps, text: build(caps, fmt as OutFormat, parseFloat($<HTMLSelectElement>('outFps').value)) };
+    return { caps, text: build(caps, fmt as OutFormat, parseFloat($<HTMLSelectElement>('outFps').value), firstNum()) };
   }
 
   function render() {
@@ -717,23 +857,53 @@ const ART: Record<string, string> = {
       err.hidden = true;
       drawMap(d.captions, caps);
       if (mode === 'edit') return;
-      const before = d.captions;
       $('outFpsWrap').hidden = outFmt.value !== 'sub';
-      const timed = mode !== 'clean' && mode !== 'merge';
-      const show = timed ? before.slice(0, 6).concat(before.length > 12 ? before.slice(-6) : before.slice(6)) : caps.slice(0, 12);
-      const plainOut = isDocFormat(outFmt.value) || outFmt.value === 'sbv';
-      const rows = show.map((c) => {
-        const i = timed ? before.indexOf(c) : caps.indexOf(c);
-        const after = timed ? caps[i] : c;
-        const text = plainOut ? esc(stripTags(after.text)) : esc(after.text);
-        return `<tr><td>${i + 1}</td><td>${timed ? fmtTime(c.start) : ''}</td><td>${fmtTime(after.start)}</td><td>${text.replace(/\n/g, '<br>')}</td></tr>`;
-      });
-      $('rows').innerHTML = rows.join('');
+      $('numWrap').hidden = outFmt.value !== 'srt';
+      renderPreview(d.captions, caps);
     } catch (e: any) {
       $('rows').innerHTML = '';
       err.textContent = e?.message ?? String(e);
       err.hidden = false;
     }
+  }
+
+  // ---------- before and after table ----------
+
+  const PREVIEW_ROWS = 60;
+  function renderPreview(before: Caption[], caps: Caption[]) {
+    const plainOut = isDocFormat(outFmt.value) || outFmt.value === 'sbv' || outFmt.value === 'sub';
+    const show = (t: string) => (plainOut ? esc(stripTags(t)) : esc(t)).replace(/\n/g, '<br>');
+    type Row = { i: number; b?: Caption; a?: Caption; changed: boolean };
+    let items: Row[];
+    if (mode === 'merge') {
+      items = caps.map((a, i) => ({ i, a, changed: false }));
+    } else {
+      const seen = new Set<number>();
+      items = caps.map((a) => {
+        const i = (a as any)._i as number;
+        seen.add(i);
+        const b = before[i];
+        return { i, b, a, changed: !b || a.start !== b.start || a.end !== b.end || a.text !== b.text };
+      });
+      before.forEach((b, i) => { if (!seen.has(i)) items.push({ i, b, changed: true }); });
+      items.sort((x, y) => x.i - y.i || (x.a?.start ?? 0) - (y.a?.start ?? 0));
+    }
+    const changed = items.filter((x) => x.changed);
+    const only = $<HTMLInputElement>('onlyChanged').checked && changed.length > 0;
+    const list = (only ? changed : items).slice(0, PREVIEW_ROWS);
+    $('onlyChanged').closest('label')!.hidden = mode === 'merge' || !changed.length;
+    const removed = items.filter((x) => !x.a).length;
+    $('pvSum').textContent =
+      mode === 'merge' ? `${n(caps.length, 'line')} in the merged file.`
+      : changed.length ? `${changed.length} of ${n(before.length, 'line')} change${removed ? ` (${removed} removed)` : ''}.${(only ? changed : items).length > PREVIEW_ROWS ? ` Showing the first ${PREVIEW_ROWS}.` : ''}`
+      : `No line changes${outFmt.value !== doc()?.format ? ', only the format' : ''}.`;
+    $('rows').innerHTML = list.map(({ i, b, a, changed: ch }) => {
+      const t0 = b ? fmtTime(b.start) : '';
+      if (!a) return `<tr class="gone"><td>${i + 1}</td><td>${t0}</td><td>removed</td><td><del>${show(b!.text)}</del></td></tr>`;
+      const moved = b && a.start !== b.start;
+      const text = b && a.text !== b.text ? `<del>${show(b.text)}</del><ins>${show(a.text)}</ins>` : show(a.text);
+      return `<tr${ch ? ' class="ch"' : ''}><td>${i + 1}</td><td>${t0}</td><td${moved ? ' class="moved"' : ''}>${fmtTime(a.start)}</td><td>${text}</td></tr>`;
+    }).join('');
   }
 
   // ---------- cue map: every line as a block on one timeline, before above, after below ----------
@@ -764,9 +934,10 @@ const ART: Record<string, string> = {
     const over = after.filter((c, i) => i > 0 && c.start < after[i - 1].end);
     $('cmIssue').setAttribute('d', bars(over, 34, 18));
     map.setAttribute('aria-valuemax', String(Math.max(0, after.length - 1)));
-    setHead(Math.min(headIdx, after.length - 1));
+    setHead(Math.min(headIdx, after.length - 1), false);
+    if (videoOn()) videoTick();
   }
-  function setHead(i: number) {
+  function setHead(i: number, seek = true) {
     if (!mapAfter.length) return;
     headIdx = Math.max(0, Math.min(mapAfter.length - 1, i));
     const c = mapAfter[headIdx];
@@ -776,6 +947,7 @@ const ART: Record<string, string> = {
     $('vtime').textContent = `Line ${headIdx + 1} of ${mapAfter.length} · ${fmtTime(c.start)}`;
     map.setAttribute('aria-valuenow', String(headIdx));
     map.setAttribute('aria-valuetext', `Line ${headIdx + 1}, ${fmtTime(c.start)}`);
+    if (videoOn() && seek) video.currentTime = c.start / 1000;
   }
   const headAt = (clientX: number) => {
     const r = map.getBoundingClientRect();
@@ -1159,7 +1331,101 @@ const ART: Record<string, string> = {
       render();
     }),
   );
-  const quiet = new Set(['enc', 'file', 'filePick', 'lang', 'onlyIssues', 'addFile', 'srcFps', 'txtCps', 'txtStart', 'track', 'ocrLang']);
+  // ---------- watch with your video: a local file, played here with the fixed subtitles on top ----------
+
+  const video = $<HTMLVideoElement>('video');
+  let videoUrl = '';
+  const videoOn = () => !!videoUrl;
+  function cueAt(t: number) {
+    let lo = 0, hi = mapAfter.length - 1, hit = -1;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (mapAfter[mid].start <= t) { hit = mid; lo = mid + 1; } else hi = mid - 1;
+    }
+    // Lines can overlap, so look back a little for one still on screen.
+    for (let k = hit; k >= 0 && k > hit - 4; k--) if (mapAfter[k].end > t) return k;
+    return -1;
+  }
+  function videoTick() {
+    if (!videoOn() || !mapAfter.length) return;
+    const t = video.currentTime * 1000;
+    const k = cueAt(t);
+    $('vsub').textContent = k >= 0 ? stripTags(mapAfter[k].text) : '';
+    const x = ((t - mapT0) * W) / (mapT1 - mapT0);
+    $('cmHead').setAttribute('d', `M${Math.max(0, Math.min(W, x)).toFixed(1)} 0V${H}`);
+    $('vtime').textContent = `${fmtTime(t)}${k >= 0 ? ` · line ${k + 1}` : ''}`;
+    if (k >= 0) headIdx = k;
+  }
+  let raf = 0;
+  const loop = () => { videoTick(); raf = video.paused ? 0 : requestAnimationFrame(loop); };
+  video.addEventListener('play', () => { if (!raf) raf = requestAnimationFrame(loop); });
+  video.addEventListener('seeked', videoTick);
+  video.addEventListener('timeupdate', () => { if (!raf) videoTick(); });
+  video.addEventListener('error', () => {
+    const note = $('vNote');
+    note.textContent = 'This browser cannot play that video. MP4 and WebM files work best. Some MKV and AVI files only play in a video player.';
+    note.hidden = false;
+  });
+  video.addEventListener('loadeddata', () => { $('vNote').hidden = true; videoTick(); });
+  function showOffset() {
+    const raw = $<HTMLInputElement>('offset').value.trim();
+    const v = parseFloat(raw) || 0;
+    $('vOff').textContent = mode === 'shift' && v ? `Moved ${v > 0 ? '+' : ''}${v} s` : '';
+  }
+  $<HTMLInputElement>('videoFile').addEventListener('change', (e) => {
+    const f = (e.target as HTMLInputElement).files?.[0];
+    if (!f) return;
+    if (videoUrl) URL.revokeObjectURL(videoUrl);
+    videoUrl = URL.createObjectURL(f);
+    video.src = videoUrl;
+    video.hidden = false;
+    root.classList.add('has-video');
+    $('vctl').hidden = false;
+    $('vPick').firstChild!.textContent = 'Use another video';
+    $('vPick').classList.remove('lead');
+    showOffset();
+    (e.target as HTMLInputElement).value = '';
+  });
+  $('vClose').addEventListener('click', () => {
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    URL.revokeObjectURL(videoUrl);
+    videoUrl = '';
+    video.hidden = true;
+    root.classList.remove('has-video');
+    $('vctl').hidden = true;
+    $('vNote').hidden = true;
+    $('vPick').firstChild!.textContent = 'Watch with your video';
+    setHead(headIdx, false);
+  });
+  root.querySelectorAll<HTMLElement>('[data-vnudge]').forEach((b) =>
+    b.addEventListener('click', () => {
+      if (mode !== 'shift') {
+        const r = root.querySelector<HTMLInputElement>('input[name="sym"][value="early-late"]');
+        if (r && root.querySelector('input[name="sym"]:checked')) r.checked = true;
+        setTab('shift');
+      }
+      const o = $<HTMLInputElement>('offset');
+      const v = parseFloat(o.value) || 0;
+      o.value = String(Math.round((v + +b.dataset.vnudge! / 1000) * 1000) / 1000);
+      render();
+      showOffset();
+      videoTick();
+    }),
+  );
+
+  // ---------- find and replace rows ----------
+
+  $('addRule').addEventListener('click', () => {
+    const first = document.querySelector<HTMLElement>('#rules .rule')!;
+    const row = first.cloneNode(true) as HTMLElement;
+    row.querySelectorAll('input').forEach((i) => (i.value = ''));
+    $('rules').append(row);
+    row.querySelector('input')!.focus();
+  });
+
+  const quiet = new Set(['enc', 'file', 'filePick', 'lang', 'onlyIssues', 'addFile', 'srcFps', 'txtCps', 'txtStart', 'track', 'ocrLang', 'videoFile']);
   const inPanel = (el: HTMLElement) => el.closest('#editor, #candList, .pick');
   root.addEventListener('input', (e) => {
     const t = e.target as HTMLElement;

@@ -25,7 +25,10 @@ fix. Free, with no account.
 
 ## Capabilities and Constraints
 - Fixes: shift timing (all lines or from a line), change frame rate, sync two points, fix
-  characters (encoding), clean up, check and edit, convert format, merge files. More are coming,
+  timing (overlaps, gaps, too short or too long), fix characters (encoding), clean up
+  (including duplicates and renumbering), reading speed (check and rewrap), find and replace
+  (batch rules, optional patterns), check and edit, convert format, merge files. Every fix shows
+  a before and after preview, and any fix can be checked against a local video. More are coming,
   so the fix count grows past 7. Layouts must not hard-code seven.
 - Batch: up to 100 files, downloaded as one zip.
 - Formats in: SRT, VTT, ASS, SSA, MicroDVD SUB, SBV, SAMI, LRC, TTML, DFXP, YouTube XML, EBU and Spruce STL, TXT, Blu-ray SUP (read with OCR in the browser; tesseract.js and its language data load from the jsDelivr CDN only when a .sup file arrives).

@@ -4,7 +4,7 @@ export const SITE = {
   url: 'https://subfixer.app',
 };
 
-export type Mode = 'shift' | 'fps' | 'sync' | 'encoding' | 'clean' | 'edit' | 'convert' | 'merge';
+export type Mode = 'shift' | 'fps' | 'sync' | 'timing' | 'encoding' | 'clean' | 'reading' | 'replace' | 'edit' | 'convert' | 'merge';
 export type Group = 'Timing' | 'Text' | 'Convert';
 export const GROUPS: Group[] = ['Timing', 'Text', 'Convert'];
 
@@ -16,7 +16,7 @@ export interface ToolPage {
   h1: string;
   lede: string;
   description: string; // meta description
-  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string };
+  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string; clean?: 'dupes' | 'renumber'; video?: boolean };
   steps: string[];
   faq: { q: string; a: string }[];
 }
@@ -470,6 +470,128 @@ export const PAGES: ToolPage[] = [
     faq: [
       { q: 'Is there a limit?', a: 'Up to 100 files, each under 20 MB. Subtitle files are usually well under 1 MB.' },
       { q: 'Each file needs a different offset.', a: 'Then fix them one at a time. A batch applies the same settings to every file.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'fix-subtitle-timing',
+    mode: 'timing',
+    group: 'Timing',
+    preset: { symptom: 'flicker' },
+    title: 'Fix subtitle timing: overlaps, flicker and lines that stay too long',
+    h1: 'Fix overlapping and flickering subtitles',
+    lede: 'Some lines cover each other, some blink past and some hang on screen long after the talking stops. This tidies all of them at once and leaves the start times alone.',
+    description: 'Fix overlapping subtitle lines, add a gap between lines, and set the shortest and longest time on screen. SRT, VTT, ASS. Free, in your browser.',
+    steps: [
+      'Drop in your subtitle file, or a whole season.',
+      'Pick the gap between lines and the shortest and longest time a line stays up.',
+      'Check the changed lines in the table, then download.',
+    ],
+    faq: [
+      { q: 'Does it move when lines appear?', a: 'No. Start times stay where they are. Only the end of each line moves, so a line never starts sooner or later than it did.' },
+      { q: 'What is a frame gap for?', a: 'When one line ends on the exact frame the next begins, some players blink or merge them. A gap of two frames, about 83 milliseconds, keeps each line clear.' },
+      { q: 'Why did a line not get longer?', a: 'It only grows into empty time. If the next line starts right after it, there is no room, and the line keeps its length.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'subtitle-reading-speed',
+    mode: 'reading',
+    group: 'Text',
+    title: 'Subtitle reading speed checker: find lines too fast to read',
+    h1: 'Check subtitle reading speed',
+    lede: 'Find the lines that ask for more than anyone can read, rewrap long rows and give fast lines more time where there is room.',
+    description: 'Check subtitles for characters per second and line length, rewrap long lines into two even rows and stretch fast lines. Free, in your browser.',
+    steps: [
+      'Drop in your subtitle file.',
+      'Pick a reading speed and the longest row you want.',
+      'See which lines are too fast, let the tool rewrap and stretch them, then download.',
+    ],
+    faq: [
+      { q: 'How is reading speed measured?', a: 'Characters per second: every letter, space and punctuation mark the viewer sees, divided by the time the line is up. Tags are not counted.' },
+      { q: 'Which limit should I pick?', a: 'Seventeen characters a second is a common choice for grown-up viewers. Pick fifteen for children or slow readers, and twenty or more for fast dialogue.' },
+      { q: 'Some lines are still too fast.', a: 'They have no free time before the next line. Shorten the words in "Check and edit", or split the line in two.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'find-and-replace-subtitles',
+    mode: 'replace',
+    group: 'Text',
+    title: 'Find and replace in subtitles: fix a name or typo in every line',
+    h1: 'Find and replace in subtitle files',
+    lede: 'A name spelled wrong in three hundred lines, or a word you want gone? Type it once and fix every line, in one file or a whole season.',
+    description: 'Find and replace text in SRT, VTT and ASS subtitles, with whole-word, match-case and regular expression options. Works on many files at once.',
+    steps: [
+      'Drop in one subtitle file, or a batch of them.',
+      'Type what to find and what to put instead. Add more pairs if you need them.',
+      'Check the changed lines in the table, then download one file or a zip.',
+    ],
+    faq: [
+      { q: 'Can I use regular expressions?', a: 'Yes. Tick "Use patterns" to write a JavaScript regular expression. Use $1 for a captured group and \\n for a line break in the replacement.' },
+      { q: 'What happens to a line I empty?', a: 'A line with nothing left in it is deleted, so the player never shows a blank subtitle.' },
+      { q: 'Does it touch the timing?', a: 'No. Only the text changes. Times stay exactly as they were.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'remove-duplicate-subtitles',
+    mode: 'clean',
+    group: 'Text',
+    preset: { clean: 'dupes' },
+    title: 'Remove duplicate subtitle lines from SRT files online',
+    h1: 'Remove duplicate subtitle lines',
+    lede: 'The same line twice in a row, or a copy sitting on top of the first one. Duplicates get merged into one line that runs for the time of both.',
+    description: 'Remove duplicate and doubled lines from SRT, VTT and ASS subtitles. Merges repeats into one line and renumbers the file. Free, in your browser.',
+    steps: [
+      'Drop in your subtitle file.',
+      '"The same line repeated" is ticked. Tick other clean-up options if you want them too.',
+      'Check the removed lines in the table, then download.',
+    ],
+    faq: [
+      { q: 'Which lines count as duplicates?', a: 'Lines with the same words, ignoring formatting, that follow each other within half a second, or that are both on screen at the same time.' },
+      { q: 'Is the file renumbered?', a: 'Yes. Lines are put in time order and numbered again from 1, or from any number you pick next to Save as.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'renumber-srt',
+    mode: 'clean',
+    group: 'Text',
+    preset: { clean: 'renumber', out: 'srt' },
+    title: 'Renumber SRT subtitles: sort lines and fix the numbering',
+    h1: 'Renumber an SRT file',
+    lede: 'Numbers out of order, skipped or repeated? The lines are sorted by time and numbered again, starting from 1 or any number you choose.',
+    description: 'Renumber SRT subtitles online. Sorts lines by time, numbers them in order from any starting number and drops empty lines. Free, in your browser.',
+    steps: [
+      'Drop in your .srt file.',
+      'Change the starting number next to Save as if you need one other than 1.',
+      'Download the renumbered file.',
+    ],
+    faq: [
+      { q: 'Why would I start from another number?', a: 'When a file is the second part of a longer one, you can carry the numbering on from where the first part ended.' },
+      { q: 'Does it change the text?', a: 'No. Nothing else changes unless you tick one of the clean-up options. Lines with no text at all are dropped.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'preview-subtitles-with-video',
+    mode: 'shift',
+    group: 'Timing',
+    preset: { symptom: 'early-late', video: true },
+    title: 'Preview subtitles with your video and fix the sync live',
+    h1: 'Watch subtitles on your video and fix the sync',
+    lede: 'Open your subtitle file, then your video. Watch them together here and nudge the subtitles a tenth of a second at a time until the words land on the speech.',
+    description: 'Play your own video with its subtitles in the browser and shift them live until they match. The video is never uploaded. SRT, VTT, ASS.',
+    steps: [
+      'Drop in your subtitle file.',
+      'Press "Watch with your video" and pick the video file. It plays right here, from your own device.',
+      'Use the +0.1 s and -0.1 s buttons while it plays, then download the fixed file.',
+    ],
+    faq: [
+      { q: 'Is my video uploaded?', a: 'No. The browser plays it straight from your device, the same way it opens a photo. Nothing is sent anywhere.' },
+      { q: 'Which videos play?', a: 'Whatever your browser can play. MP4 and WebM work almost everywhere. Some MKV and AVI files only open in a video player.' },
+      { q: 'The subtitles drift instead of being off by the same amount.', a: 'That is a frame-rate problem. Use "Change frame rate" or "Sync two points"; the video keeps playing with the new timing.' },
       PRIVACY_FAQ,
     ],
   },

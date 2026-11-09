@@ -172,7 +172,7 @@ export function parse(raw: string, fps = 23.976, o: ParseOptions = {}): Doc {
   return { format, captions, raw: text };
 }
 
-export function build(captions: Caption[], format: OutFormat, fps = 23.976): string {
+export function build(captions: Caption[], format: OutFormat, fps = 23.976, firstNumber = 1): string {
   if (format === 'sub') return buildMicroDvd(captions, fps);
   if (format === 'smi') return buildSami(captions.map((c) => ({ ...c, text: c.text.replace(/\{\\[^}]*\}/g, '') })));
   if (format === 'ttml' || format === 'dfxp') return buildTtml(captions, format);
@@ -182,10 +182,12 @@ export function build(captions: Caption[], format: OutFormat, fps = 23.976): str
       : format === 'sbv' || format === 'sub' ? stripTags(c.text)
       : format === 'vtt' ? c.text.replace(/\{\\[^}]*\}/g, '').replace(/<(?!\/?[ibu]>)[^>]+>/g, '')
       : c.text;
-    return { type: 'caption', index: i + 1, start: c.start, end: c.end, duration: c.end - c.start, content: text, text };
+    return { type: 'caption', index: i + firstNumber, start: c.start, end: c.end, duration: c.end - c.start, content: text, text };
   });
   let out = subsrt.build(items as any, { format, fps, eol: '\r\n' } as any);
   if (format === 'srt' || format === 'vtt') out = out.replace(/\r?\n/g, '\r\n');
+  if (format === 'srt' && firstNumber !== 1)
+    out = out.replace(/(^|\r\n\r\n)(\d+)(?=\r\n\d+:\d\d:\d\d,\d{3} -->)/g, (_m, a, k) => a + (+k + firstNumber - 1));
   return out;
 }
 
@@ -298,10 +300,19 @@ export function fixCommon(captions: Caption[], o: FixOptions): { captions: Capti
     const out: Caption[] = [];
     for (const c of list) {
       const prev = out[out.length - 1];
-      if (prev && stripTags(prev.text).trim() === stripTags(c.text).trim() && c.start <= prev.end + 500) {
+      const same = (p: Caption) => stripTags(p.text).trim() === stripTags(c.text).trim();
+      if (prev && same(prev) && c.start <= prev.end + 500) {
         prev.end = Math.max(prev.end, c.end);
         r.merged++;
-      } else out.push(c);
+        continue;
+      }
+      // The same line again while an earlier copy is still on screen (a doubled cue a few lines back).
+      let dup = false;
+      for (let j = out.length - 2; j >= 0 && out.length - j <= 8; j--) {
+        if (out[j].end > c.start && same(out[j])) { out[j].end = Math.max(out[j].end, c.end); dup = true; break; }
+      }
+      if (dup) r.merged++;
+      else out.push(c);
     }
     list = out;
   }

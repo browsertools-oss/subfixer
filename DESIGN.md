@@ -15,14 +15,22 @@ top bar) and from subtitlefixer.com. SubFixer uses none of those.
   No sign-up). Right: the screen, a night still with a yellow subtitle and two lanes
   (Subtitle, Speech) where the cue slides from its late ghost into line with the speech.
 - Below: "What is wrong with your subtitles?" as ticket rolls, one row per group (Timing,
-  Text, Format). Nine tickets today. Each ticket has a vertical stub with the fix name, a perforation, a drawing
+  Text, Format). Twelve tickets today. Each ticket has a vertical stub with the fix name, a perforation, a drawing
   and the symptom in plain words. Rolls use an auto-fill grid, so new fixes just add tickets.
   On phones each roll is a sideways scroll strip.
 - After a file loads, the screen and drop ticket go away (`.tool.has-file`) and the tool
   shows: file bar, viewer (the current line on a dark screen, then the cue map with every
   line as a block, before in gray above, after in the group color below, overlaps in red, a
   yellow playhead you drag or move with arrow keys), fix tabs, the counter panel, Save as
-  and Download, then the preview table.
+  and Download, then the before and after preview: each changed line with its old and new
+  time and the text struck through above the new text, removed lines grayed out, a summary
+  line and an "Only lines that change" switch.
+- Watch with your video: a local video file plays in the dark screen with the current line
+  laid over it. Nudge buttons (-1 s, -0.1 s, +0.1 s, +1 s) shift the subtitles live and switch
+  to Shift timing. The video never leaves the device (object URL), and Close video revokes it.
+- Fix timing, Reading speed and Find and replace are tabs like the others. Each panel ends in a
+  plain report line (what was found, what changed). Reading speed lists the slowest lines.
+  Find and replace takes several rules at once; patterns are opt in.
 - Reading options (`#srcOpts`) sit under the file bar and only appear when the file needs one:
   the frame rate for MicroDVD or Spruce files without one, the language for multi-language SAMI,
   reading speed and start time for plain text. Changing one re-reads the file in place.

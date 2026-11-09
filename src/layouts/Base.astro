@@ -393,6 +393,42 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .mpart input { width: 100%; font-family: var(--mono); }
   .batchnote { margin: 14px 0 0; }
 
+  .optrow { display: flex; flex-wrap: wrap; gap: 16px 20px; align-items: flex-end; }
+  .panel .optrow label.check { width: auto; }
+  .rules { display: grid; gap: 10px; }
+  .rule { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+  .rule input { width: 100%; }
+  .slow { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15px; }
+  .slow:empty { display: none; }
+  .slow li { overflow-wrap: anywhere; }
+  .mono { font-family: var(--mono); font-size: 14px; color: var(--soft); margin-right: 8px; }
+  .pvhead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 20px; margin-bottom: 10px; }
+  .pvsum { margin: 0; font-weight: 600; }
+  .pvhead label.check { display: flex; gap: 10px; align-items: center; font-size: 15px; }
+  .pvhead label[hidden] { display: none; }
+  .preview del { display: block; color: var(--soft); text-decoration-thickness: 1px; }
+  .preview ins { display: block; text-decoration: none; font-weight: 600; }
+  .preview tr.gone td { color: var(--soft); }
+  .preview td.moved { font-weight: 700; }
+  .vctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 10px 2px 0; font-size: 14px; }
+  .vctl[hidden], .vnote[hidden] { display: none; }
+  .vnudge { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .vnudge button {
+    font: inherit; font-family: var(--mono); font-size: 13px; font-weight: 600; height: 36px; padding: 0 10px; cursor: pointer;
+    background: #1b1830; color: #efedf3; border: 1px solid #4a4658; border-radius: 8px;
+  }
+  .vnudge button:hover { border-color: var(--sub); }
+  .vnudge button:active { transform: translateY(1px); }
+  .voff { color: var(--sub); font-variant-numeric: tabular-nums; }
+  .vnote { margin: 10px 2px 0; font-size: 14px; color: #efedf3; border: 1px solid #ff6b7d; border-radius: 8px; padding: 8px 12px; }
+  .vlink { font: inherit; font-size: 13px; background: none; border: 0; padding: 0; color: #efedf3; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #6c6878; position: relative; }
+  .vlink:hover { text-decoration-color: currentColor; }
+  .vpick:focus-within, .vlink:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .vpick.lead { background: var(--sub); color: #17151b; text-decoration: none; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
+  .has-video .vscreen { height: auto; aspect-ratio: 16 / 9; padding: 0; position: relative; background: #000; overflow: hidden; }
+  .has-video .vscreen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .has-video .vsub { position: absolute; left: 50%; bottom: 14%; transform: translateX(-50%); width: max-content; max-width: 90%; pointer-events: none; font-size: clamp(16px, 2.6vw, 26px); }
+  .vscreen video[hidden] { display: none; }
   .panel.stack { display: block; }
   .panel.stack[hidden] { display: none; }
   .panel.stack > * + * { margin-top: 14px; }
@@ -475,6 +511,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
     .roll-name { margin: 0; }
   }
   @media (max-width: 599px) {
+    .rule { grid-template-columns: 1fr; }
     .top, main, .foot-in { padding-left: 16px; padding-right: 16px; }
     .top { padding-top: 16px; }
     .tag { flex: 1 1 100%; font-size: 14px; }

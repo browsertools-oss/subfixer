@@ -12,3 +12,7 @@ Monetization model: free tools for traffic, a paid tier on the tools that get tr
 
 ## Later
 - The same paid-tier pattern on the file-tools site once it has traffic.
+
+## Ads (first revenue)
+- Trigger: about 300 visits a month in ops/metrics.csv and most tool pages indexed. Then open one `decision` issue asking the owner to apply for Google AdSense (it needs his identity and tax details). Never sign up yourself.
+- After approval: fill the existing empty ad slot below the tool, one unit per page, never above the drop zone.

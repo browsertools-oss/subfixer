@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 export default defineConfig({
-  site: 'https://subfixer.example',
+  site: 'https://subfixer.app',
   trailingSlash: 'always',
   integrations: [sitemap()],
 });

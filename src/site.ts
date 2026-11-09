@@ -1,7 +1,7 @@
 export const SITE = {
   name: 'SubFixer',
   tagline: 'Fix subtitle timing in your browser',
-  url: 'https://subfixer.example', // replaced once the domain is bought
+  url: 'https://subfixer.app',
 };
 
 export type Mode = 'shift' | 'fps' | 'sync' | 'convert' | 'clean';

@@ -1,6 +1,5 @@
 {
-  "_note": "Fixed monthly costs in USD, spread evenly per day. Edit when something is bought or cancelled.",
   "monthly": {
-    "domain subfixer.app ($14/yr)": 1.17
+    "domain subfixer.app ($8.20 first year, $14.20/yr after)": 0.68
   }
 }

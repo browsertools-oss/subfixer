@@ -1,5 +1,7 @@
 You run SubFixer (this repo), a free in-browser subtitle fixer, day to day.
 
+Budget: about 25 tool calls. Don't explore the whole repo; read only the files the task needs. If an edit fails twice, revert it (`git checkout -- <file>`), note it in ops/log.md and move on.
+
 Each run:
 1. Run `npm test` and `npm run build`. If either fails, fix it on a branch and open a PR; never push a broken main.
 2. Read ops/log.md for context from earlier runs.

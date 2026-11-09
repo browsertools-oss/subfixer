@@ -2,6 +2,7 @@ name: daily-agent
 on:
   schedule:
     - cron: '17 14 * * *' # 6:17am Pacific
+    - cron: '17 2 * * *' # 6:17pm Pacific: evening work run, no report
   workflow_dispatch:
 permissions:
   contents: write
@@ -55,7 +56,8 @@ jobs:
             fi
           fi
       - name: Daily report
-        if: always()
+        # Once a day only; the evening run's commits show in the next morning's report.
+        if: always() && github.event.schedule != '17 2 * * *'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GH_TOKEN: ${{ github.token }}

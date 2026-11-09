@@ -191,6 +191,67 @@ export function build(captions: Caption[], format: OutFormat, fps = 23.976, firs
   return out;
 }
 
+/** Rebuild an ASS/SSA file after its text or lines changed, keeping the source's script info,
+ *  styles, layers, positions and override tags. Lines that came from the source (`_i` points at
+ *  `before`) keep every source event they stood for, with the new times; text that changed keeps
+ *  the source's leading position block. New lines use the first style. */
+export function rebuildAss(raw: string, before: Caption[], captions: Caption[]): string {
+  const eol = raw.includes('\r\n') ? '\r\n' : '\n';
+  const lines = raw.split(/\r?\n/);
+  const evAt = lines.findIndex((l) => /^\[events\]/i.test(l.trim()));
+  if (evAt < 0) return build(captions, 'ass');
+  let endAt = lines.findIndex((l, i) => i > evAt && /^\[[^\]]+\]\s*$/.test(l.trim()));
+  if (endAt < 0) endAt = lines.length;
+  const head = lines.slice(0, evAt + 1);
+  const tail = lines.slice(endAt);
+  const body = lines.slice(evAt + 1, endAt);
+  const formatLine = body.find((l) => /^format:/i.test(l)) ?? 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text';
+  const comments = body.filter((l) => /^comment:/i.test(l));
+  const toMs = (t: string) => {
+    const m = t.match(/(\d+):(\d{2}):(\d{2})[.:](\d{2})/);
+    return m ? ((+m[1] * 60 + +m[2]) * 60 + +m[3]) * 1000 + +m[4] * 10 : 0;
+  };
+  const fmt = (ms: number) => {
+    ms = Math.max(0, Math.round(ms / 10) * 10);
+    const p = (n: number) => String(n).padStart(2, '0');
+    return `${Math.floor(ms / 3600000)}:${p(Math.floor(ms / 60000) % 60)}:${p(Math.floor(ms / 1000) % 60)}.${p(Math.floor((ms % 1000) / 10))}`;
+  };
+  type Ev = { f: string[]; start: number; end: number; key: string; text: string };
+  const events: Ev[] = [];
+  for (const l of body) {
+    const m = l.match(/^dialogue:\s*(.*)$/i);
+    if (!m) continue;
+    const f = m[1].split(',');
+    if (f.length < 10) continue;
+    const text = f.slice(9).join(',');
+    const start = toMs(f[1]), end = toMs(f[2]);
+    events.push({ f: f.slice(0, 9), start, end, text, key: `${start}|${end}|${stripTags(assToHtml(text)).trim()}` });
+  }
+  const byKey = new Map<string, Ev[]>();
+  for (const e of events) byKey.set(e.key, [...(byKey.get(e.key) ?? []), e]);
+  const style = (lines.find((l) => /^style:/i.test(l))?.replace(/^style:\s*/i, '').split(',')[0] ?? 'Default').trim();
+  const out: string[] = [];
+  for (const c of captions) {
+    const i = (c as any)._i as number | undefined;
+    const src = i === undefined ? undefined : before[i];
+    const evs = src ? byKey.get(`${src.start}|${src.end}|${stripTags(src.text).trim()}`) : undefined;
+    const t = fmt(c.start), e = fmt(Math.max(c.start, c.end));
+    if (!evs?.length) {
+      out.push(`Dialogue: 0,${t},${e},${style},,0,0,0,,${htmlToAss(c.text).replace(/\n/g, '\\N')}`);
+      continue;
+    }
+    for (const ev of evs) {
+      let text = ev.text;
+      if (c.text !== src!.text) {
+        const lead = (ev.text.match(/^\{[^}]*\}/)?.[0] ?? '').replace(/\\[ibu][01]?(?=[\\}])/g, '');
+        text = (lead === '{}' ? '' : lead) + htmlToAss(c.text).replace(/\n/g, '\\N');
+      }
+      out.push(`Dialogue: ${ev.f[0]},${t},${e},${ev.f.slice(3).join(',')},${text}`);
+    }
+  }
+  return [...head, formatLine, ...comments, ...out, '', ...tail].join(eol).replace(/(\r?\n){3,}$/, eol);
+}
+
 // ---------- timing ----------
 
 export type TimeFn = (ms: number) => number;

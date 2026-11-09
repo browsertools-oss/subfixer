@@ -185,9 +185,14 @@ const clock = (ms: number) => {
 
 export function buildTtml(caps: Caption[], flavor: 'ttml' | 'dfxp' = 'ttml', lang = 'en'): string {
   const ns = flavor === 'dfxp' ? 'http://www.w3.org/2006/10/ttaf1' : 'http://www.w3.org/ns/ttml';
-  const span = (l: string) => escXml(stripAll(l)).trim();
+  const esc = (l: string) => escXml(stripAll(l));
+  // Italic runs become italic spans, so "<i>Fine.</i> Come in." keeps its one italic word.
+  const line = (l: string) =>
+    l.trim().split(/(<i>[\s\S]*?<\/i>)/i).filter(Boolean)
+      .map((part) => (/^<i>/i.test(part) ? `<span tts:fontStyle="italic">${esc(part)}</span>` : esc(part)))
+      .join('');
   const body = caps.map((c) => {
-    const lines = c.text.split('\n').map((l) => (/^\s*<i>.*<\/i>\s*$/i.test(l) ? `<span tts:fontStyle="italic">${span(l)}</span>` : span(l)));
+    const lines = c.text.split('\n').map(line);
     return `      <p begin="${clock(c.start)}" end="${clock(c.end)}">${lines.join('<br/>')}</p>`;
   });
   return [

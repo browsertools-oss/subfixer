@@ -418,7 +418,7 @@ const ART: Record<string, string> = {
 
 <script>
   import {
-    decode, parse, build, retime, retimeAssRaw, shiftFn, fpsFn, twoPointFn, fixCommon, validate, checkSrtRaw,
+    decode, parse, build, retime, retimeAssRaw, rebuildAss, shiftFn, fpsFn, twoPointFn, fixCommon, validate, checkSrtRaw,
     encodingCandidates, garbleScore, fmtTime, parseTime, stripTags, ENCODINGS, LANG_ENCODINGS, REPAIR_UTF8, FORMAT_LABEL,
     type Doc, type OutFormat, type Caption, type TimeFn, type Candidate,
   } from '../lib/subs';
@@ -535,10 +535,24 @@ const ART: Record<string, string> = {
     }
   }
 
+  /** Common files people drop by mistake, named so the error says what went wrong. */
+  function notSubtitle(b: Uint8Array, name: string): string {
+    const at = (o: number, ...v: number[]) => v.every((x, i) => b[o + i] === x);
+    if (at(0, 0x25, 0x50, 0x44, 0x46)) return 'This is a PDF document, not a subtitle file.';
+    if (at(0, 0x89, 0x50, 0x4e, 0x47) || at(0, 0xff, 0xd8, 0xff) || at(0, 0x47, 0x49, 0x46, 0x38) || (at(0, 0x52, 0x49, 0x46, 0x46) && at(8, 0x57, 0x45, 0x42, 0x50))) return 'This is a picture, not a subtitle file.';
+    if (at(4, 0x66, 0x74, 0x79, 0x70) || at(0, 0x1a, 0x45, 0xdf, 0xa3) || (at(0, 0x52, 0x49, 0x46, 0x46) && at(8, 0x41, 0x56, 0x49))) return 'This is a video file. Choose the subtitle file instead, or use "Watch with your video" once one is loaded.';
+    if (at(0, 0x50, 0x4b, 0x03, 0x04)) return /\.(docx|xlsx|pptx|odt)$/i.test(name) ? 'This is an office document, not a subtitle file.' : 'This is a zip file. Unzip it and choose the subtitle files inside.';
+    if (at(0, 0x52, 0x61, 0x72, 0x21) || at(0, 0x37, 0x7a, 0xbc, 0xaf)) return 'This is a compressed archive. Unpack it and choose the subtitle files inside.';
+    return '';
+  }
+
   async function loadEntry(f: Entry, forced = '') {
     f.forced = forced;
     try {
       const bytes = new Uint8Array(f.buf);
+      if (!bytes.length || !/\S/.test(new TextDecoder().decode(bytes.subarray(0, 4096)).replace(/\uFEFF/g, '')) && bytes.length < 4096) throw new Error('This file is empty.');
+      const kind = notSubtitle(bytes, f.name);
+      if (kind) throw new Error(kind);
       if (isVobSub(bytes)) throw new Error('This .sub file holds DVD pictures (it comes with an .idx file). Only Blu-ray .sup picture files can be read here.');
       if (isSup(bytes)) return await readSup(f, bytes);
       if (isEbuStl(bytes)) {
@@ -606,6 +620,14 @@ const ART: Record<string, string> = {
     }
     files = next.filter((f) => f.doc);
     cur = 0;
+    // Signs placed on screen overlap the dialogue on purpose, so overlap fixes would cut them short.
+    if (files.some((f) => /^(ass|ssa)$/.test(f.doc!.format) && /\\(pos|move|an\d)/.test(f.doc!.raw))) {
+      $<HTMLInputElement>('overlaps').checked = false;
+      $<HTMLInputElement>('tOverlap').checked = false;
+      msgs.push('This file has signs placed on screen, which overlap the dialogue on purpose. Overlap fixes start switched off.');
+      note.textContent = msgs.join(' ');
+      note.hidden = false;
+    }
     const preset = root.dataset.out;
     const d = files[0].doc!;
     outFmt.value = preset || (SUB_FORMATS.includes(d.format) ? d.format : 'srt');
@@ -842,6 +864,8 @@ const ART: Record<string, string> = {
     const ass = d.format === 'ass' || d.format === 'ssa';
     // Same ASS/SSA format and a timing-only change: rewrite in place so styling survives.
     if (ass && fmt === d.format && !REBUILD.has(mode) && !f.edited) return { caps, text: fn ? retimeAssRaw(d.raw, fn, from) : d.raw };
+    // Text or lines changed: rebuild from the source so styles, layers and positions survive.
+    if (ass && fmt === d.format) return { caps, text: rebuildAss(d.raw, d.captions, caps) };
     // Only the characters were wrong: keep the file exactly as it was, now in UTF-8.
     if (mode === 'encoding' && fmt === d.format && !f.edited) return { caps, text: d.raw };
     return { caps, text: build(caps, fmt as OutFormat, parseFloat($<HTMLSelectElement>('outFps').value), firstNum()) };

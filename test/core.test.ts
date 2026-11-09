@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssRaw, parseTime, decode, validate, checkSrtRaw, repairDoubleUtf8, encodingCandidates, ENCODINGS, REPAIR_UTF8 } from '../src/lib/subs.ts';
+import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssRaw, rebuildAss, parseTime, decode, validate, checkSrtRaw, repairDoubleUtf8, encodingCandidates, ENCODINGS, REPAIR_UTF8 } from '../src/lib/subs.ts';
 import { toTxt, toCsv, toDocx, toXlsx, zipFiles } from '../src/lib/export.ts';
 import { unzipSync, strFromU8 } from 'fflate';
 
@@ -328,4 +328,26 @@ test('tidy: timing, reading speed, reflow, find and replace, numbering, duplicat
   ], { removeDuplicates: true });
   assert.equal(dup.captions.length, 2);
   assert.equal(dup.report.merged, 1);
+});
+
+test('ass rebuild keeps styles, layers and positions', () => {
+  const raw = readFileSync(new URL('./fixtures/layers.ass', import.meta.url), 'utf8');
+  const d = parse(raw);
+  assert.equal(d.captions.length, 3);
+  const caps = d.captions.map((c, i) => ({ ...c, _i: i }) as any);
+  caps[0] = { ...caps[0], text: '<i>Are you</i> leaving?' };
+  caps[1] = { ...caps[1], start: caps[1].start + 1000, end: caps[1].end + 1000 };
+  const out = rebuildAss(raw, d.captions, [...caps, { start: 9000, end: 10000, text: 'New\nline' }]);
+  assert.ok(out.includes('Style: Sign,Georgia'));
+  assert.ok(out.includes('Comment: 0,0:00:00.00,0:00:00.50,Default,,0,0,0,,typeset notes'));
+  assert.ok(out.includes('Dialogue: 0,0:00:01.00,0:00:03.00,Default,Ann,0,0,0,,{\\i1}Are you{\\i0} leaving?'));
+  assert.ok(out.includes('Dialogue: 1,0:00:03.00,0:00:07.00,Sign,,0,0,0,,{\\pos(960,120)\\fad(200,200)}CLOSED'));
+  assert.ok(out.includes('Dialogue: 0,0:00:03.00,0:00:07.00,Sign,,0,0,0,,{\\pos(962,122)\\blur4\\c&H000000&}CLOSED'));
+  assert.ok(out.includes('Dialogue: 0,0:00:09.00,0:00:10.00,Default,,0,0,0,,New\\Nline'));
+  assert.equal(parse(out).captions.length, 4);
+});
+
+test('ttml keeps italics inside a line', () => {
+  const caps = [{ start: 1000, end: 2000, text: '<i>Fine.</i> Come in & sit' }];
+  for (const f of ['ttml', 'dfxp'] as const) assert.deepEqual(parse(build(caps, f)).captions, caps);
 });

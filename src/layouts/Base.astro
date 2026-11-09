@@ -26,7 +26,7 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
     <meta property="og:url" content={canonical} />
     <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/fonts/geist-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/atkinson-next-400.woff2" as="font" type="font/woff2" crossorigin />
     {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
   </head>
   <body>
@@ -61,10 +61,10 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
 </html>
 
 <style is:global>
-  /* Design system: Vercel's Geist language (light and dark). See DESIGN.md. */
-  @font-face { font-family: 'Geist'; src: url('/fonts/geist-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'Geist'; src: url('/fonts/geist-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'Geist'; src: url('/fonts/geist-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+  /* Design system: Vercel's Geist language (light and dark), set in Atkinson Hyperlegible Next. See DESIGN.md. */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; src: url('/fonts/atkinson-next-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; src: url('/fonts/atkinson-next-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; src: url('/fonts/atkinson-next-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
   :root {
     --canvas: #ffffff;
     --canvas-soft: #fafafa;
@@ -118,7 +118,7 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
     margin: 0;
     background: var(--canvas-soft);
     color: var(--ink);
-    font: 16px/24px 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font: 16px/24px 'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   ::selection { background: var(--ink); color: var(--canvas); }
@@ -134,10 +134,10 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
     height: 64px; display: flex; align-items: center; gap: 12px;
     background: var(--canvas); border-bottom: 1px solid var(--hairline); padding: 0 24px;
   }
-  .brand { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 600; letter-spacing: -0.54px; }
+  .brand { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 600; letter-spacing: -0.2px; }
   .brand b { font-weight: 600; }
   .brand:hover { color: var(--ink); }
-  .shell-header .tag { color: var(--mute); font-size: 14px; line-height: 20px; letter-spacing: -0.28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 12px; border-left: 1px solid var(--hairline); }
+  .shell-header .tag { color: var(--mute); font-size: 14px; line-height: 20px; letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 12px; border-left: 1px solid var(--hairline); }
 
   .sidenav { display: none; }
   .content { min-width: 0; }
@@ -154,18 +154,18 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
     .sidenav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
     .sidenav a {
       display: block; padding: 6px 12px; border-radius: 6px;
-      color: var(--body); text-decoration: none; font-size: 14px; line-height: 20px; letter-spacing: -0.28px;
+      color: var(--body); text-decoration: none; font-size: 14px; line-height: 20px; letter-spacing: 0;
     }
     .sidenav a:hover { background: var(--hover); color: var(--ink); }
     .sidenav a[aria-current='page'] { background: var(--canvas-soft-2); color: var(--ink); font-weight: 500; }
     main { padding: 48px 48px 0; }
   }
 
-  h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.96px; margin: 0 0 8px; text-wrap: balance; }
-  @media (min-width: 672px) { h1 { font-size: 32px; line-height: 40px; letter-spacing: -1.28px; } }
+  h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.4px; margin: 0 0 8px; text-wrap: balance; }
+  @media (min-width: 672px) { h1 { font-size: 32px; line-height: 40px; letter-spacing: -0.6px; } }
   .lede { color: var(--body); font-size: 16px; line-height: 24px; max-width: 64ch; margin: 0 0 32px; }
   main > p:not(.lede) { max-width: 64ch; color: var(--body); }
-  h2 { font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.6px; margin: 0 0 16px; }
+  h2 { font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.2px; margin: 0 0 16px; }
   main > h2 { margin-top: 40px; }
 
   /* reference sections below the tool: stacked, heading on top */
@@ -182,7 +182,7 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
   .faq details + details { border-top: 1px solid var(--hairline); }
   .faq summary {
     cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    padding: 12px 20px; min-height: 52px; font-weight: 500; font-size: 15px; letter-spacing: -0.2px;
+    padding: 12px 20px; min-height: 52px; font-weight: 500; font-size: 15px; letter-spacing: 0;
   }
   .faq summary::-webkit-details-marker { display: none; }
   .faq summary::after {
@@ -194,7 +194,7 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
   .faq summary:focus-visible { outline-offset: -2px; border-radius: 0; }
   .faq details p { color: var(--body); margin: 0; padding: 0 48px 16px 20px; max-width: 68ch; font-size: 14px; line-height: 22px; }
 
-  footer { margin-top: 64px; padding: 32px 24px 40px; border-top: 1px solid var(--hairline); color: var(--mute); font-size: 14px; line-height: 20px; letter-spacing: -0.28px; }
+  footer { margin-top: 64px; padding: 32px 24px 40px; border-top: 1px solid var(--hairline); color: var(--mute); font-size: 14px; line-height: 20px; letter-spacing: 0; }
   footer nav { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 32px; padding-bottom: 24px; }
   footer nav a { color: var(--body); text-decoration: none; padding: 4px 0; }
   footer nav a:hover { color: var(--ink); }
@@ -221,8 +221,8 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
   .drop.over { border: 1px solid var(--focus); background: var(--canvas-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 20%, transparent); }
   .drop:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
   .drop[hidden] { display: none; }
-  .drop-main { font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.6px; }
-  .drop-sub { color: var(--body); font-size: 14px; line-height: 20px; letter-spacing: -0.28px; }
+  .drop-main { font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.2px; }
+  .drop-sub { color: var(--body); font-size: 14px; line-height: 20px; letter-spacing: 0; }
   .drop-btn {
     margin-top: 20px; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 6px;
     background: var(--primary); color: var(--on-primary); font-size: 14px; font-weight: 500;
@@ -237,7 +237,7 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
     margin: 0 -24px; padding: 14px 24px; border-bottom: 1px solid var(--hairline);
   }
   .fileinfo strong { word-break: break-all; font-weight: 500; font-size: 14px; font-family: var(--mono); }
-  #fmeta { color: var(--mute); font-size: 14px; letter-spacing: -0.28px; flex: 1 1 260px; font-variant-numeric: tabular-nums; }
+  #fmeta { color: var(--mute); font-size: 14px; letter-spacing: 0; flex: 1 1 260px; font-variant-numeric: tabular-nums; }
   .enc { font-size: 13px; color: var(--mute); display: flex; gap: 8px; align-items: center; }
   .enc select { height: 32px; }
 
@@ -249,7 +249,7 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
   .tabs::-webkit-scrollbar { display: none; }
   .tabs button {
     flex: none; height: 32px; padding: 0 12px; border: 0; border-radius: 6px;
-    background: transparent; color: var(--body); font: inherit; font-size: 14px; font-weight: 500; letter-spacing: -0.28px; cursor: pointer; white-space: nowrap;
+    background: transparent; color: var(--body); font: inherit; font-size: 14px; font-weight: 500; letter-spacing: 0; cursor: pointer; white-space: nowrap;
   }
   .tabs button:hover { color: var(--ink); }
   .tabs button[aria-selected='true'] { background: var(--canvas); color: var(--ink); box-shadow: var(--shadow-raised), 0 0 0 1px var(--hairline); }
@@ -258,13 +258,13 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
   .panel { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
   .panel[hidden] { display: none; }
   .panel label, .outrow label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 16px; font-weight: 500; color: var(--body); }
-  .panel label.check { flex-direction: row; align-items: center; gap: 10px; color: var(--ink); width: 100%; font-size: 14px; line-height: 20px; font-weight: 400; letter-spacing: -0.28px; }
+  .panel label.check { flex-direction: row; align-items: center; gap: 10px; color: var(--ink); width: 100%; font-size: 14px; line-height: 20px; font-weight: 400; letter-spacing: 0; }
   input[type='checkbox'] { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); }
-  .hint { width: 100%; color: var(--mute); font-size: 14px; line-height: 20px; letter-spacing: -0.28px; margin: 0; }
+  .hint { width: 100%; color: var(--mute); font-size: 14px; line-height: 20px; letter-spacing: 0; margin: 0; }
   .syncrow { display: flex; flex-wrap: wrap; gap: 16px; width: 100%; }
   .syncrow select { max-width: min(420px, 80vw); }
   input:not([type]), input[type='text'], select {
-    font: inherit; font-size: 14px; letter-spacing: -0.28px; color: var(--ink);
+    font: inherit; font-size: 14px; letter-spacing: 0; color: var(--ink);
     background-color: var(--canvas); border: 1px solid var(--hairline); border-radius: 6px;
     height: 40px; padding: 0 12px; min-width: 0;
     transition: border-color 0.15s ease;
@@ -290,7 +290,7 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
   .nudges button:focus-visible { outline-offset: -2px; border-radius: 0; }
   .nudges button:hover, .swap:hover { background: var(--hover); }
   .swap { width: 40px; height: 40px; padding: 0; font-family: inherit; border: 1px solid var(--hairline); border-radius: 6px; }
-  .link { font: inherit; font-size: 14px; letter-spacing: -0.28px; background: none; border: 0; color: var(--link); padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .link { font: inherit; font-size: 14px; letter-spacing: 0; background: none; border: 0; color: var(--link); padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .link:hover { color: var(--link-hover); }
 
   .outrow {
@@ -305,12 +305,12 @@ const tools = PAGES.map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.s
   .primary:hover { background: var(--primary-hover); }
   .primary:active { transform: translateY(1px); }
   .error {
-    color: var(--ink); font-size: 14px; line-height: 20px; letter-spacing: -0.28px; margin: 16px 0 0;
+    color: var(--ink); font-size: 14px; line-height: 20px; letter-spacing: 0; margin: 16px 0 0;
     background: var(--error-soft); border: 1px solid var(--error); border-radius: 6px; padding: 10px 14px;
   }
   .error[hidden] { display: none; }
   .preview { margin-top: 24px; overflow-x: auto; border: 1px solid var(--hairline); border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; letter-spacing: -0.28px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; letter-spacing: 0; }
   th { text-align: left; font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: 0; color: var(--mute); background: var(--canvas-soft); padding: 0 12px; height: 32px; white-space: nowrap; border-bottom: 1px solid var(--hairline); }
   td { border-bottom: 1px solid var(--hairline); padding: 8px 12px; vertical-align: top; line-height: 20px; }
   tbody tr:last-child td { border-bottom: 0; }

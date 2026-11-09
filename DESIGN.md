@@ -1,6 +1,7 @@
 # SubFixer design
 
-Built on Vercel's Geist design language (light and dark), applied by hand in
+Built on Vercel's Geist design language (light and dark) for color, spacing, corners and
+components, applied by hand in
 `src/layouts/Base.astro` so the site stays one small static CSS file. No UI packages.
 
 Why Geist: SubFixer is a quiet utility. Geist is near-white canvas, ink text, hairline
@@ -23,11 +24,14 @@ SubFixer uses none of those.
 - Top bar is 64px (56px on phones), canvas background with a bottom hairline.
 - Desktop (1056px+) shows the tool list as a left sidebar. The current page gets a gray
   rounded fill, not a side bar. Phones rely on the footer list.
-- Type: Geist 400, 500 and 600, self-hosted latin subset in `public/fonts` with
-  `Geist-OFL.txt`. No other web font. Timecodes, file names and numbers use the system mono
-  stack.
-- Scale (px): h1 32/40 at -1.28 tracking (24/32 on phones), h2 20/28 at -0.6, body 16/24,
-  small 14/20 at -0.28, labels 13/16 weight 500.
+- Type: Atkinson Hyperlegible Next 400, 500 and 600 (Braille Institute, OFL), self-hosted
+  latin subset in `public/fonts` with `AtkinsonHyperlegibleNext-OFL.txt`. It replaces the
+  Geist face because Geist is on the impeccable overused-font list. It was drawn for
+  legibility, which suits a subtitle tool. No other web font. Timecodes, file names and
+  numbers use the system mono stack.
+- Scale (px): h1 32/40 at -0.6 tracking (24/32 at -0.4 on phones), h2 20/28 at -0.2,
+  body 16/24, small 14/20, labels 13/16 weight 500. Atkinson is wide, so body tracking
+  stays at 0.
 - Spacing: 4, 8, 12, 16, 24, 32, 40, 48, 64.
 - Tool tabs are a segmented control and scroll sideways on phones.
 - Sections below the tool stack the heading on top of the content.

@@ -20,7 +20,7 @@ export interface ToolPage {
 
 const PRIVACY_FAQ = {
   q: 'Is my subtitle file uploaded anywhere?',
-  a: 'No. The file is read and fixed by your browser. Nothing is sent to a server, so it works with private files and even offline once the page has loaded.',
+  a: 'No. Your browser reads and fixes the file on your own computer. Nothing is sent to a server, so private files are fine, and the tool keeps working offline once the page has loaded.',
 };
 
 export const PAGES: ToolPage[] = [
@@ -29,13 +29,13 @@ export const PAGES: ToolPage[] = [
     mode: 'shift',
     title: 'Subtitle Fixer: shift, resync and convert SRT files online, free',
     h1: 'Fix out-of-sync subtitles',
-    lede: 'Shift timing, fix frame-rate drift, resync to two points, clean up and convert SRT, VTT and ASS files. Free, private, and nothing leaves your browser.',
+    lede: 'Subtitles early, late or drifting further off as the movie goes on? Drop the file in and fix the timing, the frame rate or the format. It is free, and the file stays on your computer.',
     description:
       'Free online subtitle fixer. Shift SRT timing, convert 25 fps to 23.976, resync by two points, fix encoding and convert SRT, VTT, ASS. Runs in your browser.',
     steps: [
       'Drop your .srt, .vtt, .ass or .sub file onto the box.',
-      'Pick what is wrong: subtitles early or late, drifting, garbled characters, or the wrong format.',
-      'Check the preview, then download the fixed file. It is always saved as clean UTF-8.',
+      'Pick what is wrong with it: the timing, a slow drift, garbled characters or the format.',
+      'Check the preview, then download the fixed file. It is saved as UTF-8.',
     ],
     faq: [
       {
@@ -56,7 +56,7 @@ export const PAGES: ToolPage[] = [
     h1: 'Shift subtitle timing',
     lede: 'Move every line earlier or later by the same amount. Works with SRT, VTT, ASS and SSA, and keeps ASS styling intact.',
     description:
-      'Delay or advance all subtitles in an SRT, VTT or ASS file by a fixed number of seconds. Free, instant and private: the file never leaves your browser.',
+      'Delay or advance every subtitle in an SRT, VTT or ASS file by a fixed number of seconds. Free, and the file never leaves your browser.',
     steps: [
       'Drop in your subtitle file.',
       'Enter the offset: 2.5 delays by two and a half seconds, -1.2 shows them 1.2 seconds sooner. You can also type 00:01:05,300 or 1500ms.',
@@ -80,7 +80,7 @@ export const PAGES: ToolPage[] = [
     preset: { from: 25, to: 24000 / 1001 },
     title: 'Convert subtitles from 25 fps to 23.976 fps (PAL to NTSC film)',
     h1: 'Convert subtitles from 25 to 23.976 fps',
-    lede: 'Subtitles made for a 25 fps (PAL) release drift ahead on a 23.976 fps file, about 2.5 seconds per minute. This stretches every timestamp by the exact ratio so they line up again.',
+    lede: 'Subtitles made for a 25 fps (PAL) release drift ahead on a 23.976 fps file, about 2.5 seconds per minute. This tool stretches every timestamp by the exact ratio so they line up again.',
     description:
       'Fix subtitles that drift out of sync because they were timed for 25 fps PAL video. Convert SRT, VTT and ASS timing to 23.976 fps free in your browser.',
     steps: [
@@ -130,13 +130,13 @@ export const PAGES: ToolPage[] = [
     mode: 'sync',
     title: 'Sync subtitles by two points: fix drifting SRT subtitles online',
     h1: 'Sync subtitles to two points',
-    lede: 'Tell us when one early line and one late line should appear. Every line in between is stretched and moved to match. Fixes any mix of offset and drift.',
+    lede: 'Enter when one early line and one late line are actually spoken. The tool stretches and moves every other line to match, which fixes an offset and a drift together.',
     description:
-      'Resync drifting subtitles by matching two lines to the video. Fixes offset and frame-rate drift at once for SRT, VTT and ASS. Free, private, in-browser.',
+      'Resync drifting subtitles by matching two lines to the video. This fixes a fixed offset and frame-rate drift in one go for SRT, VTT and ASS files, free in your browser.',
     steps: [
       'Drop in your subtitle file.',
       'Pick a line near the start and type when it is actually spoken in the video. Do the same for a line near the end.',
-      'Download. Every line is mapped onto the corrected timeline.',
+      'Download the file with every line retimed.',
     ],
     faq: [
       {
@@ -153,7 +153,7 @@ export const PAGES: ToolPage[] = [
     title: 'SRT to VTT converter: convert subtitles to WebVTT online',
     h1: 'Convert SRT to VTT',
     lede: 'Turn SubRip .srt files into WebVTT .vtt for HTML5 video, YouTube, Vimeo and most web players.',
-    description: 'Convert SRT subtitles to WebVTT (.vtt) instantly. Free, no upload, no sign-up. Also converts ASS, SSA and SBV.',
+    description: 'Convert SRT subtitles to WebVTT (.vtt) in your browser. It is free and needs no account or upload. ASS, SSA and SBV files work too.',
     steps: ['Drop in your .srt file.', 'Output is preset to WebVTT.', 'Download the .vtt file.'],
     faq: [
       { q: 'What changes between SRT and VTT?', a: 'VTT adds a WEBVTT header and uses a dot instead of a comma before milliseconds. The text and timing stay the same.' },
@@ -168,7 +168,7 @@ export const PAGES: ToolPage[] = [
     title: 'VTT to SRT converter: convert WebVTT subtitles to SRT online',
     h1: 'Convert VTT to SRT',
     lede: 'Turn WebVTT captions, like ones downloaded from a web player, into SRT files that work in VLC, Plex, TVs and video editors.',
-    description: 'Convert WebVTT (.vtt) captions to SRT for VLC, Plex, Premiere and TVs. Free, private, runs in your browser.',
+    description: 'Convert WebVTT (.vtt) captions to SRT for VLC, Plex, Premiere and TVs. Free, and it runs in your browser.',
     steps: ['Drop in your .vtt file.', 'Output is preset to SRT.', 'Download the .srt file.'],
     faq: [
       { q: 'Will positioning and styling carry over?', a: 'SRT has no positioning, so cue settings like position and alignment are dropped. Italic and bold tags are kept unless you strip them.' },
@@ -182,7 +182,7 @@ export const PAGES: ToolPage[] = [
     title: 'ASS to SRT converter: convert SSA/ASS subtitles to SRT online',
     h1: 'Convert ASS or SSA to SRT',
     lede: 'Convert Advanced SubStation (.ass) and SubStation Alpha (.ssa) subtitles, common with anime releases, into plain SRT that every player supports.',
-    description: 'Convert ASS and SSA subtitles to SRT online. Removes styling tags, keeps line breaks and timing. Free and private.',
+    description: 'Convert ASS and SSA subtitles to SRT online. Styling tags are removed; line breaks and timing are kept. Free, and the file stays on your computer.',
     steps: ['Drop in your .ass or .ssa file.', 'Output is preset to SRT. Styling tags are removed and line breaks kept.', 'Download the .srt file.'],
     faq: [
       { q: 'Why are signs and karaoke lines doubled or out of place?', a: 'ASS files often layer several lines at once for signs and effects. SRT cannot position text, so those lines show at the bottom. Turn on "Clean up" to remove empty or effect-only lines.' },
@@ -194,9 +194,9 @@ export const PAGES: ToolPage[] = [
     mode: 'clean',
     title: 'Fix subtitle encoding: repair garbled characters (Ã©, ð, ?) in SRT',
     h1: 'Fix garbled subtitle characters',
-    lede: 'Accents showing as Ã© or Ä‡, or letters replaced by question marks? The file is in an old encoding. Pick the right one and save it as UTF-8 that every player reads correctly.',
+    lede: 'Accents showing up as Ã© or Ä‡, or letters turned into question marks? The file uses an old encoding. Pick the right one and save it as UTF-8, which every player reads.',
     description:
-      'Repair SRT subtitles with broken accents and symbols. Detects Windows-1250/1251/1252, ISO-8859 and more, and saves as UTF-8. Free and private.',
+      'Repair SRT subtitles with broken accents and symbols. It detects Windows-1250/1251/1252, ISO-8859 and other encodings and saves the file as UTF-8. Free, in your browser.',
     steps: [
       'Drop in the file. The encoding is detected automatically.',
       'If the preview still looks wrong, choose another encoding from the list until the text reads correctly.',
@@ -226,8 +226,8 @@ export const PAGES: ToolPage[] = [
     preset: { out: 'srt' },
     title: 'SBV to SRT converter: YouTube captions to SRT',
     h1: 'Convert YouTube SBV to SRT',
-    lede: 'YouTube exports captions as SBV (YouTube format). Convert them to SRT for use in VLC, Plex and video editors.',
-    description: 'Convert YouTube SBV captions to SRT. YouTube uses SBV format; SRT works in most subtitle players and editors. Free online conversion, runs in your browser.',
+    lede: 'YouTube Studio can download captions as .sbv files. Convert them to SRT to use in VLC, Plex or a video editor.',
+    description: 'Convert YouTube SBV captions to SRT, which works in most players and editors. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to SRT.', 'Download the .srt file.'],
     faq: [
       { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio open Subtitles, pick the video and language, then use the menu next to the track to download it as .sbv.' },

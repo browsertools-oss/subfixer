@@ -18,3 +18,9 @@ Hard rules:
 - Anything that needs the owner (money, accounts, legal, identity, a judgment call) goes in a GitHub issue labelled `decision`, then stop working on it.
 - Don't edit ops/metrics.csv or ops/costs.json; the report script owns the numbers.
 - Never upload or log user files; the site stays fully client-side.
+
+Copy style (owner rule: all page copy must read like a person wrote it):
+- Plain, specific sentences. Say what the tool does and for whom; no sales words (seamless, effortless, powerful, robust, vibrant, ultimate), no "not just X, it's Y", no clipped taglines like "Free, private, instant."
+- No em or en dashes. No piled-up groups of three. Use "is" and "has", not "serves as" or "boasts".
+- Never claim something the site doesn't do (check before writing about analytics, accounts, uploads).
+- Re-read any copy you write and rewrite sentences that sound like an ad or a chatbot.

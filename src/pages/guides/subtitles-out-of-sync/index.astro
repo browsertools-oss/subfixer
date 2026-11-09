@@ -1,0 +1,32 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Why subtitles go out of sync, and which fix to use';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Subtitles that are early, late or drifting have one of three causes. How to tell which one you have and how to fix each, with a free tool that runs in your browser." path="/guides/subtitles-out-of-sync/" jsonld={jsonld}>
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Out-of-sync subtitles almost always come down to one of three things. Watch how the error behaves over the length of the video and you can tell which one you have in a minute or two.</p>
+
+    <h2>1. The same error the whole way through</h2>
+    <p>The first line is two seconds early, a line in the middle is two seconds early, and so is the last one. This is a plain offset. It happens when the video has a different intro, a studio logo or a few seconds of black at the start that the subtitle maker's copy did not have.</p>
+    <p>Fix: <a href="/shift-subtitle-timing/">shift the timing</a> by that amount. Play the video to the first spoken line, note the time, and compare it with that line's time in the preview. A positive offset makes subtitles appear later.</p>
+
+    <h2>2. Right at the start, wrong later, and getting worse</h2>
+    <p>The first few minutes look fine, but by the end the subtitles are several seconds ahead or behind. The error grows steadily. This is a frame-rate mismatch: the subtitles were timed against a video running at a different speed.</p>
+    <p>The usual culprit is 25 fps against 23.976 fps. European TV and DVD releases run at 25 fps, which is about 4% faster than film. A subtitle made for a 25 fps copy runs ahead on a 23.976 fps copy, by about 2.5 seconds every minute.</p>
+    <p>Fix: <a href="/convert-25-fps-to-23976/">convert 25 to 23.976 fps</a>, or <a href="/change-subtitle-frame-rate/">change the frame rate</a> between any two rates. If you do not know the frame rates, <a href="/sync-subtitles/">sync two points</a>: give the real time of one early line and one late line, and every other line is stretched to fit.</p>
+
+    <h2>3. Fine until one point, then off by a fixed amount</h2>
+    <p>Everything matches until a certain scene, then every line after it is off by the same few seconds. Your copy of the video was cut differently at that point: an ad break was removed, a scene was added in an extended edition, or two parts were joined.</p>
+    <p>Fix: <a href="/shift-subtitles-from-a-line/">shift from that line onward</a>. Pick the first wrong line as the starting point and enter the offset. Lines before it stay as they are. If it happens at two points, fix the first, download, then load the result and fix the second.</p>
+
+    <h2>A quick way to tell them apart</h2>
+    <ol>
+      <li>Check a line in the first five minutes. Note how far off it is.</li>
+      <li>Check a line in the middle and one near the end.</li>
+      <li>Same amount every time: shift. Growing steadily: frame rate. Zero, then a jump: shift from the line where it jumps.</li>
+    </ol>
+    <p>If the error changes in some other way, the subtitles were probably made for a different cut of the film altogether. Look for a subtitle file that names the same release as your video.</p>
+  </article>
+</Base>

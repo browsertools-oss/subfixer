@@ -23,10 +23,14 @@ export const FORMAT_LABEL: Record<string, string> = {
 
 // ---------- decoding ----------
 
-export const ENCODINGS = ['UTF-8', 'windows-1252', 'windows-1250', 'windows-1251', 'windows-1253', 'windows-1254', 'windows-1255', 'windows-1256', 'ISO-8859-2', 'KOI8-R', 'Shift_JIS', 'EUC-KR', 'GB18030', 'Big5', 'UTF-16LE'];
+export const ENCODINGS = ['UTF-8', 'windows-1252', 'windows-1250', 'windows-1251', 'windows-1253', 'windows-1254', 'windows-1255', 'windows-1256', 'windows-1257', 'windows-1258', 'windows-874', 'ISO-8859-2', 'ISO-8859-15', 'KOI8-R', 'KOI8-U', 'Shift_JIS', 'EUC-JP', 'EUC-KR', 'GB18030', 'Big5', 'UTF-16LE'];
 
 export async function decode(buf: ArrayBuffer, forced?: string): Promise<{ text: string; encoding: string }> {
   const b = new Uint8Array(buf);
+  if (forced === REPAIR_UTF8) {
+    const t = new TextDecoder('utf-8').decode(b).replace(/^\uFEFF/, '');
+    return { text: repairDoubleUtf8(t) ?? t, encoding: REPAIR_UTF8 };
+  }
   if (forced) {
     try {
       return { text: new TextDecoder(forced.toLowerCase()).decode(b).replace(/^\uFEFF/, ''), encoding: forced };
@@ -62,9 +66,39 @@ export async function decode(buf: ArrayBuffer, forced?: string): Promise<{ text:
 
 const ASS_TAGS = /\{[^}]*\}/g;
 
+/** ASS override blocks -> SRT-style tags. Italic, bold and underline survive; everything else goes. */
+export function assToHtml(t: string): string {
+  const open = { i: false, b: false, u: false };
+  let out = t.replace(ASS_TAGS, (block) => {
+    let r = '';
+    for (const m of block.matchAll(/\\([ibu])(\d*)(?=\\|\})/g)) {
+      const k = m[1] as 'i' | 'b' | 'u';
+      const on = m[2] !== '' && m[2] !== '0';
+      if (on && !open[k]) { r += `<${k}>`; open[k] = true; }
+      else if (!on && open[k]) { r += `</${k}>`; open[k] = false; }
+    }
+    if (/\\r(?=\\|\})/.test(block)) for (const k of ['u', 'b', 'i'] as const) if (open[k]) { r += `</${k}>`; open[k] = false; }
+    return r;
+  });
+  for (const k of ['u', 'b', 'i'] as const) if (open[k]) out += `</${k}>`;
+  return out.replace(/\\N/gi, '\n').replace(/\\n/g, '\n').replace(/\\h/g, ' ').replace(/<([ibu])>(\s*)<\/\1>/g, '$2');
+}
+
+/** SRT-style tags -> ASS override tags. */
+export function htmlToAss(t: string): string {
+  return t
+    .replace(/<([ibu])>/gi, (_, k) => `{\\${k.toLowerCase()}1}`)
+    .replace(/<\/([ibu])>/gi, (_, k) => `{\\${k.toLowerCase()}0}`)
+    .replace(/<[^>]+>/g, '');
+}
+
+export const stripTags = (t: string) => t.replace(/<[^>]+>/g, '').replace(/\{\\[^}]*\}/g, '');
+
 function cleanText(c: any, format: string): string {
-  let t: string = (c.text ?? c.content ?? '').replace(/\r/g, '');
-  if (format === 'ass' || format === 'ssa') t = t.replace(ASS_TAGS, '').replace(/\\N/gi, '\n').replace(/\\h/g, ' ');
+  // subsrt's `text` has formatting stripped; `content` is what the file says. Use content so italics survive.
+  let t: string = (c.content ?? c.text ?? '').replace(/\r/g, '');
+  if (format === 'ass' || format === 'ssa') t = assToHtml(t);
+  else if (format === 'vtt') t = t.replace(/<(?!\/?[ibu]>)[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ');
   return t.replace(/\s+$/g, '').replace(/^\s+/g, '');
 }
 
@@ -75,21 +109,32 @@ export function parse(raw: string, fps = 23.976): Doc {
   const parsed: any[] = subsrt.parse(text, { format, fps } as any);
   const captions = parsed
     .filter((c) => c.type === 'caption' || (c.start !== undefined && c.end !== undefined))
-    .map((c) => ({ start: Math.round(c.start), end: Math.round(c.end), text: cleanText(c, format) }));
+    .map((c) => ({ start: Math.round(c.start), end: Math.round(c.end), text: cleanText(c, format) }))
+    .filter((c) => !(format === 'ass' || format === 'ssa') || c.text.trim() !== '');
+  if (format === 'ass' || format === 'ssa') {
+    // Signs and effects are often stacked on several layers with the same time and text. Keep one.
+    const seen = new Set<string>();
+    const unique = captions.filter((c) => {
+      const k = `${c.start}|${c.end}|${stripTags(c.text)}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+    captions.splice(0, captions.length, ...unique.sort((a, b) => a.start - b.start));
+  }
   if (!captions.length) throw new Error('No subtitle lines were found in this file.');
   return { format, captions, raw: text };
 }
 
 export function build(captions: Caption[], format: OutFormat, fps = 23.976): string {
-  const items = captions.map((c, i) => ({
-    type: 'caption',
-    index: i + 1,
-    start: c.start,
-    end: c.end,
-    duration: c.end - c.start,
-    content: format === 'ass' || format === 'ssa' ? c.text.replace(/\n/g, '\\N') : c.text,
-    text: c.text,
-  }));
+  const items = captions.map((c, i) => {
+    const text =
+      format === 'ass' || format === 'ssa' ? htmlToAss(c.text)
+      : format === 'sbv' || format === 'sub' ? stripTags(c.text)
+      : format === 'vtt' ? c.text.replace(/\{\\[^}]*\}/g, '').replace(/<(?!\/?[ibu]>)[^>]+>/g, '')
+      : c.text;
+    return { type: 'caption', index: i + 1, start: c.start, end: c.end, duration: c.end - c.start, content: text, text };
+  });
   let out = subsrt.build(items as any, { format, fps, eol: '\r\n' } as any);
   if (format === 'srt' || format === 'vtt') out = out.replace(/\r?\n/g, '\r\n');
   return out;
@@ -112,8 +157,10 @@ export function twoPointFn(old1: number, new1: number, old2: number, new2: numbe
   return (t) => a * t + b;
 }
 
-export function retime(captions: Caption[], fn: TimeFn): Caption[] {
+/** Retime every line, or only lines starting at or after `fromMs` (the "fine until one scene" case). */
+export function retime(captions: Caption[], fn: TimeFn, fromMs = -Infinity): Caption[] {
   return captions.map((c) => {
+    if (c.start < fromMs) return c;
     const start = Math.max(0, Math.round(fn(c.start)));
     const end = Math.max(start, Math.round(fn(c.end)));
     return { ...c, start, end };
@@ -121,7 +168,7 @@ export function retime(captions: Caption[], fn: TimeFn): Caption[] {
 }
 
 /** Retime ASS/SSA in place so styles, fonts and override tags survive untouched. */
-export function retimeAssRaw(raw: string, fn: TimeFn): string {
+export function retimeAssRaw(raw: string, fn: TimeFn, fromMs = -Infinity): string {
   const toMs = (s: string) => {
     const m = s.match(/(\d+):(\d{2}):(\d{2})[.:](\d{2})/);
     if (!m) return 0;
@@ -137,7 +184,8 @@ export function retimeAssRaw(raw: string, fn: TimeFn): string {
   };
   return raw.replace(
     /^((?:Dialogue|Comment):\s*[^,]*,)(\d+:\d{2}:\d{2}[.:]\d{2}),(\d+:\d{2}:\d{2}[.:]\d{2})/gm,
-    (_, pre, a, b) => {
+    (all, pre, a, b) => {
+      if (toMs(a) < fromMs) return all;
       const s = Math.max(0, fn(toMs(a)));
       const e = Math.max(s, fn(toMs(b)));
       return `${pre}${fmt(s)},${fmt(e)}`;
@@ -148,8 +196,12 @@ export function retimeAssRaw(raw: string, fn: TimeFn): string {
 // ---------- cleanup ----------
 
 export interface FixOptions {
-  removeHearingImpaired?: boolean; // [music], (laughs), SPEAKER:
+  removeHearingImpaired?: boolean; // shorthand for the three below
+  removeBrackets?: boolean; // [door slams], (laughs)
+  removeSpeakers?: boolean; // JOHN:
+  removeMusic?: boolean; // ♪ lyrics ♪
   removeTags?: boolean; // <i>, <font>, {\an8}
+  removeDuplicates?: boolean; // same text repeated back to back
   fixOverlaps?: boolean;
   minDurationMs?: number; // 0 = off
 }
@@ -160,10 +212,14 @@ export interface FixReport {
   extended: number;
   sorted: boolean;
   hiRemoved: number;
+  merged: number;
 }
 
 export function fixCommon(captions: Caption[], o: FixOptions): { captions: Caption[]; report: FixReport } {
-  const r: FixReport = { removedEmpty: 0, fixedOverlaps: 0, extended: 0, sorted: false, hiRemoved: 0 };
+  const r: FixReport = { removedEmpty: 0, fixedOverlaps: 0, extended: 0, sorted: false, hiRemoved: 0, merged: 0 };
+  const brackets = o.removeBrackets ?? o.removeHearingImpaired;
+  const speakers = o.removeSpeakers ?? o.removeHearingImpaired;
+  const music = o.removeMusic ?? o.removeHearingImpaired;
   let list = captions.map((c) => ({ ...c }));
 
   const sorted = [...list].sort((a, b) => a.start - b.start);
@@ -172,26 +228,34 @@ export function fixCommon(captions: Caption[], o: FixOptions): { captions: Capti
 
   for (const c of list) {
     let t = c.text;
-    if (o.removeTags) t = t.replace(/<[^>]+>/g, '').replace(/\{\\[^}]*\}/g, '');
-    if (o.removeHearingImpaired) {
-      const before = t;
-      t = t
-        .replace(/\[[^\]]*\]/g, '')
-        .replace(/\([^)]*\)/g, '')
-        .replace(/[♪♫]+[^♪♫\n]*[♪♫]*/g, '')
-        .replace(/^(?:-\s*)?[A-Z][A-Z0-9 .'-]{1,30}:\s*/gm, (m) => (m.trim().startsWith('-') ? '- ' : ''));
-      if (t !== before) r.hiRemoved++;
-    }
+    if (o.removeTags) t = stripTags(t);
+    const before = t;
+    if (brackets) t = t.replace(/\[[^\]]*\]/g, '').replace(/\([^)]*\)/g, '');
+    if (music) t = t.replace(/^.*[♪♫#].*$/gm, (l) => (/^\s*(?:<[^>]+>)*\s*-?\s*[♪♫#]/.test(l) || /[♪♫]\s*(?:<\/[^>]+>)*\s*$/.test(l) ? '' : l));
+    if (speakers) t = t.replace(/^(\s*(?:<[^>]+>)*\s*)(-\s*)?[A-Z][A-Z0-9 .'&-]{1,30}(?:\s*\([^)]*\))?:\s*/gm, (_m, tag, dash) => tag + (dash ? '- ' : ''));
+    if (t !== before) r.hiRemoved++;
     c.text = t
       .split('\n')
       .map((l) => l.replace(/[ \t]+/g, ' ').trim())
-      .filter((l) => l && l !== '-')
+      .filter((l) => l && l !== '-' && stripTags(l).trim() !== '' && stripTags(l).trim() !== '-')
       .join('\n');
   }
 
-  const kept = list.filter((c) => c.text.length > 0);
+  const kept = list.filter((c) => stripTags(c.text).trim().length > 0);
   r.removedEmpty = list.length - kept.length;
   list = kept;
+
+  if (o.removeDuplicates) {
+    const out: Caption[] = [];
+    for (const c of list) {
+      const prev = out[out.length - 1];
+      if (prev && stripTags(prev.text).trim() === stripTags(c.text).trim() && c.start <= prev.end + 500) {
+        prev.end = Math.max(prev.end, c.end);
+        r.merged++;
+      } else out.push(c);
+    }
+    list = out;
+  }
 
   if (o.minDurationMs) {
     for (let i = 0; i < list.length; i++) {
@@ -216,6 +280,167 @@ export function fixCommon(captions: Caption[], o: FixOptions): { captions: Capti
     }
   }
   return { captions: list, report: r };
+}
+
+// ---------- checking ----------
+
+export type IssueKind = 'empty' | 'zero' | 'negative' | 'short' | 'overlap' | 'order';
+export interface Issue { index: number; kind: IssueKind; text: string }
+
+export const ISSUE_TEXT: Record<IssueKind, string> = {
+  empty: 'No text',
+  zero: 'Zero length: starts and ends at the same moment',
+  negative: 'Ends before it starts',
+  short: 'On screen for under half a second',
+  overlap: 'Overlaps the next line',
+  order: 'Starts before the line above it',
+};
+
+/** Problems in the parsed lines. One entry per problem, lines can have several. */
+export function validate(captions: Caption[]): Issue[] {
+  const out: Issue[] = [];
+  const add = (index: number, kind: IssueKind) => out.push({ index, kind, text: ISSUE_TEXT[kind] });
+  captions.forEach((c, i) => {
+    if (!stripTags(c.text).trim()) add(i, 'empty');
+    const d = c.end - c.start;
+    if (d < 0) add(i, 'negative');
+    else if (d === 0) add(i, 'zero');
+    else if (d < 500) add(i, 'short');
+    const next = captions[i + 1];
+    if (next && c.end > next.start && next.start >= c.start) add(i, 'overlap');
+    if (i > 0 && c.start < captions[i - 1].start) add(i, 'order');
+  });
+  return out;
+}
+
+/** Problems in the SRT text itself that a parser quietly skips over. `line` is 1-based in the file. */
+export function checkSrtRaw(raw: string): { line: number; text: string }[] {
+  const out: { line: number; text: string }[] = [];
+  const lines = raw.replace(/^﻿/, '').split(/\r?\n/);
+  const strict = /^\d{2,}:\d{2}:\d{2},\d{3} --> \d{2,}:\d{2}:\d{2},\d{3}(?:\s.*)?$/;
+  const loose = /\d+:\d+:\d+[,.:]\d+\s*-+>\s*\d+:\d+:\d+[,.:]\d+/;
+  let expect = 1;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i].trim();
+    if (!l) continue;
+    const isBlockStart = i === 0 || !lines[i - 1].trim();
+    if (!isBlockStart) continue;
+    if (/^\d+$/.test(l)) {
+      const n = +l;
+      if (n !== expect) out.push({ line: i + 1, text: `Numbered ${n}, expected ${expect}` });
+      expect = n + 1;
+      const t = (lines[i + 1] ?? '').trim();
+      if (!strict.test(t)) out.push({ line: i + 2, text: loose.test(t) ? `Timestamp is not in standard SRT form: ${t}` : 'Missing or unreadable timestamp' });
+    } else if (loose.test(l)) {
+      out.push({ line: i + 1, text: 'Line number missing before this timestamp' });
+      expect++;
+    }
+  }
+  return out;
+}
+
+// ---------- encodings ----------
+
+export const LANG_ENCODINGS: { lang: string; encs: string[] }[] = [
+  { lang: 'Western European (English, French, Spanish, German…)', encs: ['windows-1252', 'ISO-8859-15'] },
+  { lang: 'Central European (Polish, Czech, Croatian, Hungarian…)', encs: ['windows-1250', 'ISO-8859-2'] },
+  { lang: 'Cyrillic (Russian, Ukrainian, Bulgarian, Serbian)', encs: ['windows-1251', 'KOI8-R', 'KOI8-U', 'ISO-8859-5'] },
+  { lang: 'Greek', encs: ['windows-1253', 'ISO-8859-7'] },
+  { lang: 'Turkish', encs: ['windows-1254', 'ISO-8859-9'] },
+  { lang: 'Hebrew', encs: ['windows-1255', 'ISO-8859-8'] },
+  { lang: 'Arabic, Persian', encs: ['windows-1256', 'ISO-8859-6'] },
+  { lang: 'Baltic (Lithuanian, Latvian, Estonian)', encs: ['windows-1257', 'ISO-8859-13'] },
+  { lang: 'Vietnamese', encs: ['windows-1258'] },
+  { lang: 'Thai', encs: ['windows-874'] },
+  { lang: 'Japanese', encs: ['Shift_JIS', 'EUC-JP'] },
+  { lang: 'Korean', encs: ['EUC-KR'] },
+  { lang: 'Chinese, simplified', encs: ['GB18030'] },
+  { lang: 'Chinese, traditional', encs: ['Big5'] },
+];
+
+export const REPAIR_UTF8 = 'UTF-8, repaired';
+
+let cp1252: Map<string, number> | null = null;
+/** Undo UTF-8 that was read as Windows-1252 and saved again ("CafÃ©" -> "Café"). Returns null if it isn't that. */
+export function repairDoubleUtf8(text: string): string | null {
+  if (!/[ÃÂÅÄÐÑØÙ][\u0080-¿‘-›ŒœŠšŸŽžˆ˜€™]/.test(text)) return null;
+  if (!cp1252) {
+    cp1252 = new Map();
+    const bytes = new Uint8Array(256).map((_, i) => i);
+    const chars = new TextDecoder('windows-1252').decode(bytes);
+    for (let i = 0; i < 256; i++) cp1252.set(chars[i], i);
+  }
+  // Repair each run of non-ASCII characters on its own, so text that was already fine stays fine.
+  let changed = false;
+  const out = text.replace(/[^\x00-\x7f]+/g, (run) => {
+    const b: number[] = [];
+    for (const ch of run) {
+      const v = cp1252!.get(ch);
+      if (v === undefined) return run;
+      b.push(v);
+    }
+    try {
+      const fixed = new TextDecoder('utf-8', { fatal: true }).decode(new Uint8Array(b));
+      changed = true;
+      return fixed;
+    } catch {
+      return run;
+    }
+  });
+  return changed ? out : null;
+}
+
+/** Rough score of how wrong decoded text looks. Lower is better. */
+export function garbleScore(text: string): number {
+  let s = 0;
+  for (const m of text.matchAll(/�/g)) s += 10;
+  for (const m of text.matchAll(/[\u0080-\u009f]/g)) s += 6;
+  for (const m of text.matchAll(/[ÃÂÐÑ][\u0080-¿‘-›€]/g)) s += 4;
+  for (const m of text.matchAll(/[¤¦¨¯´¸¹²³¼½¾×÷þÞðÐ]/g)) s += 1;
+  // Three or more accented Latin letters in a row ("Ďđčâĺň") almost never happens in a real language.
+  for (const m of text.matchAll(/[\u00c0-\u024f]{3,}/g)) s += 2;
+  // Letters from two scripts glued in one word usually means the wrong code page.
+  for (const m of text.matchAll(/[a-zA-Z][Ѐ-ӿ]|[Ѐ-ӿ][a-zA-Z]|[a-zA-Z][Ͱ-Ͽ]|[Ͱ-Ͽ][a-zA-Z]/g)) s += 2;
+  return s;
+}
+
+/** Lines that show off the non-ASCII characters, so a person can see which reading is right. */
+export function sampleLines(text: string, max = 3): string[] {
+  const out: string[] = [];
+  for (const l of text.split(/\r?\n/)) {
+    const t = l.trim();
+    if (!t || /^\d+$/.test(t) || t.includes('-->') || /^\[.*\]$/.test(t) || /^(Style|Format|Title|ScriptType|PlayRes[XY]|WrapStyle|ScaledBorderAndShadow|YCbCr Matrix|Original \w+|Script Updated By|Update Details|Collisions|Timer):/.test(t)) continue;
+    const body = t.replace(/^(?:Dialogue|Comment):(?:[^,]*,){9}/, '');
+    if (/[^\x00-\x7f]/.test(body)) out.push(stripTags(assToHtml(body)).slice(0, 90));
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
+export interface Candidate { encoding: string; text: string; score: number; sample: string[] }
+
+/** Read the bytes several ways and rank them, best first. */
+export function encodingCandidates(buf: ArrayBuffer, encs: string[]): Candidate[] {
+  const b = new Uint8Array(buf);
+  const out: Candidate[] = [];
+  const tryEnc = (encoding: string, text: string) => out.push({ encoding, text, score: garbleScore(text), sample: sampleLines(text) });
+  try {
+    const t = new TextDecoder('utf-8', { fatal: true }).decode(b).replace(/^﻿/, '');
+    tryEnc('UTF-8', t);
+    const fixed = repairDoubleUtf8(t);
+    if (fixed) out.push({ encoding: REPAIR_UTF8, text: fixed, score: garbleScore(fixed) - 1, sample: sampleLines(fixed) });
+  } catch {
+    /* not valid UTF-8 */
+  }
+  for (const e of encs) {
+    if (e === 'UTF-8') continue;
+    try {
+      tryEnc(e, new TextDecoder(e.toLowerCase()).decode(b).replace(/^﻿/, ''));
+    } catch {
+      /* browser lacks this decoder */
+    }
+  }
+  return out.sort((x, y) => x.score - y.score);
 }
 
 // ---------- helpers ----------

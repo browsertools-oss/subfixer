@@ -1,10 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
 import Tool from './Tool.astro';
-import { SITE, type ToolPage } from '../site';
+import { SITE, GUIDES, type ToolPage } from '../site';
 interface Props { page: ToolPage }
 const { page } = Astro.props;
 const path = page.slug ? `/${page.slug}/` : '/';
+const home = !page.slug;
+// Symptom to fix. Each fix opens the matching tab in the tool above, without leaving the page.
+const which: { see: string; fix: string; go: string; sym: string }[] = [
+  { see: 'Every line is early or late by about the same amount', fix: 'Shift timing', go: 'shift', sym: 'early-late' },
+  { see: 'Fine until one scene, then off for the rest', fix: 'Shift timing, starting at the first wrong line', go: 'shift', sym: 'one-scene' },
+  { see: 'Close at the start, a few seconds off by the end', fix: 'Change frame rate, usually 25 to 23.976', go: 'fps', sym: 'drift' },
+  { see: 'Off by different amounts and you do not know the frame rates', fix: 'Sync two points', go: 'sync', sym: 'drift' },
+  { see: 'Accents show as Ã© or Ä‡, or Cyrillic as Ð¿Ñ€', fix: 'Fix characters', go: 'encoding', sym: 'garbled' },
+  { see: '[MUSIC], (sighs) and NAMES: you do not need', fix: 'Clean up', go: 'clean', sym: 'sdh' },
+  { see: 'Lines flash past, overlap, or the player skips some', fix: 'Check and edit, or Clean up', go: 'edit', sym: 'broken' },
+  { see: 'A website wants VTT, a TV wants SRT, or you need a transcript', fix: 'Convert format', go: 'convert', sym: 'format' },
+];
 const jsonld = [
   {
     '@context': 'https://schema.org',
@@ -25,7 +37,22 @@ const jsonld = [
 <Base title={page.title} description={page.description} path={path} jsonld={jsonld}>
   <h1>{page.h1}</h1>
   <p class="lede">{page.lede}</p>
-  <Tool mode={page.mode} preset={page.preset} />
+  <Tool mode={page.mode} preset={page.preset} home={home} />
+  {home && (
+    <section class="block">
+      <h2>Which fix do I need?</h2>
+      <div class="which">
+        <table>
+          <thead><tr><th>What you see</th><th>What to use</th></tr></thead>
+          <tbody>
+            {which.map((w) => (
+              <tr><td>{w.see}</td><td><a href="#tool" data-go-tab={w.go} data-sym={w.sym}>{w.fix}</a></td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
   <section class="block">
     <h2>How it works</h2>
     <ol class="steps">{page.steps.map((s) => <li>{s}</li>)}</ol>
@@ -34,4 +61,16 @@ const jsonld = [
     <h2>Questions</h2>
     <div class="faq">{page.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
   </section>
+  {home && (
+    <section class="block">
+      <h2>Why it runs in your browser</h2>
+      <p>Subtitle files are small text files, and every fix here is simple arithmetic on their timestamps or a change to their text. Your browser can do that in a fraction of a second, so there is no reason to send the file anywhere. That keeps unreleased or private material on your computer, and the tool keeps working if you lose your connection after the page loads.</p>
+    </section>
+  )}
+  {home && (
+    <section class="block">
+      <h2>Guides</h2>
+      <ul class="plainlist">{GUIDES.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul>
+    </section>
+  )}
 </Base>

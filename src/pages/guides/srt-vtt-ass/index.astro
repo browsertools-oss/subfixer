@@ -1,0 +1,31 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'SRT, VTT and ASS: what is the difference?';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="SRT, WebVTT and ASS subtitle formats compared: what each one stores, which players and sites accept it, and what is lost when you convert between them." path="/guides/srt-vtt-ass/" jsonld={jsonld}>
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">All three store lines of text with a start and end time. They differ in how much else they can say about each line, and in which players and websites accept them.</p>
+
+    <h2>SRT (SubRip)</h2>
+    <p>The simplest and most widely supported. Each line has a number, a start and end time like <code>00:01:02,500 --&gt; 00:01:04,000</code>, and the text. Italic, bold and underline tags work in most players. There is no reliable way to position text or set colors.</p>
+    <p>Use it for TVs, media servers like Plex and Jellyfin, VLC, and most video editors. If you are unsure, SRT is the safe choice.</p>
+
+    <h2>VTT (WebVTT)</h2>
+    <p>The web version of SRT. The file starts with <code>WEBVTT</code>, times use a dot before the milliseconds, and line numbers are optional. It adds settings for position and alignment, voice tags for speakers, and styling through CSS.</p>
+    <p>Use it for HTML5 video, YouTube, Vimeo and most online course platforms. Browsers read VTT and do not read SRT.</p>
+
+    <h2>ASS and SSA (SubStation Alpha)</h2>
+    <p>Built for typesetting. Each file has a list of named styles with fonts, colors, outlines and margins, and each line can be placed anywhere on screen, animated or layered. Anime fansubs use it for signs and karaoke. SSA is the older version; ASS added more effects.</p>
+    <p>Use it when the styling matters and your player supports it, like VLC, mpv or MPC-HC. Most TVs and websites will not show it.</p>
+
+    <h2>What survives a conversion</h2>
+    <ul class="plainlist spaced">
+      <li>SRT to VTT and VTT to SRT: text, timing, italics and bold carry over. VTT position settings are dropped going to SRT.</li>
+      <li>ASS to SRT or VTT: text, timing, line breaks, italics and bold carry over. Fonts, colors, positions and effects are dropped. The same line stacked on several layers is merged into one.</li>
+      <li>SRT or VTT to ASS: you get a plain ASS file with one default style. Italics and bold become ASS tags.</li>
+    </ul>
+    <p>Try it with the <a href="/srt-to-vtt/">SRT to VTT</a>, <a href="/vtt-to-srt/">VTT to SRT</a>, <a href="/ass-to-srt/">ASS to SRT</a> or <a href="/ass-to-vtt/">ASS to VTT</a> converters. They all open the same tool.</p>
+  </article>
+</Base>

@@ -4,19 +4,27 @@ export const SITE = {
   url: 'https://subfixer.app',
 };
 
-export type Mode = 'shift' | 'fps' | 'sync' | 'convert' | 'clean';
+export type Mode = 'shift' | 'fps' | 'sync' | 'encoding' | 'clean' | 'edit' | 'convert';
+export type Group = 'Timing' | 'Text' | 'Convert';
+export const GROUPS: Group[] = ['Timing', 'Text', 'Convert'];
 
 export interface ToolPage {
   slug: string; // '' = home
   mode: Mode;
+  group: Group;
   title: string; // <title>
   h1: string;
   lede: string;
   description: string; // meta description
-  preset?: { from?: number; to?: number; out?: string };
+  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean };
   steps: string[];
   faq: { q: string; a: string }[];
 }
+
+export const GUIDES = [
+  { slug: 'subtitles-out-of-sync', title: 'Why subtitles go out of sync, and which fix to use' },
+  { slug: 'srt-vtt-ass', title: 'SRT, VTT and ASS: what is the difference?' },
+];
 
 const PRIVACY_FAQ = {
   q: 'Is my subtitle file uploaded anywhere?',
@@ -27,6 +35,7 @@ export const PAGES: ToolPage[] = [
   {
     slug: '',
     mode: 'shift',
+    group: 'Timing',
     title: 'Subtitle Fixer: shift, resync and convert SRT files online, free',
     h1: 'Fix out-of-sync subtitles',
     lede: 'Subtitles early, late or drifting further off as the movie goes on? Drop the file in and fix the timing, the frame rate or the format. It is free, and the file stays on your computer.',
@@ -46,12 +55,17 @@ export const PAGES: ToolPage[] = [
         q: 'Subtitles are a fixed amount early or late the whole way through.',
         a: 'Use "Shift timing" and enter the offset. A positive number makes them appear later, a negative number earlier.',
       },
+      {
+        q: 'Can I fix a whole season at once?',
+        a: 'Yes. Choose or drop several files together. Shift, frame rate, clean up, character fixes and format changes apply to every file, and you get one zip back. Two-point sync and the line editor work on one file at a time.',
+      },
       PRIVACY_FAQ,
     ],
   },
   {
     slug: 'shift-subtitle-timing',
     mode: 'shift',
+    group: 'Timing',
     title: 'Shift subtitle timing online: delay or advance an SRT file',
     h1: 'Shift subtitle timing',
     lede: 'Move every line earlier or later by the same amount. Works with SRT, VTT, ASS and SSA, and keeps ASS styling intact.',
@@ -77,6 +91,7 @@ export const PAGES: ToolPage[] = [
   {
     slug: 'convert-25-fps-to-23976',
     mode: 'fps',
+    group: 'Timing',
     preset: { from: 25, to: 24000 / 1001 },
     title: 'Convert subtitles from 25 fps to 23.976 fps (PAL to NTSC film)',
     h1: 'Convert subtitles from 25 to 23.976 fps',
@@ -103,6 +118,7 @@ export const PAGES: ToolPage[] = [
   {
     slug: 'change-subtitle-frame-rate',
     mode: 'fps',
+    group: 'Timing',
     title: 'Change subtitle frame rate online: 23.976, 24, 25, 29.97, 30 fps',
     h1: 'Change subtitle frame rate',
     lede: 'Convert subtitle timing between any two frame rates: 23.976, 24, 25, 29.97 or 30 fps, or type your own.',
@@ -128,6 +144,7 @@ export const PAGES: ToolPage[] = [
   {
     slug: 'sync-subtitles',
     mode: 'sync',
+    group: 'Timing',
     title: 'Sync subtitles by two points: fix drifting SRT subtitles online',
     h1: 'Sync subtitles to two points',
     lede: 'Enter when one early line and one late line are actually spoken. The tool stretches and moves every other line to match, which fixes an offset and a drift together.',
@@ -149,6 +166,7 @@ export const PAGES: ToolPage[] = [
   {
     slug: 'srt-to-vtt',
     mode: 'convert',
+    group: 'Convert',
     preset: { out: 'vtt' },
     title: 'SRT to VTT converter: convert subtitles to WebVTT online',
     h1: 'Convert SRT to VTT',
@@ -164,6 +182,7 @@ export const PAGES: ToolPage[] = [
   {
     slug: 'vtt-to-srt',
     mode: 'convert',
+    group: 'Convert',
     preset: { out: 'srt' },
     title: 'VTT to SRT converter: convert WebVTT subtitles to SRT online',
     h1: 'Convert VTT to SRT',
@@ -171,27 +190,29 @@ export const PAGES: ToolPage[] = [
     description: 'Convert WebVTT (.vtt) captions to SRT for VLC, Plex, Premiere and TVs. Free, and it runs in your browser.',
     steps: ['Drop in your .vtt file.', 'Output is preset to SRT.', 'Download the .srt file.'],
     faq: [
-      { q: 'Will positioning and styling carry over?', a: 'SRT has no positioning, so cue settings like position and alignment are dropped. Italic and bold tags are kept unless you strip them.' },
+      { q: 'Will positioning and styling carry over?', a: 'SRT has no positioning, so cue settings like position and alignment are dropped. Italic, bold and underline tags are kept unless you strip them under "Clean up".' },
       PRIVACY_FAQ,
     ],
   },
   {
     slug: 'ass-to-srt',
     mode: 'convert',
+    group: 'Convert',
     preset: { out: 'srt' },
     title: 'ASS to SRT converter: convert SSA/ASS subtitles to SRT online',
     h1: 'Convert ASS or SSA to SRT',
     lede: 'Convert Advanced SubStation (.ass) and SubStation Alpha (.ssa) subtitles, common with anime releases, into plain SRT that every player supports.',
-    description: 'Convert ASS and SSA subtitles to SRT online. Styling tags are removed; line breaks and timing are kept. Free, and the file stays on your computer.',
-    steps: ['Drop in your .ass or .ssa file.', 'Output is preset to SRT. Styling tags are removed and line breaks kept.', 'Download the .srt file.'],
+    description: 'Convert ASS and SSA subtitles to SRT online. Italics, bold and line breaks are kept, and lines stacked on several layers are merged. Free, and the file stays on your computer.',
+    steps: ['Drop in your .ass or .ssa file.', 'Output is preset to SRT. Italics and bold carry over as SRT tags, other styling is dropped, and \\N becomes a real line break.', 'Download the .srt file.'],
     faq: [
-      { q: 'Why are signs and karaoke lines doubled or out of place?', a: 'ASS files often layer several lines at once for signs and effects. SRT cannot position text, so those lines show at the bottom. Turn on "Clean up" to remove empty or effect-only lines.' },
+      { q: 'Why are signs and karaoke lines doubled or out of place?', a: 'ASS files often stack the same line on several layers for signs and effects. Copies with the same time and text are merged into one, but signs still show at the bottom because SRT cannot position text. Remove any you do not want in "Check and edit".' },
       PRIVACY_FAQ,
     ],
   },
   {
     slug: 'fix-subtitle-encoding',
-    mode: 'clean',
+    mode: 'encoding',
+    group: 'Text',
     title: 'Fix subtitle encoding: repair garbled characters (Ã©, ð, ?) in SRT',
     h1: 'Fix garbled subtitle characters',
     lede: 'Accents showing up as Ã© or Ä‡, or letters turned into question marks? The file uses an old encoding. Pick the right one and save it as UTF-8, which every player reads.',
@@ -199,7 +220,7 @@ export const PAGES: ToolPage[] = [
       'Repair SRT subtitles with broken accents and symbols. It detects Windows-1250/1251/1252, ISO-8859 and other encodings and saves the file as UTF-8. Free, in your browser.',
     steps: [
       'Drop in the file. The encoding is detected automatically.',
-      'If the preview still looks wrong, choose another encoding from the list until the text reads correctly.',
+      'Under "Fix characters" you see the same lines read several ways. Pick the one that reads correctly, or choose the language to narrow the list.',
       'Download. The fixed file is UTF-8.',
     ],
     faq: [
@@ -210,11 +231,12 @@ export const PAGES: ToolPage[] = [
   {
     slug: 'remove-hearing-impaired-subtitles',
     mode: 'clean',
+    group: 'Text',
     title: 'Remove SDH / hearing impaired text from subtitles online',
     h1: 'Remove hearing-impaired text',
     lede: 'Strip [MUSIC], (laughs), ♪ lyrics and speaker names like "JOHN:" from SDH subtitles, and delete lines left empty.',
     description: 'Remove hearing impaired (SDH) tags, sound descriptions and speaker names from SRT, VTT and ASS subtitles. Free online, runs in your browser.',
-    steps: ['Drop in your subtitle file.', 'Keep "Remove hearing-impaired text" ticked, plus any other cleanups you want.', 'Download the cleaned file.'],
+    steps: ['Drop in your subtitle file.', 'Sound descriptions, speaker names and music lines are ticked already. Untick any you want to keep.', 'Download the cleaned file.'],
     faq: [
       { q: 'Will it remove real dialogue in brackets?', a: 'Anything in [square] or (round) brackets is removed, which is nearly always a sound description. Check the preview before downloading.' },
       PRIVACY_FAQ,
@@ -223,6 +245,7 @@ export const PAGES: ToolPage[] = [
   {
     slug: 'sbv-to-srt',
     mode: 'convert',
+    group: 'Convert',
     preset: { out: 'srt' },
     title: 'SBV to SRT converter: YouTube captions to SRT',
     h1: 'Convert YouTube SBV to SRT',
@@ -232,6 +255,221 @@ export const PAGES: ToolPage[] = [
     faq: [
       { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio open Subtitles, pick the video and language, then use the menu next to the track to download it as .sbv.' },
       { q: 'How is SBV different from SRT?', a: 'SBV puts the start and end time on one line separated by a comma and has no line numbers. SRT numbers each line and uses an arrow between the times. The text is the same.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'shift-subtitles-from-a-line',
+    mode: 'shift',
+    group: 'Timing',
+    preset: { fromLine: true },
+    title: 'Subtitles out of sync after one scene? Shift from that line on',
+    h1: 'Shift subtitles from one line onward',
+    lede: 'Subtitles are fine at the start, then jump out of sync after an ad break, a cut scene or a reel change. Shift only the lines from that point on and leave the earlier ones alone.',
+    description:
+      'Fix subtitles that go out of sync partway through a video. Pick the first wrong line and shift it and every line after it. SRT, VTT and ASS, free in your browser.',
+    steps: [
+      'Drop in your subtitle file.',
+      'Under "Shift timing", set "Starting at line" to the first line that is wrong.',
+      'Enter the offset for that line, check the preview, and download.',
+    ],
+    faq: [
+      {
+        q: 'Why would subtitles go wrong halfway through?',
+        a: 'The video you have was cut differently from the one the subtitles were made for. A TV recording with ads removed, an extended edition or a different release can add or drop a few seconds at one point.',
+      },
+      {
+        q: 'It goes wrong at two different points.',
+        a: 'Fix the first point and download. Then load the fixed file, pick the second point and shift again.',
+      },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'srt-editor',
+    mode: 'edit',
+    group: 'Text',
+    title: 'SRT editor online: edit subtitle text and timing in your browser',
+    h1: 'Edit subtitle lines',
+    lede: 'Change the text or the start and end time of any line, delete lines, or add new ones. Problems like overlaps and empty lines are marked as you go.',
+    description:
+      'Free online SRT and VTT editor. Edit subtitle text and timestamps, add or delete lines, and see overlaps and empty lines flagged. Nothing is uploaded.',
+    steps: [
+      'Drop in your .srt, .vtt or .ass file.',
+      'Edit any line. Times take the same form as the file, like 00:01:02,500.',
+      'Download. Lines are renumbered and saved as UTF-8.',
+    ],
+    faq: [
+      {
+        q: 'Can I edit a long file?',
+        a: 'Yes. The editor shows 200 lines at a time with a button to show more. Tick "Only lines with problems" to jump straight to the ones that need work.',
+      },
+      {
+        q: 'Do my edits carry over if I then shift or convert?',
+        a: 'Yes. Edits change the loaded file, so any fix you pick afterwards starts from your edited version.',
+      },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'srt-validator',
+    mode: 'edit',
+    group: 'Text',
+    title: 'SRT validator: check a subtitle file for errors online',
+    h1: 'Check a subtitle file for errors',
+    lede: 'Find the problems that make players skip lines or refuse a file: broken timestamps, wrong numbering, overlapping lines, empty lines and lines that end before they start.',
+    description:
+      'Check SRT subtitles for bad timestamps, numbering mistakes, overlaps, zero-length and empty lines. Fix them in the built-in editor. Free and private.',
+    steps: [
+      'Drop in your subtitle file. The check runs as soon as it loads.',
+      'Read the list of problems. Each one names the line it is on.',
+      'Fix lines in the editor below the list, or use "Clean up" to fix overlaps in one go, then download.',
+    ],
+    faq: [
+      {
+        q: 'What counts as a problem?',
+        a: 'Line numbers out of sequence, timestamps not written as 00:00:00,000, a line that overlaps the next, a line with no text, a line on screen for under half a second, and a line that ends before it starts. Files that are not UTF-8 are noted too.',
+      },
+      {
+        q: 'My player shows nothing at all.',
+        a: 'Look for a timestamp error near the top of the list. One broken timestamp can stop some players from reading anything after it.',
+      },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'subtitle-cleaner',
+    mode: 'clean',
+    group: 'Text',
+    title: 'Subtitle cleaner: remove SDH tags, names, music and formatting',
+    h1: 'Clean up subtitles',
+    lede: 'Remove sound descriptions, speaker names, music lines, formatting tags and repeated lines. Choose each one separately. The timing stays as it is.',
+    description:
+      'Clean SRT, VTT and ASS subtitles: remove [sound] tags, speaker names, ♪ music lines, <i> and font tags and repeated lines. Free, runs in your browser.',
+    steps: [
+      'Drop in your subtitle file.',
+      'Tick what to remove. The preview updates as you go.',
+      'Download the cleaned file.',
+    ],
+    faq: [
+      {
+        q: 'Will it change the timing?',
+        a: 'Only if you tick the overlap or minimum length options. Lines left with no text are deleted, and the rest keep their times.',
+      },
+      {
+        q: 'What does "repeated lines" do?',
+        a: 'Some files show the same line twice in a row, split into two cues. They are merged into one line that runs for the time of both.',
+      },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'ass-to-vtt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'vtt' },
+    title: 'ASS to VTT converter: SSA and ASS subtitles to WebVTT',
+    h1: 'Convert ASS or SSA to VTT',
+    lede: 'Turn styled .ass or .ssa subtitles into WebVTT for web players and HTML5 video. Italics and bold are kept and line breaks come through.',
+    description: 'Convert ASS and SSA subtitles to WebVTT (.vtt). Italics, bold and line breaks are kept, and duplicate layer lines are merged. Free, in your browser.',
+    steps: ['Drop in your .ass or .ssa file.', 'Output is preset to VTT.', 'Download the .vtt file.'],
+    faq: [
+      { q: 'What about fonts, colors and positions?', a: 'VTT has no place for most ASS styling, so fonts, colors, positions and effects are dropped. If you need those, keep the ASS file and use a player that supports it, like VLC or mpv.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'srt-to-txt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'txt' },
+    title: 'SRT to TXT: turn subtitles into a plain text transcript',
+    h1: 'Convert SRT to plain text',
+    lede: 'Get the words out of a subtitle file as a plain transcript, one line per subtitle. Keep the times if you want them.',
+    description: 'Convert SRT subtitles to a TXT transcript with or without timestamps. Tags and numbering are removed. Free, and the file stays on your computer.',
+    steps: ['Drop in your .srt file.', 'Choose "Plain text" or "Text with times" under Save as.', 'Download the .txt file.'],
+    faq: [
+      { q: 'What does the text look like?', a: 'Each subtitle becomes one line, with its own line breaks joined by a space. With times, each line starts with [00:01:02,500 - 00:01:04,000].' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'vtt-to-txt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'txt' },
+    title: 'VTT to TXT: get a transcript from WebVTT captions',
+    h1: 'Convert VTT to plain text',
+    lede: 'Turn WebVTT captions, like the ones saved from a web player or a lecture recording, into readable text.',
+    description: 'Convert WebVTT (.vtt) captions to a plain text transcript, with or without timestamps. Free, and it runs in your browser.',
+    steps: ['Drop in your .vtt file.', 'Choose "Plain text" or "Text with times" under Save as.', 'Download the .txt file.'],
+    faq: [
+      { q: 'Are voice and class tags removed?', a: 'Yes. Tags like <v Speaker> and <c.yellow> are removed, so only the words are left.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'srt-to-word',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'docx' },
+    title: 'SRT to Word: convert subtitles to a .docx document',
+    h1: 'Convert subtitles to Word',
+    lede: 'Make a Word document from a subtitle file, as running text or as a table with the start and end time of each line. Useful for translation, review and scripts.',
+    description: 'Convert SRT, VTT or ASS subtitles to a Word .docx file, as text or as a table with timestamps. Free, made in your browser.',
+    steps: ['Drop in your subtitle file.', 'Choose "Word, as text" or "Word, as a table" under Save as.', 'Download the .docx file.'],
+    faq: [
+      { q: 'Will it open in Google Docs or Pages?', a: 'Yes. The file is a standard .docx, which Word, Google Docs, Pages and LibreOffice all open.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'srt-to-excel',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'xlsx' },
+    title: 'SRT to Excel: convert subtitles to an .xlsx spreadsheet',
+    h1: 'Convert subtitles to Excel',
+    lede: 'Get a spreadsheet with one row per subtitle: number, start, end, length in seconds and text. Handy for translation lists and timing reviews.',
+    description: 'Convert SRT, VTT or ASS subtitles to an Excel .xlsx or a CSV file with one row per line and its timestamps. Free and private.',
+    steps: ['Drop in your subtitle file.', 'Output is preset to Excel. Pick CSV instead if you prefer.', 'Download the spreadsheet.'],
+    faq: [
+      { q: 'Can I turn the spreadsheet back into subtitles?', a: 'Not yet. For now, edit text and times in the line editor here and save as SRT.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'srt-to-csv',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'csv' },
+    title: 'SRT to CSV: export subtitles with timestamps to CSV',
+    h1: 'Convert subtitles to CSV',
+    lede: 'Export each subtitle line as a CSV row with its number, start and end time, length and text. It opens in Excel, Numbers and Google Sheets.',
+    description: 'Convert SRT, VTT or ASS subtitles to CSV with timestamps. Saved as UTF-8 so accents show correctly in Excel. Free, in your browser.',
+    steps: ['Drop in your subtitle file.', 'Output is preset to CSV.', 'Download the .csv file.'],
+    faq: [
+      { q: 'Why do accented letters look wrong in Excel?', a: 'Older Excel versions guess the wrong encoding for CSV. This file starts with a UTF-8 marker that tells Excel how to read it, so accents should show correctly.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'batch-convert-subtitles',
+    mode: 'convert',
+    group: 'Convert',
+    title: 'Batch convert and fix subtitle files: many SRT files at once',
+    h1: 'Fix or convert many subtitle files at once',
+    lede: 'Drop in a whole folder of subtitles, like every episode of a season, and apply the same shift, frame-rate change, cleanup or format to all of them. You get one zip back.',
+    description:
+      'Batch convert SRT, VTT, ASS and SBV subtitles, or shift and clean many files at once. Download them together as a zip. Free, and nothing is uploaded.',
+    steps: [
+      'Choose or drop all the files at once.',
+      'Pick the fix and the output format. The preview shows the file selected in the list.',
+      'Download. Several files come back as one zip.',
+    ],
+    faq: [
+      { q: 'Is there a limit?', a: 'Up to 100 files, each under 20 MB. Subtitle files are usually well under 1 MB.' },
+      { q: 'Each file needs a different offset.', a: 'Then fix them one at a time. A batch applies the same settings to every file.' },
       PRIVACY_FAQ,
     ],
   },

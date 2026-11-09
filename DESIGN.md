@@ -10,16 +10,25 @@ section. SubFixer uses none of those.
 ## Structure
 
 - One tool. Every URL (home plus the fix pages in `src/site.ts`) renders the same tool,
-  preset to that page's fix. Drop a file once, then pick the fix. Switching fixes is
-  client-side and keeps the file.
-- No sidebar or menu. The footer has a single "Other fixes:" line of plain text links,
-  then the privacy line.
+  preset to that page's fix. Drop one file or many, then pick the fix. Switching fixes is
+  client-side and keeps the files.
+- Before a file is loaded, a "What is wrong with your subtitles?" list of native radios
+  (rows split by hairlines) picks the fix. Fix pages preselect their symptom.
+- With several files, a select above the fixes says which file is shown. Timing, frame
+  rate, characters, clean up and convert run on every file and download as one zip.
+- Fix characters lists each candidate encoding as a radio row: name, script, then two
+  sample lines in the page font, so the reader picks the one that reads correctly.
+- Check and edit is a list of rows: number, two mono time fields, a text area, and
+  "Add below" / "Delete" as plain links. A problem shows as a short line of error-color
+  text under the row, never a border or fill.
+- No sidebar or menu. The footer has short grouped lines of plain text links (Timing,
+  Text, Convert, Guides), then the privacy line.
 - Column is 680px wide, left-aligned text, centered on the page. 24px side padding
   (16px on phones).
 
 ## Rules
 
-- One primary action on screen at a time: "Choose a file" before a file is loaded,
+- One primary action on screen at a time: "Choose files" before a file is loaded,
   "Download fixed file" after. Both are the dark button (ink fill, 6px corners, 46px).
 - The drop area has no frame at rest. While a file is dragged over it gets a light tint and
   a 2px ink outline. The whole page also accepts drops.

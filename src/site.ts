@@ -229,8 +229,8 @@ export const PAGES: ToolPage[] = [
     description: 'Convert YouTube SBV captions to SRT. YouTube uses SBV format; SRT works in most subtitle players and editors. Free online conversion, runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to SRT.', 'Download the .srt file.'],
     faq: [
-      { q: 'Where do I find YouTube captions as SBV?', a: 'YouTube does not provide a direct download option, but you can use browser extensions or third-party tools to extract captions as SBV files.' },
-      { q: 'How is SBV different from SRT?', a: 'SBV uses semicolons to separate text and time, while SRT uses commas. SBV also includes additional metadata like timestamps and speaker information.' },
+      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio open Subtitles, pick the video and language, then use the menu next to the track to download it as .sbv.' },
+      { q: 'How is SBV different from SRT?', a: 'SBV puts the start and end time on one line separated by a comma and has no line numbers. SRT numbers each line and uses an arrow between the times. The text is the same.' },
       PRIVACY_FAQ,
     ],
   },

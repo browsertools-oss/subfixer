@@ -47,7 +47,7 @@ jobs:
           git config user.email "subfixer-agent@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
             if npm test && npm run build; then
-              git add -A ':!dist' ':!.astro'
+              git add -A
               git commit -qm "Agent: daily update $(date -u +%F)" && git push -q
             else
               echo "Agent changes failed tests/build; discarded." | tee -a ops/discarded.txt
@@ -67,4 +67,4 @@ jobs:
           git config user.name "subfixer-agent"
           git config user.email "subfixer-agent@users.noreply.github.com"
           git add ops/metrics.csv ops/.llm_usage_total 2>/dev/null || true
-          git commit -qm "Daily metrics $(date -u +%F)" && git push -q || true
+          git commit -qm "Daily metrics $(date -u +%F)" -- ops/metrics.csv ops/.llm_usage_total && git push -q || true

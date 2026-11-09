@@ -1,5 +1,7 @@
 {
-  "monthly": {
-    "domain subfixer.app ($8.20 first year, $14.20/yr after)": 0.68
-  }
+  "monthly": {},
+  "purchases": [
+    { "date": "2026-11-08", "item": "subfixer.app domain, 1 year (renews at $14.20)", "usd": 8.20, "kind": "domain" },
+    { "date": "2026-11-08", "item": "OpenRouter credit top-up (shared by all ventures)", "usd": 10.00, "kind": "api credits" }
+  ]
 }

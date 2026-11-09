@@ -25,8 +25,13 @@ async function llmSpendTotal() {
   const j = await r.json();
   return Number(j?.data?.usage ?? 0); // lifetime USD on this key
 }
-const costs = JSON.parse(readFileSync('ops/costs.json', 'utf8')).monthly;
-const fixedPerDay = Object.values(costs).reduce((a, b) => a + b, 0) / 30;
+// ops/costs.json: monthly = recurring charges; purchases = one-off cash out
+// (domains, API credit top-ups). AI usage draws down prepaid credit, so it is
+// tracked in metrics.csv but not counted again as cash spend.
+const costsFile = JSON.parse(readFileSync('ops/costs.json', 'utf8'));
+const recurring = Object.values(costsFile.monthly ?? {}).reduce((a, b) => a + b, 0);
+const purchases = costsFile.purchases ?? [];
+const boughtOn = (pred) => purchases.filter((p) => pred(p.date)).reduce((a, p) => a + p.usd, 0);
 
 // --- revenue (add Gumroad / AdSense / affiliate fetchers here as each goes live) ---
 async function madeToday() {
@@ -42,11 +47,12 @@ const statePath = 'ops/.llm_usage_total';
 const prevLlm = existsSync(statePath) ? +readFileSync(statePath, 'utf8') : null;
 const llmTotal = await llmSpendTotal();
 const llmToday = llmTotal != null && prevLlm != null ? Math.max(0, llmTotal - prevLlm) : 0;
-const spentToday = +(fixedPerDay + llmToday).toFixed(4);
+const aiToday = +llmToday.toFixed(4); // stored in metrics.csv spent_usd
+const spentToday = boughtOn((d) => d === today);
 const made = await madeToday();
 
 const without = rows.filter((r) => r.date !== today);
-without.push({ date: today, spent: spentToday, made, visitors: null });
+without.push({ date: today, spent: aiToday, made, visitors: null });
 const hist = without.slice(-90);
 
 if (!dry) {
@@ -58,9 +64,9 @@ if (!dry) {
 const last = hist.slice(-30);
 let cs = 0, cm = 0;
 const cumS = [], cumM = [];
-for (const r of hist) { cs += r.spent; cm += r.made; }
-let s0 = cs - last.reduce((a, r) => a + r.spent, 0), m0 = cm - last.reduce((a, r) => a + r.made, 0);
-for (const r of last) { s0 += r.spent; m0 += r.made; cumS.push(+s0.toFixed(2)); cumM.push(+m0.toFixed(2)); }
+for (const r of hist) { cm += r.made; }
+let m0 = cm - last.reduce((a, r) => a + r.made, 0);
+for (const r of last) { m0 += r.made; cumS.push(+(recurring + boughtOn((d) => d <= r.date)).toFixed(2)); cumM.push(+m0.toFixed(2)); }
 const top = Math.max(1, ...cumS, ...cumM);
 const chart = [
   '```mermaid',
@@ -76,7 +82,9 @@ const chart = [
 // --- month to date ---
 const month = today.slice(0, 7);
 const mtd = hist.filter((r) => r.date.startsWith(month));
-const mtdSpent = mtd.reduce((a, r) => a + r.spent, 0);
+const mtdSpent = recurring + boughtOn((d) => d.startsWith(month));
+const aiUsedAll = hist.reduce((a, r) => a + r.spent, 0);
+const credit = purchases.filter((p) => p.kind === 'api credits').reduce((a, p) => a + p.usd, 0);
 const mtdMade = mtd.reduce((a, r) => a + r.made, 0);
 
 // --- decisions from open issues labelled `decision` ---
@@ -90,7 +98,7 @@ const next = existsSync('ops/next.md') ? readFileSync('ops/next.md', 'utf8').tri
 
 const body = `${chart}
 
-The first line is money made and the second is money spent, both as running totals.
+The first line is money made and the second is cash spent (domains, credits, plans), both as running totals.
 
 | | Today | This month | Cap |
 |---|---|---|---|
@@ -98,7 +106,7 @@ The first line is money made and the second is money spent, both as running tota
 | Made | ${usd(made)} | ${usd(mtdMade)} | |
 | Net | ${usd(made - spentToday)} | ${usd(mtdMade - mtdSpent)} | |
 
-LLM spend today: ${llmTotal == null ? 'not available (no key yet)' : usd(llmToday)}.
+LLM spend today: ${llmTotal == null ? 'not available (no key yet)' : usd(llmToday)}${credit && llmTotal != null ? ` (from prepaid credit: ${usd(aiUsedAll)} of ${usd(credit)} used)` : ''}.
 
 ### Next steps
 ${next}

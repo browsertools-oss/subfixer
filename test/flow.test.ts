@@ -76,3 +76,10 @@ test('savedMessage names the file and the next step', () => {
   assert.match(savedMessage('subtitles-fixed.zip', true), /Unzip/);
   for (const m of [savedMessage('a.srt', false), savedMessage('a.zip', true)]) assert.doesNotMatch(m, /[–—]/);
 });
+
+import { ticketAction } from '../src/lib/flow.ts';
+
+test('a symptom ticket is one click: no file opens the picker, a loaded file jumps to the fix', () => {
+  assert.equal(ticketAction(false), 'choose-file');
+  assert.equal(ticketAction(true), 'jump');
+});

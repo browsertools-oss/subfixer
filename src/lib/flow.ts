@@ -85,3 +85,11 @@ export function savedMessage(name: string, zip: boolean): string {
   if (zip) return `Saved ${name}. Unzip it into the folder with the videos.`;
   return `Saved ${name}. Put it in the same folder as the video. If the player does not pick it up, give both the same name (movie.mkv and movie.srt).`;
 }
+
+/**
+ * A symptom ticket is one click. With no file yet it opens the file picker already set to that fix;
+ * with a file loaded it switches straight to that fix. There is no selected state to confirm.
+ */
+export function ticketAction(hasFile: boolean): 'choose-file' | 'jump' {
+  return hasFile ? 'jump' : 'choose-file';
+}

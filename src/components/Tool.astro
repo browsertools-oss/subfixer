@@ -147,22 +147,20 @@ const ART: Record<string, string> = {
   </div>
 
   <fieldset class="pick" id="pick">
-    <legend>What is wrong with your subtitles?</legend>
+    <legend><span class="pick-q" id="pickQ">What is wrong with your subtitles?</span> <span class="pick-how" id="pickHow">Tap the one that fits, then choose your file.</span></legend>
     <div class="rolls">
       {ROLLS.map((r) => (
         <div class="roll" data-group={r.g}>
           <p class="roll-name">{r.name}</p>
           <div class="tickets">
             {symptoms.filter((s) => GROUP_OF[s.go] === r.g).map((s) => (
-              <label class="tk" data-group={r.g}>
-                <input type="radio" name="sym" class="visually-hidden" value={s.id} data-go={s.go} checked={s.id === picked} />
+              <button type="button" class="tk" data-group={r.g} data-sym={s.id} data-go={s.go}>
                 <span class="tk-stub" aria-hidden="true"><span>{LABEL[s.go]}</span></span>
                 <span class="tk-paper">
                   <svg class="tk-art" viewBox="0 0 240 64" aria-hidden="true" set:html={ART[s.id]} />
                   <span class="tk-text">{s.text}</span>
-                  <span class="tk-punch" aria-hidden="true">Picked</span>
                 </span>
-              </label>
+              </button>
             ))}
           </div>
         </div>
@@ -447,7 +445,7 @@ const ART: Record<string, string> = {
   import { isEbuStl, parseEbuStl, mergeStack, mergeTop, mergeParts, autoOffsets } from '../lib/formats';
   import { isSup, isVobSub, parseSup, type SupImage } from '../lib/sup';
   import { fixTiming, reflow, compileRules, findReplace, cps, longestLine } from '../lib/tidy';
-  import { parseAmount, signedOffset, splitOffset, amountText, describeShift, downloadState, quietChange, savedMessage, type Dir } from '../lib/flow';
+  import { parseAmount, signedOffset, splitOffset, amountText, describeShift, downloadState, quietChange, savedMessage, ticketAction, type Dir } from '../lib/flow';
 
   type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[]; track?: string; sup?: SupImage[]; ocrLang?: string };
 
@@ -484,7 +482,7 @@ const ART: Record<string, string> = {
     mode = id;
     root.dataset.group = GROUP_OF[id] ?? 'timing';
     const tab = root.querySelector<HTMLElement>(`[data-tab="${id}"]`);
-    if (root.querySelector('input[name="sym"]:checked')) $('dropFix').textContent = `Fix: ${tab?.textContent ?? ''}`;
+    if (chosen) $('dropFix').textContent = `Fix: ${tab?.textContent ?? ''}`;
     root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
     root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== id));
     $('preview').hidden = id === 'edit';
@@ -494,21 +492,36 @@ const ART: Record<string, string> = {
     render();
   }
   root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab!)));
-  root.querySelectorAll<HTMLInputElement>('input[name="sym"]').forEach((r) =>
-    r.addEventListener('change', () => {
-      if (r.checked) setTab(r.dataset.go!);
-    }),
-  );
+  // One click on a ticket does the job: with no file yet it opens the file picker in that fix
+  // (or takes a file dropped on it); with a file loaded it jumps straight to that fix.
+  let chosen = !!root.dataset.symptom;
+  function goFix(go: string) {
+    chosen = true;
+    setTab(go);
+  }
+  function landInFix() {
+    $('loaded').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  root.querySelectorAll<HTMLElement>('.tk[data-go]').forEach((t) => {
+    t.addEventListener('click', () => {
+      const act = ticketAction(okFiles().length > 0);
+      goFix(t.dataset.go!);
+      if (act === 'jump') landInFix();
+      else fileInput.click();
+    });
+    ['dragenter', 'dragover'].forEach((ev) => t.addEventListener(ev, (e) => { e.preventDefault(); t.classList.add('over'); }));
+    t.addEventListener('dragleave', () => t.classList.remove('over'));
+    // The page-wide drop handler loads the file; this only says which fix it is for.
+    t.addEventListener('drop', () => { t.classList.remove('over'); goFix(t.dataset.go!); });
+  });
   // Links elsewhere on the page ("which fix do I need") open a tab in place.
   document.addEventListener('click', (e) => {
     const t = (e.target as HTMLElement).closest<HTMLElement>('[data-go-tab]');
     if (!t) return;
     e.preventDefault();
-    const id = t.dataset.goTab!;
-    const r = root.querySelector<HTMLInputElement>(`input[name="sym"][value="${t.dataset.sym ?? ''}"]`) ?? root.querySelector<HTMLInputElement>(`input[name="sym"][data-go="${id}"]`);
-    if (r) r.checked = true;
-    setTab(id);
-    root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    goFix(t.dataset.goTab!);
+    if (okFiles().length) landInFix();
+    else root.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   setTab(mode);
 
@@ -657,9 +670,13 @@ const ART: Record<string, string> = {
     $<HTMLSelectElement>('outFps').value = nearestFps(d.fps);
     if (mode === 'merge') renderMerge();
     showFile();
-    $('pick').hidden = true;
     root.classList.add('has-file');
     $('loaded').hidden = false;
+    // The tickets stay, below the work, so another fix is still one click away.
+    $('loaded').after($('pick'));
+    $('pickQ').textContent = 'Something else wrong with it?';
+    $('pickHow').textContent = 'Tap a ticket to switch to that fix.';
+    if (chosen) landInFix();
   }
 
   function showFile() {
@@ -1166,11 +1183,12 @@ const ART: Record<string, string> = {
   }
   $('doneMore').addEventListener('click', () => {
     $('done').hidden = true;
-    root.querySelector<HTMLElement>('.tabs [aria-selected="true"]')?.focus();
+    $('pick').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+  // Straight to the file picker, still set to the same fix.
   $('doneNew').addEventListener('click', () => {
-    $('reset').click();
-    fileInput.focus();
+    clearFiles();
+    fileInput.click();
   });
 
   // ---------- fix characters ----------
@@ -1402,17 +1420,23 @@ const ART: Record<string, string> = {
     showFile();
   });
   $('reset').addEventListener('click', () => {
+    clearFiles();
+    fileInput.click();
+  });
+  function clearFiles() {
     files = [];
     fileInput.value = '';
     $<HTMLSelectElement>('filePick').innerHTML = '';
     $('loaded').hidden = true;
     $('fileNote').hidden = true;
     root.classList.remove('has-file');
-    $('pick').hidden = false;
+    $('loaded').before($('pick'));
+    $('pickQ').textContent = 'What is wrong with your subtitles?';
+    $('pickHow').textContent = 'Tap the one that fits, then choose your file.';
     $('done').hidden = true;
     showAllCands = false;
     mergeOffsets = null;
-  });
+  }
   $('download').addEventListener('click', download);
   $('swap').addEventListener('click', () => {
     const a = $<HTMLSelectElement>('fpsFrom'), b = $<HTMLSelectElement>('fpsTo');
@@ -1510,11 +1534,7 @@ const ART: Record<string, string> = {
   });
   root.querySelectorAll<HTMLElement>('[data-vnudge]').forEach((b) =>
     b.addEventListener('click', () => {
-      if (mode !== 'shift') {
-        const r = root.querySelector<HTMLInputElement>('input[name="sym"][value="early-late"]');
-        if (r && root.querySelector('input[name="sym"]:checked')) r.checked = true;
-        setTab('shift');
-      }
+      if (mode !== 'shift') setTab('shift');
       nudgeShift(+b.dataset.vnudge!);
       render();
       showOffset();

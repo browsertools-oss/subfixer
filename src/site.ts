@@ -219,4 +219,19 @@ export const PAGES: ToolPage[] = [
       PRIVACY_FAQ,
     ],
   },
+  {
+    slug: 'sbv-to-srt',
+    mode: 'convert',
+    preset: { out: 'srt' },
+    title: 'SBV to SRT converter: YouTube captions to SRT',
+    h1: 'Convert YouTube SBV to SRT',
+    lede: 'YouTube exports captions as SBV (YouTube format). Convert them to SRT for use in VLC, Plex and video editors.',
+    description: 'Convert YouTube SBV captions to SRT. YouTube uses SBV format; SRT works in most subtitle players and editors. Free online conversion, runs in your browser.',
+    steps: ['Drop in your .sbv file.', 'Output is preset to SRT.', 'Download the .srt file.'],
+    faq: [
+      { q: 'Where do I find YouTube captions as SBV?', a: 'YouTube does not provide a direct download option, but you can use browser extensions or third-party tools to extract captions as SBV files.' },
+      { q: 'How is SBV different from SRT?', a: 'SBV uses semicolons to separate text and time, while SRT uses commas. SBV also includes additional metadata like timestamps and speaker information.' },
+      PRIVACY_FAQ,
+    ],
+  },
 ];

@@ -1,1 +1,3 @@
-- Waiting on launch setup (domain, Cloudflare, GitHub, OpenRouter key).
+- Update next.md with completed launch tasks.
+- Consider adding FAQ for common subtitle conversion questions.
+- Check for any other missing subtitle format conversions.

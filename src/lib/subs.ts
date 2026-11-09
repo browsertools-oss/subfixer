@@ -172,7 +172,7 @@ export function fixCommon(captions: Caption[], o: FixOptions): { captions: Capti
 
   for (const c of list) {
     let t = c.text;
-    if (o.removeTags) t = t.replace(/<[^>]+>/g, '').replace(/\{\\[^}]*\}/g, '');
+    if (o.removeTags) t = t.replace(/<[^>]+>/g, '').replace(/\{[^}]*\}/g, '');
     if (o.removeHearingImpaired) {
       const before = t;
       t = t

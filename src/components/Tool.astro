@@ -6,8 +6,12 @@ interface Props {
   mode: Mode;
   preset?: { from?: number; to?: number; out?: string; fromLine?: boolean };
   home?: boolean;
+  h1: string;
+  lede: string;
 }
-const { mode, preset = {}, home = false } = Astro.props;
+const { mode, preset = {}, home = false, h1, lede } = Astro.props;
+type Group = 'timing' | 'text' | 'convert';
+const GROUP_OF: Record<Mode, Group> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert' };
 const tabs: { id: Mode; label: string }[] = [
   { id: 'shift', label: 'Shift timing' },
   { id: 'fps', label: 'Change frame rate' },
@@ -17,7 +21,8 @@ const tabs: { id: Mode; label: string }[] = [
   { id: 'edit', label: 'Check and edit' },
   { id: 'convert', label: 'Convert format' },
 ];
-// The symptom picker. Each answer opens one of the tabs above, in place.
+const LABEL = Object.fromEntries(tabs.map((t) => [t.id, t.label])) as Record<Mode, string>;
+// The symptom picker. Each answer opens one of the tabs above, in place. Grouped into rolls so more fixes slot in.
 const symptoms: { id: string; go: Mode; text: string }[] = [
   { id: 'early-late', go: 'shift', text: 'Early or late by the same amount the whole way through' },
   { id: 'one-scene', go: 'shift', text: 'Fine at first, then off from one scene onward' },
@@ -26,6 +31,11 @@ const symptoms: { id: string; go: Mode; text: string }[] = [
   { id: 'sdh', go: 'clean', text: 'Full of [MUSIC], (laughs) and speaker names' },
   { id: 'broken', go: 'edit', text: 'The player skips lines or will not open the file' },
   { id: 'format', go: 'convert', text: 'Wrong format for my player, website or editor' },
+];
+const ROLLS: { g: Group; name: string }[] = [
+  { g: 'timing', name: 'Timing' },
+  { g: 'text', name: 'Text' },
+  { g: 'convert', name: 'Format' },
 ];
 const picked = home ? '' : preset.fromLine ? 'one-scene' : symptoms.find((s) => s.go === mode)?.id ?? '';
 const fps = [
@@ -37,22 +47,104 @@ const fps = [
 ];
 const from = String(preset.from ?? 25);
 const to = String(preset.to ?? 24000 / 1001);
+const FORMATS = ['SRT', 'VTT', 'ASS', 'SSA', 'SUB', 'SBV', 'SMI', 'LRC'];
+
+// Ticket drawings. One fixed scale for all of them: 240 x 64, cue lane on top, speech underneath,
+// so every problem reads against the same timeline.
+const SPEECH = [[20, 70], [100, 150], [180, 225]];
+const wave = (spans = SPEECH) => {
+  let d = '';
+  for (let x = 6; x < 236; x += 5) {
+    const on = spans.some(([a, b]) => x >= a && x <= b);
+    const h = on ? 6 + ((x * 7) % 13) : 1.5 + ((x * 3) % 3);
+    d += `M${x} ${50 - h / 2}v${h}`;
+  }
+  return `<path class="wv" d="${d}"/>`;
+};
+const cue = (a: number, b: number, ghost = false) =>
+  ghost ? `<rect class="gh" x="${a}" y="14" width="${b - a}" height="14" rx="3"/>` : `<rect class="cu" x="${a}" y="14" width="${Math.min(b, 236) - a}" height="14" rx="3"/>`;
+const shifted = (offs: number[]) => SPEECH.map(([a, b], i) => (offs[i] ? cue(a, b, true) : '') + cue(a + offs[i], b + offs[i])).join('');
+const ART: Record<string, string> = {
+  'early-late': shifted([24, 24, 24]) + wave(),
+  'one-scene': `<path class="cut" d="M86 6V60"/>` + shifted([0, 24, 24]) + wave(),
+  drift: shifted([0, 10, 24]) + wave(),
+  garbled: `<rect class="cu" x="20" y="10" width="205" height="22" rx="3"/><text class="inv" x="122" y="25.5" text-anchor="middle">CafÃ© Ð¿Ñ€Ð¸</text>` + wave(),
+  sdh: `<text x="20" y="25">[MUSIC]</text><path class="strike" d="M18 21H82"/><text x="92" y="25">JOHN:</text><path class="strike" d="M90 21H138"/><text x="148" y="25" class="keep">Hello?</text>` + wave(),
+  broken: `<rect class="cu" x="20" y="14" width="80" height="14" rx="3"/><rect class="cu ov" x="78" y="14" width="72" height="14" rx="3"/><text class="inv" x="40" y="25">3</text><text class="inv" x="122" y="25">2</text><text x="168" y="25" class="warn">2 before 3</text>` + wave(),
+  format: `<rect class="gh" x="20" y="11" width="62" height="20" rx="3"/><text x="51" y="25.5" text-anchor="middle">.ass</text><path class="arrow" d="M92 21h46m-7-6 7 6-7 6"/><rect class="cu" x="148" y="11" width="62" height="20" rx="3"/><text class="inv" x="179" y="25.5" text-anchor="middle">.srt</text>` + wave(),
+};
 ---
 
-<section class="tool" id="tool" data-mode={mode} data-out={preset.out ?? ''} data-symptom={picked}>
+<section class="tool" id="tool" data-mode={mode} data-group={GROUP_OF[mode]} data-out={preset.out ?? ''} data-symptom={picked}>
+  <div class="hero">
+    <div class="hero-copy">
+      <h1 set:html={h1.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]!).replace(/\S*-\S*/g, (w) => `<span class="nobr">${w}</span>`)} />
+      <p class="lede">{lede}</p>
+
+      <label class="drop" id="drop">
+        <input type="file" id="file" class="visually-hidden" multiple accept=".srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.txt" />
+        <span class="drop-stub" aria-hidden="true"><span>Admit one or many</span></span>
+        <span class="drop-body">
+          <span class="drop-main">Drop subtitle files here</span>
+          <span class="drop-sub">One file or a whole season. Nothing leaves your device.</span>
+          <span class="chips" aria-label="Formats it reads">{FORMATS.map((f) => <span class="chip">{f}</span>)}</span>
+          <span class="drop-row">
+            <span class="drop-btn" aria-hidden="true">Choose files</span>
+            <span class="drop-fix" id="dropFix" aria-live="polite">{picked ? `Fix: ${LABEL[mode]}` : ''}</span>
+          </span>
+        </span>
+      </label>
+      <ul class="trust" aria-label="The deal"><li>Free</li><li>No upload</li><li>No sign-up</li></ul>
+      <p class="error" id="loadError" hidden></p>
+    </div>
+
+    <figure class="screen" aria-hidden="true">
+      <svg class="frame" viewBox="0 0 640 300" preserveAspectRatio="xMidYMid slice">
+        <rect width="640" height="300" class="sky" />
+        <circle cx="508" cy="70" r="24" class="moon" />
+        <path class="city" d="M0 210h40v-46h34v28h22v-64h46v52h18v-30h40v60h30v-90h52v70h26v-40h44v56h20v-24h48v38h36v-72h56v80h28v-34h40v32h40V300H0z" />
+        <g class="lit">
+          <rect x="102" y="140" width="8" height="10" /><rect x="122" y="160" width="8" height="10" /><rect x="292" y="132" width="8" height="10" /><rect x="312" y="152" width="8" height="10" />
+          <rect x="292" y="172" width="8" height="10" /><rect x="498" y="150" width="8" height="10" /><rect x="518" y="170" width="8" height="10" /><rect x="190" y="182" width="8" height="10" />
+        </g>
+        <text x="320" y="268" text-anchor="middle" class="line">I said ten o'clock, not ten past.</text>
+      </svg>
+      <svg class="lanes" viewBox="0 0 640 92">
+        <text x="0" y="30" class="lab">Subtitle</text>
+        <text x="0" y="72" class="lab">Speech</text>
+        <path class="track" d="M84 22H640M84 66H640" />
+        <rect class="ghost" x="330" y="12" width="168" height="22" rx="4" />
+        <g class="snap"><rect class="cue" x="250" y="12" width="168" height="22" rx="4" /><text x="334" y="28" text-anchor="middle" class="cuetext">ten o'clock</text></g>
+        <path class="speech" d={(() => { let d = ''; for (let x = 88; x < 638; x += 6) { const on = x >= 250 && x <= 418; const h = on ? 10 + ((x * 7) % 22) : 2 + ((x * 3) % 4); d += `M${x} ${66 - h / 2}v${h}`; } return d; })()} />
+        <path class="head" d="M250 4V88" />
+      </svg>
+      <figcaption>Speech and subtitle, lined up again</figcaption>
+    </figure>
+  </div>
+
   <fieldset class="pick" id="pick">
     <legend>What is wrong with your subtitles?</legend>
-    {symptoms.map((s) => (
-      <label class="sym"><input type="radio" name="sym" value={s.id} data-go={s.go} checked={s.id === picked} /> {s.text}</label>
-    ))}
+    <div class="rolls">
+      {ROLLS.map((r) => (
+        <div class="roll" data-group={r.g}>
+          <p class="roll-name">{r.name}</p>
+          <div class="tickets">
+            {symptoms.filter((s) => GROUP_OF[s.go] === r.g).map((s) => (
+              <label class="tk" data-group={r.g}>
+                <input type="radio" name="sym" class="visually-hidden" value={s.id} data-go={s.go} checked={s.id === picked} />
+                <span class="tk-stub" aria-hidden="true"><span>{LABEL[s.go]}</span></span>
+                <span class="tk-paper">
+                  <svg class="tk-art" viewBox="0 0 240 64" aria-hidden="true" set:html={ART[s.id]} />
+                  <span class="tk-text">{s.text}</span>
+                  <span class="tk-punch" aria-hidden="true">Picked</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   </fieldset>
-
-  <label class="drop" id="drop">
-    <input type="file" id="file" class="visually-hidden" multiple accept=".srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.txt" />
-    <span class="drop-main">Drop subtitle files here</span>
-    <span class="drop-sub">SRT, VTT, ASS, SSA, SUB or SBV. One file or a whole season. Nothing leaves your device.</span>
-    <span class="drop-btn" aria-hidden="true">Choose files</span>
-  </label>
 
   <div class="loaded" id="loaded" hidden>
     <div class="fileinfo">
@@ -68,12 +160,27 @@ const to = String(preset.to ?? 24000 / 1001);
     </div>
     <p class="note" id="fileNote" hidden></p>
 
+    <div class="viewer" id="viewer">
+      <div class="vscreen"><p class="vsub" id="vsub"></p></div>
+      <div class="vbar">
+        <span class="vtime" id="vtime"></span>
+        <span class="vkey"><i class="k-before"></i>Before <i class="k-after"></i>After</span>
+      </div>
+      <svg class="cuemap" id="cuemap" tabindex="0" role="slider" aria-label="Position in the subtitles. Arrow keys step through lines." aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" preserveAspectRatio="none">
+        <path class="cm-before" id="cmBefore" />
+        <path class="cm-after" id="cmAfter" />
+        <path class="cm-issue" id="cmIssue" />
+        <path class="cm-head" id="cmHead" />
+      </svg>
+    </div>
+
     <div class="tabs" role="tablist" aria-label="Fix">
       {tabs.map((t) => (
-        <button type="button" role="tab" data-tab={t.id} aria-selected={t.id === mode ? 'true' : 'false'}>{t.label}</button>
+        <button type="button" role="tab" data-tab={t.id} data-group={GROUP_OF[t.id]} aria-selected={t.id === mode ? 'true' : 'false'}>{t.label}</button>
       ))}
     </div>
 
+    <div class="counter">
     <div class="panel" data-panel="shift">
       <label>Offset
         <input id="offset" value="0" inputmode="decimal" placeholder="e.g. 2.5 or -00:00:01,200" />
@@ -149,6 +256,8 @@ const to = String(preset.to ?? 24000 / 1001);
       <p class="hint">Pick the output format below. Timing and text are kept. Italics and bold carry over where the format allows.</p>
     </div>
 
+    </div>
+
     <div class="outrow">
       <label>Save as
         <select id="outFmt">
@@ -177,7 +286,6 @@ const to = String(preset.to ?? 24000 / 1001);
       </table>
     </div>
   </div>
-  <p class="error" id="loadError" hidden></p>
 </section>
 
 <script>
@@ -214,8 +322,12 @@ const to = String(preset.to ?? 24000 / 1001);
 
   // ---------- tabs and symptoms ----------
 
+  const GROUP_OF: Record<string, string> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert' };
   function setTab(id: string) {
     mode = id;
+    root.dataset.group = GROUP_OF[id] ?? 'timing';
+    const tab = root.querySelector<HTMLElement>(`[data-tab="${id}"]`);
+    if (root.querySelector('input[name="sym"]:checked')) $('dropFix').textContent = `Fix: ${tab?.textContent ?? ''}`;
     root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
     root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== id));
     $('preview').hidden = id === 'edit';
@@ -297,7 +409,7 @@ const to = String(preset.to ?? 24000 / 1001);
     outFmt.value = preset || (SUB_FORMATS.includes(d.format) ? d.format : 'srt');
     showFile();
     $('pick').hidden = true;
-    drop.hidden = true;
+    root.classList.add('has-file');
     $('loaded').hidden = false;
   }
 
@@ -431,6 +543,7 @@ const to = String(preset.to ?? 24000 / 1001);
     try {
       const { caps } = compute(entry(), true);
       err.hidden = true;
+      drawMap(d.captions, caps);
       if (mode === 'edit') return;
       const before = d.captions;
       const timed = mode !== 'clean';
@@ -449,6 +562,68 @@ const to = String(preset.to ?? 24000 / 1001);
       err.hidden = false;
     }
   }
+
+  // ---------- cue map: every line as a block on one timeline, before above, after below ----------
+
+  const map = $<SVGSVGElement & HTMLElement>('cuemap');
+  const W = 1000, H = 60;
+  map.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  let mapAfter: Caption[] = [];
+  let mapT0 = 0, mapT1 = 1, headIdx = 0;
+  const bars = (caps: Caption[], y: number, h: number) => {
+    const k = W / (mapT1 - mapT0);
+    let p = '';
+    for (const c of caps) {
+      const x = (c.start - mapT0) * k;
+      const w = Math.max(1.2, (c.end - c.start) * k);
+      p += `M${x.toFixed(1)} ${y}h${w.toFixed(1)}v${h}h${(-w).toFixed(1)}z`;
+    }
+    return p;
+  };
+  function drawMap(before: Caption[], after: Caption[]) {
+    if (!before.length && !after.length) return;
+    const all = before.concat(after);
+    mapT0 = Math.min(...all.map((c) => c.start));
+    mapT1 = Math.max(mapT0 + 1, ...all.map((c) => c.end));
+    mapAfter = after;
+    $('cmBefore').setAttribute('d', bars(before, 6, 18));
+    $('cmAfter').setAttribute('d', bars(after, 34, 18));
+    const over = after.filter((c, i) => i > 0 && c.start < after[i - 1].end);
+    $('cmIssue').setAttribute('d', bars(over, 34, 18));
+    map.setAttribute('aria-valuemax', String(Math.max(0, after.length - 1)));
+    setHead(Math.min(headIdx, after.length - 1));
+  }
+  function setHead(i: number) {
+    if (!mapAfter.length) return;
+    headIdx = Math.max(0, Math.min(mapAfter.length - 1, i));
+    const c = mapAfter[headIdx];
+    const x = ((c.start - mapT0) * W) / (mapT1 - mapT0);
+    $('cmHead').setAttribute('d', `M${x.toFixed(1)} 0V${H}`);
+    $('vsub').textContent = stripTags(c.text);
+    $('vtime').textContent = `Line ${headIdx + 1} of ${mapAfter.length} · ${fmtTime(c.start)}`;
+    map.setAttribute('aria-valuenow', String(headIdx));
+    map.setAttribute('aria-valuetext', `Line ${headIdx + 1}, ${fmtTime(c.start)}`);
+  }
+  const headAt = (clientX: number) => {
+    const r = map.getBoundingClientRect();
+    const t = mapT0 + ((clientX - r.left) / r.width) * (mapT1 - mapT0);
+    let best = 0;
+    mapAfter.forEach((c, i) => { if (Math.abs(c.start - t) < Math.abs(mapAfter[best].start - t)) best = i; });
+    setHead(best);
+  };
+  map.addEventListener('pointerdown', (e) => {
+    headAt(e.clientX);
+    map.setPointerCapture(e.pointerId);
+    const move = (ev: PointerEvent) => headAt(ev.clientX);
+    map.addEventListener('pointermove', move);
+    map.addEventListener('pointerup', () => map.removeEventListener('pointermove', move), { once: true });
+  });
+  map.addEventListener('keydown', (e) => {
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, PageDown: 10, PageUp: -10 }[e.key];
+    if (step) { e.preventDefault(); setHead(headIdx + step); }
+    else if (e.key === 'Home') { e.preventDefault(); setHead(0); }
+    else if (e.key === 'End') { e.preventDefault(); setHead(mapAfter.length - 1); }
+  });
 
   function targets(): Entry[] {
     return BATCH_MODES.has(mode) ? okFiles() : [entry()];
@@ -713,7 +888,7 @@ const to = String(preset.to ?? 24000 / 1001);
     $<HTMLSelectElement>('filePick').innerHTML = '';
     $('loaded').hidden = true;
     $('fileNote').hidden = true;
-    drop.hidden = false;
+    root.classList.remove('has-file');
     $('pick').hidden = false;
   });
   $('download').addEventListener('click', download);

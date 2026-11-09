@@ -1,63 +1,84 @@
 # SubFixer design
 
-A plain document page. One column, type and space, one dark button. No design-system kit,
-no cards, no decoration. The tool should read like a well-set page that happens to work.
+Box office. Every fix is a roll ticket you tear off. You pick the problem by what it looks like,
+drop the file on a big ticket and watch the lines move back into sync on a timeline.
+Direction: cinema roll tickets (seed fc2875a8fe78ff13, brief in `.impeccable/surfaces/`).
 
-Keep it distinct from Stayfile (sibling site), which is on IBM Carbon: Plex, a gray drop
-area with a dashed frame, green links, a 48px top bar and a heading column beside each
-section. SubFixer uses none of those.
+Keep it distinct from Stayfile (IBM Carbon: Plex, gray dashed drop area, green links, 48px
+top bar) and from subtitlefixer.com. SubFixer uses none of those.
 
 ## Structure
 
 - One tool. Every URL (home plus the fix pages in `src/site.ts`) renders the same tool,
-  preset to that page's fix. Drop one file or many, then pick the fix. Switching fixes is
-  client-side and keeps the files.
-- Before a file is loaded, a "What is wrong with your subtitles?" list of native radios
-  (rows split by hairlines) picks the fix. Fix pages preselect their symptom.
-- With several files, a select above the fixes says which file is shown. Timing, frame
-  rate, characters, clean up and convert run on every file and download as one zip.
-- Fix characters lists each candidate encoding as a radio row: name, script, then two
-  sample lines in the page font, so the reader picks the one that reads correctly.
-- Check and edit is a list of rows: number, two mono time fields, a text area, and
-  "Add below" / "Delete" as plain links. A problem shows as a short line of error-color
-  text under the row, never a border or fill.
-- No sidebar or menu. The footer has short grouped lines of plain text links (Timing,
-  Text, Convert, Guides), then the privacy line.
-- Column is 680px wide, left-aligned text, centered on the page. 24px side padding
-  (16px on phones).
+  preset to that page's fix. Switching fixes is client-side and keeps the files.
+- First viewport, left: h1 (800 weight), lede, the drop ticket, the trust row (Free, No upload,
+  No sign-up). Right: the screen, a night still with a yellow subtitle and two lanes
+  (Subtitle, Speech) where the cue slides from its late ghost into line with the speech.
+- Below: "What is wrong with your subtitles?" as ticket rolls, one row per group (Timing,
+  Text, Format). Each ticket has a vertical stub with the fix name, a perforation, a drawing
+  and the symptom in plain words. Rolls use an auto-fill grid, so new fixes just add tickets.
+  On phones each roll is a sideways scroll strip.
+- After a file loads, the screen and drop ticket go away (`.tool.has-file`) and the tool
+  shows: file bar, viewer (the current line on a dark screen, then the cue map with every
+  line as a block, before in gray above, after in the group color below, overlaps in red, a
+  yellow playhead you drag or move with arrow keys), fix tabs, the counter panel, Save as
+  and Download, then the preview table.
+- Below the tool: `.adslot` (empty, hidden until an ad exists), How it works as three
+  numbered columns, Questions as hairline details, then the home-only sections.
+- Footer: a sunk band with the link rolls in columns, each headed by its roll color dot.
+
+## Ticket drawings
+
+All symptom drawings share one grammar on a 240 x 64 viewBox: cue blocks in a lane at
+y 14 to 28, a speech waveform at y 50. Ghost (dashed) blocks mark where a line should
+be. Same baseline idea as the hero lanes. Drawn in `--print` on the ticket paper.
 
 ## Rules
 
-- One primary action on screen at a time: "Choose files" before a file is loaded,
-  "Download fixed file" after. Both are the dark button (ink fill, 6px corners, 46px).
-- The drop area has no frame at rest. While a file is dragged over it gets a light tint and
-  a 2px ink outline. The whole page also accepts drops.
-- The fix chooser is a row of plain words. The chosen fix is ink, bold and underlined. No
-  segmented control, no pills.
-- Inputs: 1px field border, 6px corners, 44px tall. Timecodes use the system mono stack.
-- Lists are normal numbered lists. Questions are native details rows split by hairlines.
-- Links are ink with a light underline that darkens on hover. Blue appears only as the
-  focus ring.
+- Roll colors carry the group everywhere: tickets, tab borders, the selected tab fill, the
+  cue map's after lane, footer dots. Timing red-orange, Text green, Format blue.
+- One primary action at a time: "Choose files" (yellow on the drop ticket) before a file is
+  loaded, "Download fixed file" (ink fill) after.
+- The drop ticket is printed on the opposite stock: ink in light mode, pale in dark mode.
+  Drag-over adds a 4px yellow ring and a slight tilt.
+- A picked ticket lifts, gets a 3px ink ring and a stamped "Picked" mark. State is never
+  color alone.
+- Ticket notches are CSS masks, perforations are dot gradients. No images.
 - Never a thick colored border on one side of a box (the impeccable side-tab check is on).
   The error box gets a full 1px red border.
-- No shadows, no animation, no images, no icons.
+- Motion: the hero cue snap loop, ticket lift on hover, drop tilt. Ease-out only. All off under
+  prefers-reduced-motion.
+- Corners: 14 to 16px on big surfaces (drop, screen, counter), 10px tickets, 8px controls.
 
 ## Type
 
-Atkinson Hyperlegible Next 400 and 600 (Braille Institute, OFL), self-hosted latin subset in
-`public/fonts` with `AtkinsonHyperlegibleNext-OFL.txt`. Chosen for legibility, which suits
-a subtitle tool. Body 17/1.6, small 15, h1 34/1.2 (28 on phones), h2 20/1.3.
+Atkinson Hyperlegible Next 400, 600 and 800 (Braille Institute, OFL), self-hosted latin
+subset in `public/fonts` with `AtkinsonHyperlegibleNext-OFL.txt`. 800 for h1, h2, the drop
+headline, stub caps and the brand. Body 17/1.6. h1 clamp 36 to 58px, tight tracking.
+Hyphenated words in the h1 never break. Timecodes and format chips use the system mono stack.
 
 ## Tokens
 
 | Token | Light | Dark |
 |---|---|---|
-| bg | #ffffff | #141414 |
-| tint (drag-over) | #f3f2ef | #1f1f1e |
-| ink | #1c1c1c | #ecebe8 |
-| soft (secondary text) | #5c5c5c | #a8a6a1 |
-| rule (hairlines) | #e4e2dd | #2e2d2b |
-| field (input borders) | #8f8d87 | #6e6d68 |
-| btn / btn-text | #1c1c1c / #ffffff | #ecebe8 / #141414 |
+| bg (ground) | #e4e5e8 | #121015 |
+| raise (panels) | #f3f3f5 | #1c1a21 |
+| sunk (footer) | #d6d8dd | #0c0b0e |
+| ink | #17151b | #efedf3 |
+| soft | #4f4d57 | #aaa6b5 |
+| rule | #c3c5cc | #2e2b35 |
+| field | #7d7b86 | #6c6878 |
+| stock / stock-ink (drop ticket) | #17151b / #f3f3f5 | #efedf3 / #17151b |
+| timing / text / convert paper | #f2683a / #3db56d / #5a8ef0 | same |
+| print (ink on paper) | #17110e | same |
+| screen | #0b0a0e | #070609 |
+| sub (subtitle yellow, Choose files) | #ffe14d | same |
 | focus | #2f5bd3 | #8aa8ff |
 | error | #c8102e | #ff6b7d |
+
+## Finish review
+
+Verdict: ships. Checked desktop 1440 and phone 390, light and dark, home, a loaded file and a
+preset page, with no horizontal scroll. Detector clean. Functional run passes (encoding, ASS
+italics, editor, cleaner, from-line shift, exports, batch zip, ticket switching, reset) with no
+page errors and no non-GET requests. No raster images ship; every visual is inline SVG or CSS.

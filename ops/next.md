@@ -1,3 +1,4 @@
-- Update next.md with completed launch tasks.
-- Consider adding FAQ for common subtitle conversion questions.
-- Check for any other missing subtitle format conversions.
+- Check the SBV page's YouTube Studio download steps against current YouTube UI, and fix the copy if they changed.
+- Look for a rough edge in convert-mode output (preview and download) and fix it with a test.
+- Review the privacy FAQ's offline claim against the service worker setup before the next copy pass.
+- Add a short FAQ to the sync-subtitles page on how to find the time of a spoken line.

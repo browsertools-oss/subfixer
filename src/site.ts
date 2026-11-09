@@ -157,6 +157,7 @@ export const PAGES: ToolPage[] = [
     steps: ['Drop in your .srt file.', 'Output is preset to WebVTT.', 'Download the .vtt file.'],
     faq: [
       { q: 'What changes between SRT and VTT?', a: 'VTT adds a WEBVTT header and uses a dot instead of a comma before milliseconds. The text and timing stay the same.' },
+      { q: 'How do I add the VTT file to an HTML5 video?', a: 'Put it in a track element: <track kind="subtitles" src="subs.vtt" srclang="en" label="English" default>, placed inside your <video> tag next to the file.' },
       PRIVACY_FAQ,
     ],
   },

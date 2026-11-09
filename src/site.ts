@@ -160,6 +160,10 @@ export const PAGES: ToolPage[] = [
         q: 'Which lines should I pick?',
         a: 'The further apart the better: one in the first few minutes and one in the last few. Choose short lines that start right when someone speaks.',
       },
+      {
+        q: 'How do I find the time a line is spoken?',
+        a: 'Play the video in any player and pause the moment the first word is spoken. The player shows the time, and that is the number to type into the tool.',
+      },
       PRIVACY_FAQ,
     ],
   },

@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
+      - id: prompt
+        run: |
+          { echo 'text<<PROMPT_EOF'; cat .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
       - uses: anthropics/claude-code-action@v1
         env:
           # OpenRouter's Anthropic-compatible endpoint. To move to Claude direct later:
@@ -30,7 +33,8 @@ jobs:
           ANTHROPIC_DEFAULT_SONNET_MODEL: ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
         with:
           anthropic_api_key: ${{ secrets.OPENROUTER_API_KEY }}
-          prompt_file: .github/agent/daily.md
+          prompt: ${{ steps.prompt.outputs.text }}
+          github_token: ${{ github.token }}
           claude_args: >-
             --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
             --max-turns 30

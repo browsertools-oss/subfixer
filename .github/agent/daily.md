@@ -4,7 +4,7 @@ Budget: about 25 tool calls. Don't explore the whole repo; read only the files t
 
 Each run:
 1. Run `npm test` and `npm run build`. If either fails, fix it on a branch and open a PR; never push a broken main.
-2. Read ops/log.md for context from earlier runs.
+2. Read ops/log.md for context from earlier runs, and ops/roadmap.md for the owner-approved plan.
 3. Do one small improvement, in this order of preference:
    - fix a bug or a rough edge in the tool,
    - add or improve one tool page in src/site.ts that targets a real search phrase,

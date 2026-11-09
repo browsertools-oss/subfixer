@@ -5,7 +5,7 @@ Monetization model: free tools for traffic, a paid tier on the tools that get tr
 
 ## Accounts (Nov 9th, 2026)
 - AdSense account created (the owner's personal Google account, publisher pub-3033001375409079). The script and ads.txt are live on both sites, the payment profile is done, and both sites were submitted for review on Nov 9th, 2026. Ads appear only after Google approves.
-- Lemon Squeezy store "SubFixer" (subfixer.lemonsqueezy.com) exists in test mode. The owner still has to verify identity and connect a bank to activate it. Don't open decision issues for either signup.
+- Lemon Squeezy store "SubFixer" (subfixer.lemonsqueezy.com) exists. Identity and bank (****8448) were submitted Nov 9th, 2026 and are under review; the owner still has to submit tax info. Don't open decision issues for either signup.
 - Ads go live once the owner adds the AdSense publisher ID (ca-pub-...) to the repo, and the paid tier once the Lemon Squeezy product exists. Traffic triggers below still decide when ads or pricing are shown.
 ## Paid tier (SubFixer Pro)
 - Offer: batch fixing (many files at once, zip in and out), saved presets. About $4/month or $24/year.

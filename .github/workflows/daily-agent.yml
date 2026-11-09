@@ -1,0 +1,37 @@
+name: daily-agent
+on:
+  schedule:
+    - cron: '17 14 * * *' # 6:17am Pacific
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+concurrency: daily-agent
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - uses: anthropics/claude-code-action@v1
+        env:
+          # OpenRouter's Anthropic-compatible endpoint. To move to Claude direct later:
+          # delete these three lines and set anthropic_api_key to an Anthropic key.
+          ANTHROPIC_BASE_URL: https://openrouter.ai/api
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY: ''
+          # Keep Claude Code's background calls on the same model so nothing bills elsewhere.
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
+          ANTHROPIC_DEFAULT_SONNET_MODEL: ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
+        with:
+          anthropic_api_key: ${{ secrets.OPENROUTER_API_KEY }}
+          prompt_file: .github/agent/daily.md
+          claude_args: >-
+            --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
+            --max-turns 30
+            --allowedTools "Bash(npm run build),Bash(npm test),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"

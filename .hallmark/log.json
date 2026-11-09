@@ -1,0 +1,31 @@
+[
+ {
+  "shape": "app screen",
+  "theme": "broadside",
+  "axes": "light/display-condensed/warm",
+  "hero": "bill beside screen",
+  "nav": "wordmark on hair rule",
+  "footer": "ink band index",
+  "imagery": "built screen svg",
+  "photos": 0,
+  "entry": "redesign",
+  "sections": [
+   "hero",
+   "symptom index",
+   "how it works",
+   "questions",
+   "why",
+   "guides",
+   "footer"
+  ],
+  "signature": "cue sliding back onto its speech",
+  "waived": [
+   "39b",
+   "28b",
+   "49b"
+  ],
+  "prompt": "redesign subfixer, less AI-looking type",
+  "date": "2026-11-09",
+  "mode": "build"
+ }
+]

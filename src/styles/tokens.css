@@ -1,0 +1,48 @@
+:root {
+  color-scheme: light;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.75rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.2rem; --text-xl: 1.44rem; --text-2xl: 1.728rem; --text-3xl: 2.074rem;
+  --text-display-s: 1.44rem; --text-display: 1.728rem; --text-section: 1.2rem; --text-title: 1rem; --text-lead: 1rem;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+  --color-paper: oklch(92% 0.028 88); --color-paper-2: oklch(88.5% 0.032 88); --color-paper-3: oklch(85% 0.036 86);
+  --color-ink: oklch(18% 0.01 50); --color-ink-2: oklch(30% 0.012 50); --color-muted: oklch(43% 0.02 62);
+  --color-rule: oklch(75% 0.028 82);
+  --color-accent: oklch(53% 0.19 33); --color-accent-ink: oklch(95.5% 0.018 88); --color-focus: oklch(53% 0.19 33);
+  --font-display: "Six Caps", "Impact", sans-serif; --font-display-2: "Bevan", Georgia, serif;
+  --font-body: "Archivo Narrow", "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-outlier: var(--font-body);
+  --radius-card: 0; --radius-pill: 0; --rule-hair: 1px; --rule-bar: 5px; --rule-frame: 3px;
+  --shadow-card: none;
+  --tracking-display: 0.02em; --display-weight: 400;
+  --grain: 0.08;
+}
+/* SubFixer: the screen, the subtitle line and the controls, on top of the Broadside bill */
+:root {
+  --color-on-ink: oklch(95.5% 0.018 88);
+  --color-screen: oklch(16% 0.01 50); --color-screen-2: oklch(23% 0.012 50); --color-screen-line: oklch(32% 0.012 50);
+  --color-screen-ink: oklch(90% 0.022 88); --color-screen-muted: oklch(66% 0.02 70);
+  --color-sub: oklch(96% 0.012 88); --color-sub-edge: oklch(10% 0.008 50);
+  --color-error: oklch(50% 0.19 27);
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --grain-speck: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9 -4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-blend: multiply;
+}
+/* broadside: inked, the dark colourway */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-paper: oklch(17% 0.01 60); --color-paper-2: oklch(21% 0.012 60); --color-paper-3: oklch(25% 0.014 60);
+    --color-ink: oklch(92% 0.028 88); --color-ink-2: oklch(84% 0.026 86); --color-muted: oklch(72% 0.022 78);
+    --color-rule: oklch(38% 0.014 62);
+    --color-accent: oklch(63% 0.19 33); --color-accent-ink: oklch(15% 0.01 50); --color-focus: oklch(72% 0.16 40);
+    --color-on-ink: oklch(17% 0.01 60);
+    --color-screen: oklch(12% 0.008 50); --color-screen-2: oklch(19% 0.01 50);
+    --color-error: oklch(70% 0.17 27);
+    --grain-speck: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 9 -4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    --grain-blend: screen;
+  }
+}

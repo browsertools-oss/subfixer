@@ -38,6 +38,23 @@ async function madeToday() {
   return 0;
 }
 
+// --- visitors: yesterday's unique visitors from Cloudflare zone analytics (null if the token can't read them) ---
+async function visitorsYesterday() {
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+  if (!token) return null;
+  const H = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+  try {
+    const z = await (await fetch('https://api.cloudflare.com/client/v4/zones?name=subfixer.app', { headers: H })).json();
+    const zone = z?.result?.[0]?.id;
+    if (!zone) return null;
+    const day = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    const query = `{ viewer { zones(filter: {zoneTag: "${zone}"}) { httpRequests1dGroups(limit: 1, filter: {date: "${day}"}) { uniq { uniques } } } } }`;
+    const g = await (await fetch('https://api.cloudflare.com/client/v4/graphql', { method: 'POST', headers: H, body: JSON.stringify({ query }) })).json();
+    const u = g?.data?.viewer?.zones?.[0]?.httpRequests1dGroups?.[0]?.uniq?.uniques;
+    return u == null ? null : { day, visitors: u };
+  } catch { return null; }
+}
+
 // --- history ---
 const rows = readFileSync(csvPath, 'utf8').trim().split('\n').slice(1).filter(Boolean).map((l) => {
   const [date, spent, made, visitors] = l.split(',');
@@ -53,6 +70,13 @@ const made = await madeToday();
 
 const without = rows.filter((r) => r.date !== today);
 without.push({ date: today, spent: aiToday, made, visitors: null });
+const seen = await visitorsYesterday();
+if (seen) {
+  const row = without.find((r) => r.date === seen.day);
+  if (row) row.visitors = seen.visitors;
+  else without.unshift({ date: seen.day, spent: 0, made: 0, visitors: seen.visitors });
+  without.sort((a, b) => a.date.localeCompare(b.date));
+}
 const hist = without.slice(-90);
 
 if (!dry) {
@@ -105,6 +129,8 @@ The first line is money made and the second is cash spent (domains, credits, pla
 | Spent | ${usd(spentToday)} | ${usd(mtdSpent)} | $50.00 |
 | Made | ${usd(made)} | ${usd(mtdMade)} | |
 | Net | ${usd(made - spentToday)} | ${usd(mtdMade - mtdSpent)} | |
+
+Visitors yesterday: ${seen ? seen.visitors : 'not available yet'}. Last 7 days: ${hist.slice(-8).reduce((a, r) => a + (r.visitors ?? 0), 0)}.
 
 LLM spend today: ${llmTotal == null ? 'not available (no key yet)' : usd(llmToday)}${credit && llmTotal != null ? ` (from prepaid credit: ${usd(aiUsedAll)} of ${usd(credit)} used)` : ''}.
 

@@ -45,3 +45,10 @@ jobs:
               -d "{\"type\":\"CNAME\",\"name\":\"$DOMAIN\",\"content\":\"$PROJECT.pages.dev\",\"proxied\":true}" \
               "$api/zones/$zone/dns_records" | grep -o '"success":[a-z]*'
           fi
+      - name: Tell Bing and other IndexNow engines about every page
+        run: |
+          sleep 20
+          urls=$(curl -s "https://$DOMAIN/sitemap-0.xml" | grep -o '<loc>[^<]*</loc>' | sed 's/<[^>]*>//g' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.stringify(s.trim().split("\n").filter(Boolean))))')
+          curl -s -o /dev/null -w "IndexNow %{http_code}\n" -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"$DOMAIN\",\"key\":\"9784fecf391559140413a110b36dc38f\",\"keyLocation\":\"https://$DOMAIN/9784fecf391559140413a110b36dc38f.txt\",\"urlList\":$urls}" || true

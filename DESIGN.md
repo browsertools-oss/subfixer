@@ -26,6 +26,9 @@ top bar) and from subtitlefixer.com. SubFixer uses none of those.
 - Reading options (`#srcOpts`) sit under the file bar and only appear when the file needs one:
   the frame rate for MicroDVD or Spruce files without one, the language for multi-language SAMI,
   reading speed and start time for plain text. Changing one re-reads the file in place.
+- Picture subtitles (.sup) are read with OCR. While it runs, a raised box under the drop ticket
+  shows the file name, a progress bar in the Format blue, a short warning and a Stop link. The
+  reader (tesseract.js) loads only when a .sup file arrives. The OCR language sits in the reading options.
 - Merge files is a tab like the others. "Add files" on the file bar appends files without
   dropping the ones already loaded.
 - Below the tool: `.adslot` (empty, hidden until an ad exists), How it works as three

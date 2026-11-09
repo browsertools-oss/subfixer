@@ -582,6 +582,26 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'sup-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'SUP to SRT: read Blu-ray picture subtitles into text online',
+    h1: 'Convert Blu-ray SUP subtitles to SRT',
+    lede: 'A .sup file stores each line as a picture. The tool reads the words with OCR in your browser and gives you an SRT you can edit.',
+    description: 'Convert Blu-ray PGS .sup picture subtitles to SRT with OCR in your browser. 24 languages. Free, and the file stays on your device.',
+    steps: [
+      'Drop in your .sup file. The first time, the text reader downloads a few MB.',
+      'Wait while it reads each picture, then pick the language if the words look off.',
+      'Look over the lines in Check and edit, then download the .srt file.',
+    ],
+    faq: [
+      { q: 'Why are some letters wrong?', a: 'OCR guesses each letter from the picture, so l, I and 1 or rn and m get mixed up now and then. Fix them in Check and edit before you download.' },
+      { q: 'Can it read DVD .sub and .idx files?', a: 'Not yet. Those hold DVD pictures in a different layout. Only Blu-ray .sup files work for now.' },
+      { q: 'Is my file uploaded?', a: 'No. The pictures are read on this device. The only download is the reader itself and its language data, from a public code library.' },
+    ],
+  },
+  {
     slug: 'txt-to-srt',
     mode: 'convert',
     group: 'Convert',

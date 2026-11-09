@@ -28,7 +28,7 @@ fix. Free, with no account.
   characters (encoding), clean up, check and edit, convert format, merge files. More are coming,
   so the fix count grows past 7. Layouts must not hard-code seven.
 - Batch: up to 100 files, downloaded as one zip.
-- Formats in: SRT, VTT, ASS, SSA, MicroDVD SUB, SBV, SAMI, LRC, TTML, DFXP, YouTube XML, EBU and Spruce STL, TXT.
+- Formats in: SRT, VTT, ASS, SSA, MicroDVD SUB, SBV, SAMI, LRC, TTML, DFXP, YouTube XML, EBU and Spruce STL, TXT, Blu-ray SUP (read with OCR in the browser; tesseract.js and its language data load from the jsDelivr CDN only when a .sup file arrives).
   Formats out: subtitle formats plus TXT, CSV, DOCX and XLSX.
 - Static Astro site on Cloudflare Pages. No server processing, no paid APIs ($50/mo cap).
   Heavy libraries are lazy-loaded.

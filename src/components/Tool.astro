@@ -2,6 +2,7 @@
 import type { Mode } from '../site';
 import { LANG_ENCODINGS } from '../lib/subs';
 import { DOC_FORMATS } from '../lib/export';
+import { OCR_LANGS } from '../lib/ocr';
 interface Props {
   mode: Mode;
   preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string };
@@ -50,8 +51,8 @@ const fps = [
 ];
 const from = String(preset.from ?? 25);
 const to = String(preset.to ?? 24000 / 1001);
-const FORMATS = ['SRT', 'VTT', 'ASS', 'SSA', 'SUB', 'SBV', 'SMI', 'TTML', 'DFXP', 'XML', 'STL', 'LRC', 'TXT'];
-const ACCEPT = '.srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.ttml,.dfxp,.xml,.stl,.txt';
+const FORMATS = ['SRT', 'VTT', 'ASS', 'SSA', 'SUB', 'SBV', 'SMI', 'TTML', 'DFXP', 'XML', 'STL', 'SUP', 'LRC', 'TXT'];
+const ACCEPT = '.srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.ttml,.dfxp,.xml,.stl,.sup,.txt';
 
 // Ticket drawings. One fixed scale for all of them: 240 x 64, cue lane on top, speech underneath,
 // so every problem reads against the same timeline.
@@ -102,6 +103,12 @@ const ART: Record<string, string> = {
       </label>
       <ul class="trust" aria-label="The deal"><li>Free</li><li>No upload</li><li>No sign-up</li></ul>
       <p class="error" id="loadError" hidden></p>
+      <div class="ocr" id="ocr" hidden aria-live="polite">
+        <p class="ocr-msg" id="ocrMsg"></p>
+        <progress id="ocrBar" max="1" value="0"></progress>
+        <p class="hint">Picture subtitles hold images, not text, so the words are read with OCR. It takes a while and gets some letters wrong, so check the lines before you download. Your file stays on this device. Only the reader itself is downloaded.</p>
+        <button type="button" class="link" id="ocrStop">Stop</button>
+      </div>
     </div>
 
     <figure class="screen" aria-hidden="true">
@@ -169,6 +176,9 @@ const ART: Record<string, string> = {
     <div class="panel srcopts" id="srcOpts" hidden>
       <label id="srcFpsWrap" hidden>This file counts frames. Its video runs at
         <select id="srcFps">{fps.map((f) => <option value={f.v} selected={f.l === '23.976'}>{f.l} fps</option>)}</select>
+      </label>
+      <label id="ocrLangWrap" hidden>Language of the text in the pictures
+        <select id="ocrLang">{OCR_LANGS.map((l) => <option value={l.v}>{l.l}</option>)}</select>
       </label>
       <label id="trackWrap" hidden>Language in this file
         <select id="track"></select>
@@ -339,8 +349,9 @@ const ART: Record<string, string> = {
   } from '../lib/subs';
   import { DOC_FORMATS, isDocFormat, exportDoc, zipFiles, type DocFormat } from '../lib/export';
   import { isEbuStl, parseEbuStl, mergeStack, mergeTop, mergeParts, autoOffsets } from '../lib/formats';
+  import { isSup, isVobSub, parseSup, type SupImage } from '../lib/sup';
 
-  type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[]; track?: string };
+  type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[]; track?: string; sup?: SupImage[]; ocrLang?: string };
 
   const root = document.getElementById('tool')!;
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -407,10 +418,51 @@ const ART: Record<string, string> = {
     return { cps: +$<HTMLSelectElement>('txtCps').value || 15, startMs: isNaN(start) ? 0 : start };
   }
 
+  // ---------- picture subtitles (.sup) ----------
+
+  const LANG_HINT: Record<string, string> = {
+    en: 'eng', eng: 'eng', english: 'eng', es: 'spa', spa: 'spa', spanish: 'spa', fr: 'fra', fre: 'fra', fra: 'fra', french: 'fra',
+    de: 'deu', ger: 'deu', deu: 'deu', german: 'deu', it: 'ita', ita: 'ita', italian: 'ita', pt: 'por', por: 'por', nl: 'nld', dut: 'nld', nld: 'nld',
+    sv: 'swe', swe: 'swe', da: 'dan', dan: 'dan', no: 'nor', nor: 'nor', fi: 'fin', fin: 'fin', pl: 'pol', pol: 'pol', cs: 'ces', cze: 'ces', ces: 'ces',
+    hu: 'hun', hun: 'hun', ro: 'ron', rum: 'ron', ron: 'ron', tr: 'tur', tur: 'tur', el: 'ell', gre: 'ell', ell: 'ell', ru: 'rus', rus: 'rus',
+    uk: 'ukr', ukr: 'ukr', he: 'heb', heb: 'heb', ar: 'ara', ara: 'ara', zh: 'chi_sim', chi: 'chi_sim', zho: 'chi_sim', ja: 'jpn', jpn: 'jpn', ko: 'kor', kor: 'kor',
+  };
+  /** movie.fre.sup or Show [German].sup: take the language from the last words of the name. */
+  const guessLang = (name: string) =>
+    name.toLowerCase().replace(/\.[^.]+$/, '').split(/[._\-\s\[\]()]+/).filter(Boolean).slice(-2).reverse().map((t) => LANG_HINT[t]).find(Boolean) ?? $<HTMLSelectElement>('ocrLang').value;
+  let ocrAbort: AbortController | null = null;
+
+  async function readSup(f: Entry, bytes: Uint8Array) {
+    f.sup ??= parseSup(bytes);
+    if (!f.sup.length) throw new Error('No subtitle pictures were found in this file.');
+    const lang = (f.ocrLang ??= guessLang(f.name));
+    const box = $('ocr'), msg = $('ocrMsg'), bar = $<HTMLProgressElement>('ocrBar');
+    ocrAbort = new AbortController();
+    box.hidden = false;
+    try {
+      const { ocrImages } = await import('../lib/ocr');
+      const caps = await ocrImages(f.sup, lang, (d, t, stage) => {
+        bar.max = t;
+        bar.value = d;
+        msg.textContent = stage === 'load' ? `Getting the text reader ready for ${f.name}. The first time, this downloads a few MB.` : `Reading ${f.name}: ${d} of ${t} pictures`;
+      }, ocrAbort.signal);
+      if (!caps.length) throw new Error('No text could be read from the pictures in this file.');
+      f.doc = { format: 'sup', captions: caps, raw: '' };
+      f.encoding = 'OCR';
+      f.error = '';
+      f.edited = false;
+    } finally {
+      box.hidden = true;
+      ocrAbort = null;
+    }
+  }
+
   async function loadEntry(f: Entry, forced = '') {
     f.forced = forced;
     try {
       const bytes = new Uint8Array(f.buf);
+      if (isVobSub(bytes)) throw new Error('This .sub file holds DVD pictures (it comes with an .idx file). Only Blu-ray .sup picture files can be read here.');
+      if (isSup(bytes)) return await readSup(f, bytes);
       if (isEbuStl(bytes)) {
         const r = parseEbuStl(bytes);
         if (!r.captions.length) throw new Error('No subtitle lines were found in this file.');
@@ -448,8 +500,9 @@ const ART: Record<string, string> = {
     if (all.length > room) msgs.push(room > 0 ? `Only ${room} more files fit. The limit is 100.` : 'The limit is 100 files.');
     const next: Entry[] = [];
     for (const f of all.slice(0, Math.max(0, room))) {
-      if (f.size > 20 * 1024 * 1024) {
-        msgs.push(`${f.name} is over 20 MB, which is far bigger than a subtitle file should be.`);
+      const cap = /\.sup$/i.test(f.name) ? 100 : 20;
+      if (f.size > cap * 1024 * 1024) {
+        msgs.push(`${f.name} is over ${cap} MB, which is far bigger than a subtitle file should be.`);
         continue;
       }
       const e: Entry = { name: f.name, buf: await f.arrayBuffer(), doc: null, encoding: '', forced: '', edited: false, error: '' };
@@ -462,6 +515,7 @@ const ART: Record<string, string> = {
       err.hidden = false;
       return;
     }
+    if (next.some((f) => f.doc?.format === 'sup')) msgs.push('Lines from .sup files were read from pictures. Expect a few wrong letters, so look them over in "Check and edit".');
     const note = $('fileNote');
     note.textContent = msgs.join(' ');
     note.hidden = !msgs.length;
@@ -502,9 +556,10 @@ const ART: Record<string, string> = {
       $('fileCount').textContent = `${files.length} files, showing`;
     }
     const c = d.captions;
-    $('fmeta').textContent = `${FORMAT_LABEL[d.format] ?? d.format} · ${n(c.length, 'line')} · ${fmtTime(c[0].start)} → ${fmtTime(c[c.length - 1].end)} · read as ${f.encoding}`;
+    $('fmeta').textContent = `${FORMAT_LABEL[d.format] ?? d.format} · ${n(c.length, 'line')} · ${fmtTime(c[0].start)} → ${fmtTime(c[c.length - 1].end)} · ${f.encoding === 'OCR' ? 'read with OCR' : `read as ${f.encoding}`}`;
     encSel.value = f.forced;
-    encSel.disabled = d.format === 'stl';
+    encSel.disabled = d.format === 'stl' || d.format === 'sup';
+    encSel.closest('label')!.hidden = encSel.disabled;
     showSrcOpts(d);
     f.cands = undefined;
     fillLineSelects();
@@ -526,17 +581,22 @@ const ART: Record<string, string> = {
     const guess = d.frames === 'guess';
     const many = (d.tracks?.length ?? 0) > 1;
     const speed = d.txt === 'speed';
+    const ocr = d.format === 'sup';
+    $('ocrLangWrap').hidden = !ocr;
+    if (ocr) $<HTMLSelectElement>('ocrLang').value = entry().ocrLang ?? 'eng';
     $('srcFpsWrap').hidden = !guess;
     $('trackWrap').hidden = !many;
     $('txtCpsWrap').hidden = $('txtStartWrap').hidden = !speed;
-    $('srcOpts').hidden = !(guess || many || speed);
+    $('srcOpts').hidden = !(guess || many || speed || ocr);
     if (many) {
       const t = $<HTMLSelectElement>('track');
       t.innerHTML = '';
       d.tracks!.forEach((x) => t.add(new Option(x.label, x.id)));
       t.value = d.track ?? '';
     }
-    $('srcHint').textContent = guess
+    $('srcHint').textContent = ocr
+      ? 'Read with OCR. If the words look wrong, pick the language of the text and it reads them again.'
+      : guess
       ? 'The file has no frame rate inside it. If every line is off by more and more, try another rate here.'
       : speed
         ? 'This text has no times, so each line gets time to read it. Shift or sync afterwards to line it up with the video.'
@@ -863,6 +923,10 @@ const ART: Record<string, string> = {
     const f = entry();
     if (!f) return;
     const list = $('candList');
+    if (f.doc?.format === 'sup') {
+      list.innerHTML = '<p class="hint">This text was read from pictures, so there is no character set to fix. Wrong letters can be corrected in "Check and edit".</p>';
+      return;
+    }
     if (f.doc?.format === 'stl') {
       list.innerHTML = '<p class="hint">EBU STL files name their own character set, and this one was read with it. Nothing to pick here.</p>';
       return;
@@ -911,7 +975,7 @@ const ART: Record<string, string> = {
     const counts = new Map<string, number>();
     for (const i of issues) counts.set(i.text, (counts.get(i.text) ?? 0) + 1);
     for (const [t, k] of counts) items.push(`${esc(t)}: ${n(k, 'line')}`);
-    if (!/^utf-?8$/i.test(f.encoding)) items.push(`The file is ${esc(f.encoding)}, not UTF-8. Downloads are saved as UTF-8.`);
+    if (!/^utf-?8$/i.test(f.encoding) && d.format !== 'stl' && d.format !== 'sup') items.push(`The file is ${esc(f.encoding)}, not UTF-8. Downloads are saved as UTF-8.`);
     $('checks').innerHTML = items.length
       ? `<p class="checks-head">${n(items.length, 'thing', 'things')} to look at</p><ul>${items.map((t) => `<li>${t}</li>`).join('')}</ul>`
       : '<p class="checks-head">No problems found.</p>';
@@ -1052,6 +1116,11 @@ const ART: Record<string, string> = {
     inp.value = '';
   });
   $('srcFps').addEventListener('change', () => reparse(true));
+  $('ocrLang').addEventListener('change', () => {
+    entry().ocrLang = $<HTMLSelectElement>('ocrLang').value;
+    reparse(false);
+  });
+  $('ocrStop').addEventListener('click', () => ocrAbort?.abort());
   $('txtCps').addEventListener('change', () => reparse(true));
   $('txtStart').addEventListener('change', () => reparse(true));
   $('track').addEventListener('change', () => {
@@ -1090,7 +1159,7 @@ const ART: Record<string, string> = {
       render();
     }),
   );
-  const quiet = new Set(['enc', 'file', 'filePick', 'lang', 'onlyIssues', 'addFile', 'srcFps', 'txtCps', 'txtStart', 'track']);
+  const quiet = new Set(['enc', 'file', 'filePick', 'lang', 'onlyIssues', 'addFile', 'srcFps', 'txtCps', 'txtStart', 'track', 'ocrLang']);
   const inPanel = (el: HTMLElement) => el.closest('#editor, #candList, .pick');
   root.addEventListener('input', (e) => {
     const t = e.target as HTMLElement;

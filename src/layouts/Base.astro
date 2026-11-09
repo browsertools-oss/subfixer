@@ -249,7 +249,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   legend { padding: 0; }
   .pick { margin: 72px 0 0; }
-  .pick[hidden] { display: none; }
+  .pick[hidden], .enc[hidden] { display: none; }
   .pick legend { font-size: 26px; line-height: 1.2; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 22px; }
   .rolls { display: grid; gap: 26px; }
   .roll { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: start; }
@@ -376,6 +376,10 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .filepick select { height: 36px; max-width: min(420px, 80vw); color: var(--ink); }
   .note { color: var(--soft); font-size: 15px; margin: 14px 0 0; }
   .note[hidden], .batchnote[hidden] { display: none; }
+  .ocr { margin-top: 16px; background: var(--raise); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; justify-items: start; }
+  .ocr[hidden] { display: none; }
+  .ocr-msg { margin: 0; font-weight: 600; }
+  .ocr progress { width: 100%; height: 10px; accent-color: var(--convert); }
   .srcopts { margin-top: 12px; background: var(--raise); border-radius: var(--r); padding: 16px 18px; }
   .srcopts[hidden], .srcopts label[hidden], .outrow label[hidden], #mStack[hidden] { display: none; }
   .addfiles { position: relative; }

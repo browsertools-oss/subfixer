@@ -271,3 +271,19 @@ test('merge: stack, top and parts', () => {
   assert.deepEqual(offs, [0, 5000]);
   assert.deepEqual(mergeParts([a, [{ start: 500, end: 900, text: 'C' }]], offs).at(-1), { start: 5500, end: 5900, text: 'C' });
 });
+
+test('sup: PGS images round trip with timing and ink', async () => {
+  const { buildSup, parseSup, isSup, isVobSub } = await import('../src/lib/sup.ts');
+  const ink = (w: number, h: number) => Uint8Array.from({ length: w * h }, (_, i) => ((i % w) % 7 < 3 && (i / w) % 5 < 3 ? 255 : 0));
+  const imgs = [
+    { start: 1000, end: 2500, width: 200, height: 40, ink: ink(200, 40) },
+    { start: 4000, end: 6000, width: 90, height: 20, ink: ink(90, 20) },
+  ];
+  const sup = buildSup(imgs);
+  assert.ok(isSup(sup));
+  assert.ok(!isVobSub(sup));
+  const out = parseSup(sup);
+  assert.deepEqual(out.map((o) => [o.start, o.end, o.width, o.height]), [[1000, 2500, 200, 40], [4000, 6000, 90, 20]]);
+  assert.deepEqual([...out[0].ink], [...imgs[0].ink]);
+  assert.deepEqual([...out[1].ink], [...imgs[1].ink]);
+});

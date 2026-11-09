@@ -37,6 +37,7 @@ export const FORMAT_LABEL: Record<string, string> = {
   dfxp: 'DFXP (.dfxp)',
   ytxml: 'YouTube XML (.xml)',
   stl: 'EBU STL (.stl)',
+  sup: 'Blu-ray SUP (.sup)',
   spruce: 'Spruce STL (.stl)',
   txt: 'Plain text (.txt)',
 };

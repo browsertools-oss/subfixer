@@ -40,6 +40,20 @@ jobs:
             --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
             --max-turns 60
             --allowedTools "Bash(npm run build),Bash(npm test),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
+      - name: Commit the agent's work if tests and build pass
+        if: always()
+        run: |
+          git config user.name "subfixer-agent"
+          git config user.email "subfixer-agent@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            if npm test && npm run build; then
+              git add -A ':!dist' ':!.astro'
+              git commit -qm "Agent: daily update $(date -u +%F)" && git push -q
+            else
+              echo "Agent changes failed tests/build; discarded." | tee -a ops/discarded.txt
+              git checkout -- . && git clean -fdq -e ops/discarded.txt
+            fi
+          fi
       - name: Daily report
         if: always()
         env:

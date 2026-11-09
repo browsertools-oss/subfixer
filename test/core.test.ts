@@ -159,3 +159,115 @@ test('docx and xlsx are valid zips with the text inside', async () => {
   const zz = unzipSync(await zipFiles([{ name: 'a.srt', data: 'x' }, { name: 'a.srt', data: 'y' }]));
   assert.deepEqual(Object.keys(zz), ['a.srt', 'a (2).srt']);
 });
+
+// ---------- phase 2 formats ----------
+import { parseEbuStl, mergeStack, mergeTop, mergeParts, autoOffsets, parseTxt } from '../src/lib/formats.ts';
+
+test('microdvd with fps header, italics and line breaks', () => {
+  const d = parse('{1}{1}23.976\r\n{24}{72}{y:i}Hello|there\r\n{100}{150}Plain\r\n', 25);
+  assert.equal(d.format, 'sub');
+  assert.equal(d.frames, 'header');
+  assert.equal(d.captions[0].start, 1001);
+  assert.equal(d.captions[0].end, 3003);
+  assert.equal(d.captions[0].text, '<i>Hello</i>\n<i>there</i>');
+  const d2 = parse('{25}{50}Hi\r\n', 25);
+  assert.equal(d2.frames, 'guess');
+  assert.equal(d2.captions[0].start, 1000);
+  assert.equal(build(d2.captions, 'sub', 25), '{25}{50}Hi\r\n');
+  assert.equal(build([{ start: 1001, end: 3003, text: '<i>A</i>\nB' }], 'sub', 24000 / 1001), '{24}{72}{y:i}A|B\r\n');
+});
+
+test('sami with two languages', () => {
+  const smi = `<SAMI><HEAD><STYLE TYPE="text/css"><!--
+.ENCC { Name: English; lang: en-US; }
+.FRCC { Name: French; lang: fr-FR; }
+--></STYLE></HEAD><BODY>
+<SYNC Start=1000><P Class=ENCC>Hello<br>world<P Class=FRCC>Bonjour &amp; salut
+<SYNC Start=3000><P Class=ENCC>&nbsp;<P Class=FRCC>&nbsp;
+<SYNC Start=4000><P Class=ENCC><i>Bye</i>
+</BODY></SAMI>`;
+  const d = parse(smi);
+  assert.equal(d.format, 'smi');
+  assert.deepEqual(d.tracks!.map((t) => t.label), ['English (en-US)', 'French (fr-FR)']);
+  assert.deepEqual(d.captions.map((c) => [c.start, c.end, c.text]), [[1000, 3000, 'Hello\nworld'], [4000, 7000, '<i>Bye</i>']]);
+  const fr = parse(smi, 25, { track: 'frcc' });
+  assert.equal(fr.captions[0].text, 'Bonjour & salut');
+  const back = parse(build(d.captions, 'smi'));
+  assert.deepEqual(back.captions.map((c) => [c.start, c.end, c.text]), [[1000, 3000, 'Hello\nworld'], [4000, 7000, '<i>Bye</i>']]);
+});
+
+test('ttml and dfxp: clock, offset and frame times, italics by style, round trip', () => {
+  const ttml = `<?xml version="1.0"?><tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" ttp:frameRate="25" ttp:tickRate="10000000">
+<head><styling><style xml:id="it" tts:fontStyle="italic"/></styling></head><body><div>
+<p begin="00:00:01.500" end="00:00:03.000">Line one<br/>line   two</p>
+<p begin="40000000t" dur="2s"><span style="it">Leaning</span> words</p>
+<p begin="00:00:06:12" end="00:00:07:00">Frames &amp; more</p>
+</div></body></tt>`;
+  const d = parse(ttml);
+  assert.equal(d.format, 'ttml');
+  assert.deepEqual(d.captions.map((c) => [c.start, c.end, c.text]), [[1500, 3000, 'Line one\nline two'], [4000, 6000, '<i>Leaning</i> words'], [6480, 7000, 'Frames & more']]);
+  const out = build([{ start: 1500, end: 3000, text: '<i>Hi</i>\nA & B' }], 'dfxp');
+  assert.match(out, /ttaf1/);
+  assert.match(out, /<p begin="00:00:01.500" end="00:00:03.000"><span tts:fontStyle="italic">Hi<\/span><br\/>A &amp; B<\/p>/);
+  const back = parse(out, 25, { name: 'x.dfxp' });
+  assert.equal(back.format, 'dfxp');
+  assert.equal(back.captions[0].text, '<i>Hi</i>\nA & B');
+});
+
+test('youtube xml, both flavors', () => {
+  const d = parse('<?xml version="1.0"?><transcript><text start="1.5" dur="2">It&amp;#39;s ok</text><text start="3" dur="2.5">Next</text></transcript>');
+  assert.equal(d.format, 'ytxml');
+  assert.deepEqual(d.captions.map((c) => [c.start, c.end, c.text]), [[1500, 3000, "It's ok"], [3000, 5500, 'Next']]);
+  const d3 = parse('<timedtext format="3"><body><p t="1000" d="1500">Hey <s>you</s></p></body></timedtext>');
+  assert.deepEqual(d3.captions.map((c) => [c.start, c.end, c.text]), [[1000, 2500, 'Hey you']]);
+});
+
+test('spruce stl', () => {
+  const d = parse('$FontName = Arial\r\n00:00:01:00 , 00:00:02:12 , ^IHello^I|World\r\n', 25);
+  assert.equal(d.format, 'spruce');
+  assert.deepEqual(d.captions[0], { start: 1000, end: 2480, text: '<i>Hello</i>\nWorld' });
+});
+
+test('ebu stl binary: ISO 6937 accents, italics, newline, programme start', () => {
+  const buf = new Uint8Array(1024 + 128 * 2).fill(0x20);
+  const put = (o: number, s: string) => [...s].forEach((c, i) => (buf[o + i] = c.charCodeAt(0)));
+  put(0, '850STL25.01'); put(12, '00'); put(256, '10000000');
+  const tti = (o: number, sn: number, tci: number[], tco: number[], text: number[]) => {
+    buf.fill(0x8f, o, o + 128);
+    buf[o] = 0; buf[o + 1] = sn; buf[o + 2] = 0; buf[o + 3] = 0xff; buf[o + 4] = 0;
+    buf.set(tci, o + 5); buf.set(tco, o + 9); buf[o + 13] = 20; buf[o + 14] = 2; buf[o + 15] = 0;
+    buf.set(text, o + 16);
+  };
+  // "Café" with acute as 0xC2 + e, newline 0x8A, italic "oui"
+  tti(1024, 1, [10, 0, 1, 0], [10, 0, 3, 12], [0x43, 0x61, 0x66, 0xc2, 0x65, 0x8a, 0x80, 0x6f, 0x75, 0x69, 0x81]);
+  tti(1152, 2, [10, 0, 4, 0], [10, 0, 5, 0], [0x4f, 0x6b]);
+  const r = parseEbuStl(buf);
+  assert.equal(r.fps, 25);
+  assert.deepEqual(r.captions, [{ start: 1000, end: 3480, text: 'Café\n<i>oui</i>' }, { start: 4000, end: 5000, text: 'Ok' }]);
+});
+
+test('txt: reading speed, embedded times and our own export round trip', () => {
+  const d = parse('Hello there. This is a test of plain text.\n\nSecond paragraph here.', 25, { name: 'a.txt', txt: { cps: 15, startMs: 2000 } });
+  assert.equal(d.format, 'txt');
+  assert.equal(d.txt, 'speed');
+  assert.equal(d.captions[0].start, 2000);
+  assert.ok(d.captions.every((c) => c.end - c.start >= 1000 && c.end - c.start <= 7000));
+  assert.ok(d.captions.every((c) => c.text.split('\n').every((l) => l.length <= 42)));
+  for (let i = 1; i < d.captions.length; i++) assert.ok(d.captions[i].start >= d.captions[i - 1].end);
+  const t = parse('[00:00:01,000 - 00:00:03,000] One\r\n[00:00:04,000 - 00:00:05,500] Two\r\n', 25, { name: 'b.txt' });
+  assert.equal(t.txt, 'times');
+  assert.deepEqual(t.captions.map((c) => [c.start, c.end, c.text]), [[1000, 3000, 'One'], [4000, 5500, 'Two']]);
+  const s = parseTxt('0:05 Hi\n0:07 There\nmore\n');
+  assert.deepEqual(s.map((c) => [c.start, c.end, c.text]), [[5000, 6000, 'Hi'], [7000, 8000, 'There\nmore']]);
+  assert.throws(() => parse('just words', 25, { name: 'x.bin' }));
+});
+
+test('merge: stack, top and parts', () => {
+  const a = [{ start: 0, end: 2000, text: 'A1' }, { start: 3000, end: 4000, text: 'A2' }];
+  const b = [{ start: 1000, end: 3500, text: 'B1' }];
+  assert.deepEqual(mergeStack(a, b).map((c) => [c.start, c.end, c.text]), [[0, 1000, 'A1'], [1000, 2000, 'A1\nB1'], [2000, 3000, 'B1'], [3000, 3500, 'A2\nB1'], [3500, 4000, 'A2']]);
+  assert.equal(mergeTop(a, b)[1].text, '{\\an8}B1');
+  const offs = autoOffsets([a, [{ start: 500, end: 900, text: 'C' }]]);
+  assert.deepEqual(offs, [0, 5000]);
+  assert.deepEqual(mergeParts([a, [{ start: 500, end: 900, text: 'C' }]], offs).at(-1), { start: 5500, end: 5900, text: 'C' });
+});

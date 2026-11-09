@@ -4,14 +4,14 @@ import { LANG_ENCODINGS } from '../lib/subs';
 import { DOC_FORMATS } from '../lib/export';
 interface Props {
   mode: Mode;
-  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean };
+  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string };
   home?: boolean;
   h1: string;
   lede: string;
 }
 const { mode, preset = {}, home = false, h1, lede } = Astro.props;
 type Group = 'timing' | 'text' | 'convert';
-const GROUP_OF: Record<Mode, Group> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert' };
+const GROUP_OF: Record<Mode, Group> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert', merge: 'convert' };
 const tabs: { id: Mode; label: string }[] = [
   { id: 'shift', label: 'Shift timing' },
   { id: 'fps', label: 'Change frame rate' },
@@ -20,6 +20,7 @@ const tabs: { id: Mode; label: string }[] = [
   { id: 'clean', label: 'Clean up' },
   { id: 'edit', label: 'Check and edit' },
   { id: 'convert', label: 'Convert format' },
+  { id: 'merge', label: 'Merge files' },
 ];
 const LABEL = Object.fromEntries(tabs.map((t) => [t.id, t.label])) as Record<Mode, string>;
 // The symptom picker. Each answer opens one of the tabs above, in place. Grouped into rolls so more fixes slot in.
@@ -31,13 +32,15 @@ const symptoms: { id: string; go: Mode; text: string }[] = [
   { id: 'sdh', go: 'clean', text: 'Full of [MUSIC], (laughs) and speaker names' },
   { id: 'broken', go: 'edit', text: 'The player skips lines or will not open the file' },
   { id: 'format', go: 'convert', text: 'Wrong format for my player, website or editor' },
+  { id: 'transcript', go: 'convert', text: 'All I have is a text transcript with no timings' },
+  { id: 'merge', go: 'merge', text: 'Two files I want as one: two languages, or CD1 and CD2' },
 ];
 const ROLLS: { g: Group; name: string }[] = [
   { g: 'timing', name: 'Timing' },
   { g: 'text', name: 'Text' },
   { g: 'convert', name: 'Format' },
 ];
-const picked = home ? '' : preset.fromLine ? 'one-scene' : symptoms.find((s) => s.go === mode)?.id ?? '';
+const picked = home ? '' : preset.symptom ?? (preset.fromLine ? 'one-scene' : symptoms.find((s) => s.go === mode)?.id ?? '');
 const fps = [
   { v: String(24000 / 1001), l: '23.976' },
   { v: '24', l: '24' },
@@ -47,7 +50,8 @@ const fps = [
 ];
 const from = String(preset.from ?? 25);
 const to = String(preset.to ?? 24000 / 1001);
-const FORMATS = ['SRT', 'VTT', 'ASS', 'SSA', 'SUB', 'SBV', 'SMI', 'LRC'];
+const FORMATS = ['SRT', 'VTT', 'ASS', 'SSA', 'SUB', 'SBV', 'SMI', 'TTML', 'DFXP', 'XML', 'STL', 'LRC', 'TXT'];
+const ACCEPT = '.srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.ttml,.dfxp,.xml,.stl,.txt';
 
 // Ticket drawings. One fixed scale for all of them: 240 x 64, cue lane on top, speech underneath,
 // so every problem reads against the same timeline.
@@ -71,6 +75,8 @@ const ART: Record<string, string> = {
   garbled: `<rect class="cu" x="20" y="10" width="205" height="22" rx="3"/><text class="inv" x="122" y="25.5" text-anchor="middle">CafÃ© Ð¿Ñ€Ð¸</text>` + wave(),
   sdh: `<text x="20" y="25">[MUSIC]</text><path class="strike" d="M18 21H82"/><text x="92" y="25">JOHN:</text><path class="strike" d="M90 21H138"/><text x="148" y="25" class="keep">Hello?</text>` + wave(),
   broken: `<rect class="cu" x="20" y="14" width="80" height="14" rx="3"/><rect class="cu ov" x="78" y="14" width="72" height="14" rx="3"/><text class="inv" x="40" y="25">3</text><text class="inv" x="122" y="25">2</text><text x="168" y="25" class="warn">2 before 3</text>` + wave(),
+  transcript: `<path class="tx" d="M20 12h82M20 19h64M20 26h74"/><path class="arrow" d="M112 19h30m-7-6 7 6-7 6"/>` + cue(152, 186) + cue(192, 228) + wave([[150, 188], [192, 230]]),
+  merge: `<rect class="gh" x="20" y="6" width="56" height="10" rx="2"/><rect class="gh" x="20" y="22" width="56" height="10" rx="2"/><path class="arrow" d="M86 19h30m-7-6 7 6-7 6"/><rect class="cu" x="126" y="9" width="96" height="21" rx="3"/><path class="tx inv" d="M134 16h80M134 23h64"/>` + wave(),
   format: `<rect class="gh" x="20" y="11" width="62" height="20" rx="3"/><text x="51" y="25.5" text-anchor="middle">.ass</text><path class="arrow" d="M92 21h46m-7-6 7 6-7 6"/><rect class="cu" x="148" y="11" width="62" height="20" rx="3"/><text class="inv" x="179" y="25.5" text-anchor="middle">.srt</text>` + wave(),
 };
 ---
@@ -82,7 +88,7 @@ const ART: Record<string, string> = {
       <p class="lede">{lede}</p>
 
       <label class="drop" id="drop">
-        <input type="file" id="file" class="visually-hidden" multiple accept=".srt,.vtt,.ass,.ssa,.sub,.sbv,.smi,.sami,.lrc,.txt" />
+        <input type="file" id="file" class="visually-hidden" multiple accept={ACCEPT} />
         <span class="drop-stub" aria-hidden="true"><span>Admit one or many</span></span>
         <span class="drop-body">
           <span class="drop-main">Drop subtitle files here</span>
@@ -156,9 +162,25 @@ const ART: Record<string, string> = {
       <label class="enc">Encoding
         <select id="enc"><option value="">Auto</option></select>
       </label>
+      <label class="link addfiles">Add files<input type="file" id="addFile" class="visually-hidden" multiple accept={ACCEPT} /></label>
       <button type="button" class="link" id="reset">Use other files</button>
     </div>
     <p class="note" id="fileNote" hidden></p>
+    <div class="panel srcopts" id="srcOpts" hidden>
+      <label id="srcFpsWrap" hidden>This file counts frames. Its video runs at
+        <select id="srcFps">{fps.map((f) => <option value={f.v} selected={f.l === '23.976'}>{f.l} fps</option>)}</select>
+      </label>
+      <label id="trackWrap" hidden>Language in this file
+        <select id="track"></select>
+      </label>
+      <label id="txtCpsWrap" hidden>Reading speed
+        <select id="txtCps"><option value="12">Slow</option><option value="15" selected>Normal</option><option value="18">Fast</option></select>
+      </label>
+      <label id="txtStartWrap" hidden>First line at
+        <input id="txtStart" value="00:00:00,000" spellcheck="false" />
+      </label>
+      <p class="hint" id="srcHint"></p>
+    </div>
 
     <div class="viewer" id="viewer">
       <div class="vscreen"><p class="vsub" id="vsub"></p></div>
@@ -256,6 +278,20 @@ const ART: Record<string, string> = {
       <p class="hint">Pick the output format below. Timing and text are kept. Italics and bold carry over where the format allows.</p>
     </div>
 
+    <div class="panel stack" data-panel="merge">
+      <div class="mkind" role="radiogroup" aria-label="How to merge">
+        <label class="check"><input type="radio" name="mkind" value="stack" checked={preset.merge !== 'parts'} /> Two languages on screen together</label>
+        <label class="check"><input type="radio" name="mkind" value="parts" checked={preset.merge === 'parts'} /> Parts one after another, like CD1 and CD2</label>
+      </div>
+      <div class="syncrow" id="mStack">
+        <label>First language <select id="mA"></select></label>
+        <label>Second language <select id="mB"></select></label>
+        <label class="check"><input type="checkbox" id="mTop" /> Put the second language at the top of the screen</label>
+      </div>
+      <div class="mparts" id="mParts" hidden></div>
+      <p class="hint" id="mHint"></p>
+    </div>
+
     </div>
 
     <div class="outrow">
@@ -267,11 +303,18 @@ const ART: Record<string, string> = {
             <option value="ass">ASS</option>
             <option value="ssa">SSA</option>
             <option value="sbv">SBV</option>
+            <option value="sub">MicroDVD (.sub)</option>
+            <option value="smi">SAMI (.smi)</option>
+            <option value="ttml">TTML</option>
+            <option value="dfxp">DFXP</option>
           </optgroup>
           <optgroup label="Text and documents">
             {DOC_FORMATS.map((d) => <option value={d.value}>{d.label}</option>)}
           </optgroup>
         </select>
+      </label>
+      <label id="outFpsWrap" hidden>At
+        <select id="outFps">{fps.map((f) => <option value={f.v} selected={f.l === '23.976'}>{f.l} fps</option>)}</select>
       </label>
       <button type="button" class="primary" id="download">Download fixed file</button>
     </div>
@@ -295,8 +338,9 @@ const ART: Record<string, string> = {
     type Doc, type OutFormat, type Caption, type TimeFn, type Candidate,
   } from '../lib/subs';
   import { DOC_FORMATS, isDocFormat, exportDoc, zipFiles, type DocFormat } from '../lib/export';
+  import { isEbuStl, parseEbuStl, mergeStack, mergeTop, mergeParts, autoOffsets } from '../lib/formats';
 
-  type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[] };
+  type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[]; track?: string };
 
   const root = document.getElementById('tool')!;
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -307,12 +351,13 @@ const ART: Record<string, string> = {
   for (const e of [...ENCODINGS, REPAIR_UTF8]) encSel.add(new Option(e, e));
 
   const BATCH_MODES = new Set(['shift', 'fps', 'encoding', 'clean', 'convert']);
-  const SUB_FORMATS = ['srt', 'vtt', 'ass', 'ssa', 'sbv'];
+  const SUB_FORMATS = ['srt', 'vtt', 'ass', 'ssa', 'sbv', 'sub', 'smi', 'ttml', 'dfxp'];
   const EDITOR_PAGE = 200;
 
   let mode = root.dataset.mode as string;
   let files: Entry[] = [];
   let cur = 0;
+  let mergeOffsets: number[] | null = null;
   let editorLimit = EDITOR_PAGE;
   const entry = () => files[cur];
   const doc = () => files[cur]?.doc ?? null;
@@ -322,7 +367,7 @@ const ART: Record<string, string> = {
 
   // ---------- tabs and symptoms ----------
 
-  const GROUP_OF: Record<string, string> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert' };
+  const GROUP_OF: Record<string, string> = { shift: 'timing', fps: 'timing', sync: 'timing', encoding: 'text', clean: 'text', edit: 'text', convert: 'convert', merge: 'convert' };
   function setTab(id: string) {
     mode = id;
     root.dataset.group = GROUP_OF[id] ?? 'timing';
@@ -333,6 +378,7 @@ const ART: Record<string, string> = {
     $('preview').hidden = id === 'edit';
     if (id === 'edit') renderEditor();
     if (id === 'encoding') renderCands();
+    if (id === 'merge' && files.length) renderMerge();
     render();
   }
   root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab!)));
@@ -356,17 +402,33 @@ const ART: Record<string, string> = {
 
   // ---------- loading ----------
 
+  function txtOpts() {
+    const start = parseTime($<HTMLInputElement>('txtStart').value);
+    return { cps: +$<HTMLSelectElement>('txtCps').value || 15, startMs: isNaN(start) ? 0 : start };
+  }
+
   async function loadEntry(f: Entry, forced = '') {
     f.forced = forced;
     try {
+      const bytes = new Uint8Array(f.buf);
+      if (isEbuStl(bytes)) {
+        const r = parseEbuStl(bytes);
+        if (!r.captions.length) throw new Error('No subtitle lines were found in this file.');
+        f.doc = { format: 'stl', captions: r.captions, raw: '', fps: r.fps, frames: 'header' };
+        f.encoding = 'EBU STL';
+        f.error = '';
+        f.edited = false;
+        return;
+      }
       let { text, encoding } = await decode(f.buf, forced || undefined);
       // jschardet can be unsure on short files. If another code page reads clearly better, use it.
       if (!forced && !/^utf/i.test(encoding)) {
         const best = encodingCandidates(f.buf, ENCODINGS)[0];
         if (best && best.score < garbleScore(text)) ({ text, encoding } = best);
       }
-      const fpsFrom = parseFloat($<HTMLSelectElement>('fpsFrom').value) || 23.976;
-      f.doc = parse(text, fpsFrom);
+      const srcFps = parseFloat($<HTMLSelectElement>('srcFps').value) || 24000 / 1001;
+      f.doc = parse(text, srcFps, { name: f.name, track: f.track, txt: txtOpts() });
+      f.track = f.doc.track;
       f.encoding = encoding;
       f.error = '';
       f.edited = false;
@@ -376,15 +438,16 @@ const ART: Record<string, string> = {
     }
   }
 
-  async function takeFiles(list: FileList | File[]) {
-    const err = $('loadError');
+  async function takeFiles(list: FileList | File[], append = false) {
+    const err = append ? $('opError') : $('loadError');
     err.hidden = true;
     const all = [...list];
     if (!all.length) return;
     const msgs: string[] = [];
-    if (all.length > 100) msgs.push(`Only the first 100 of ${all.length} files were loaded.`);
+    const room = append ? 100 - files.length : 100;
+    if (all.length > room) msgs.push(room > 0 ? `Only ${room} more files fit. The limit is 100.` : 'The limit is 100 files.');
     const next: Entry[] = [];
-    for (const f of all.slice(0, 100)) {
+    for (const f of all.slice(0, Math.max(0, room))) {
       if (f.size > 20 * 1024 * 1024) {
         msgs.push(`${f.name} is over 20 MB, which is far bigger than a subtitle file should be.`);
         continue;
@@ -399,14 +462,23 @@ const ART: Record<string, string> = {
       err.hidden = false;
       return;
     }
-    files = next.filter((f) => f.doc);
-    cur = 0;
     const note = $('fileNote');
     note.textContent = msgs.join(' ');
     note.hidden = !msgs.length;
+    mergeOffsets = null;
+    if (append) {
+      files = files.concat(next.filter((f) => f.doc));
+      if (mode === 'merge') renderMerge();
+      showFile();
+      return;
+    }
+    files = next.filter((f) => f.doc);
+    cur = 0;
     const preset = root.dataset.out;
     const d = files[0].doc!;
     outFmt.value = preset || (SUB_FORMATS.includes(d.format) ? d.format : 'srt');
+    $<HTMLSelectElement>('outFps').value = nearestFps(d.fps);
+    if (mode === 'merge') renderMerge();
     showFile();
     $('pick').hidden = true;
     root.classList.add('has-file');
@@ -432,12 +504,52 @@ const ART: Record<string, string> = {
     const c = d.captions;
     $('fmeta').textContent = `${FORMAT_LABEL[d.format] ?? d.format} · ${n(c.length, 'line')} · ${fmtTime(c[0].start)} → ${fmtTime(c[c.length - 1].end)} · read as ${f.encoding}`;
     encSel.value = f.forced;
+    encSel.disabled = d.format === 'stl';
+    showSrcOpts(d);
     f.cands = undefined;
     fillLineSelects();
     editorLimit = EDITOR_PAGE;
     if (mode === 'edit') renderEditor();
     if (mode === 'encoding') renderCands();
     render();
+  }
+
+  const FPS_VALUES = () => [...$<HTMLSelectElement>('srcFps').options].map((o) => o.value);
+  function nearestFps(f?: number) {
+    const vals = FPS_VALUES();
+    if (!f) return vals[0];
+    return vals.reduce((a, b) => (Math.abs(+b - f) < Math.abs(+a - f) ? b : a));
+  }
+
+  /** Options that change how the file itself is read: frame rate, language, reading speed. */
+  function showSrcOpts(d: Doc) {
+    const guess = d.frames === 'guess';
+    const many = (d.tracks?.length ?? 0) > 1;
+    const speed = d.txt === 'speed';
+    $('srcFpsWrap').hidden = !guess;
+    $('trackWrap').hidden = !many;
+    $('txtCpsWrap').hidden = $('txtStartWrap').hidden = !speed;
+    $('srcOpts').hidden = !(guess || many || speed);
+    if (many) {
+      const t = $<HTMLSelectElement>('track');
+      t.innerHTML = '';
+      d.tracks!.forEach((x) => t.add(new Option(x.label, x.id)));
+      t.value = d.track ?? '';
+    }
+    $('srcHint').textContent = guess
+      ? 'The file has no frame rate inside it. If every line is off by more and more, try another rate here.'
+      : speed
+        ? 'This text has no times, so each line gets time to read it. Shift or sync afterwards to line it up with the video.'
+        : many
+          ? `This file holds ${d.tracks!.length} languages. Pick the one you want.`
+          : '';
+  }
+
+  async function reparse(all: boolean) {
+    for (const f of all ? okFiles() : [entry()]) await loadEntry(f, f.forced);
+    mergeOffsets = null;
+    if (mode === 'merge') renderMerge();
+    showFile();
   }
 
   function fillLineSelects() {
@@ -510,7 +622,7 @@ const ART: Record<string, string> = {
     const fmt = outFmt.value;
     const fn = timeFn(d);
     const from = fromMs();
-    let caps = d.captions;
+    let caps = mode === 'merge' ? mergeCaps() : d.captions;
     if (fn) caps = retime(caps, fn, from);
     if (mode === 'clean') {
       const { captions, report: r } = fixCommon(caps, cleanOpts());
@@ -529,10 +641,10 @@ const ART: Record<string, string> = {
     if (isDocFormat(fmt)) return { caps, text: null };
     const ass = d.format === 'ass' || d.format === 'ssa';
     // Same ASS/SSA format and a timing-only change: rewrite in place so styling survives.
-    if (ass && fmt === d.format && mode !== 'clean' && !f.edited) return { caps, text: fn ? retimeAssRaw(d.raw, fn, from) : d.raw };
+    if (ass && fmt === d.format && mode !== 'clean' && mode !== 'merge' && !f.edited) return { caps, text: fn ? retimeAssRaw(d.raw, fn, from) : d.raw };
     // Only the characters were wrong: keep the file exactly as it was, now in UTF-8.
     if (mode === 'encoding' && fmt === d.format && !f.edited) return { caps, text: d.raw };
-    return { caps, text: build(caps, fmt as OutFormat) };
+    return { caps, text: build(caps, fmt as OutFormat, parseFloat($<HTMLSelectElement>('outFps').value)) };
   }
 
   function render() {
@@ -546,7 +658,8 @@ const ART: Record<string, string> = {
       drawMap(d.captions, caps);
       if (mode === 'edit') return;
       const before = d.captions;
-      const timed = mode !== 'clean';
+      $('outFpsWrap').hidden = outFmt.value !== 'sub';
+      const timed = mode !== 'clean' && mode !== 'merge';
       const show = timed ? before.slice(0, 6).concat(before.length > 12 ? before.slice(-6) : before.slice(6)) : caps.slice(0, 12);
       const plainOut = isDocFormat(outFmt.value) || outFmt.value === 'sbv';
       const rows = show.map((c) => {
@@ -625,6 +738,59 @@ const ART: Record<string, string> = {
     else if (e.key === 'End') { e.preventDefault(); setHead(mapAfter.length - 1); }
   });
 
+  // ---------- merge ----------
+
+  const mkind = () => root.querySelector<HTMLInputElement>('input[name="mkind"]:checked')?.value ?? 'stack';
+  const partOrder = () => [...okFiles()].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+  function renderMerge() {
+    const ok = okFiles();
+    const parts = mkind() === 'parts';
+    $('mStack').hidden = parts;
+    $('mParts').hidden = !parts;
+    const a = $<HTMLSelectElement>('mA'), b = $<HTMLSelectElement>('mB');
+    const ka = a.value, kb = b.value;
+    a.innerHTML = b.innerHTML = '';
+    ok.forEach((f, i) => { a.add(new Option(f.name, String(i))); b.add(new Option(f.name, String(i))); });
+    a.value = ka && +ka < ok.length ? ka : '0';
+    b.value = kb && +kb < ok.length ? kb : String(Math.min(1, ok.length - 1));
+    if (a.value === b.value && ok.length > 1) b.value = a.value === '0' ? '1' : '0';
+    const order = partOrder();
+    mergeOffsets ??= autoOffsets(order.map((f) => f.doc!.captions));
+    $('mParts').innerHTML = order
+      .map((f, i) => `<div class="mpart"><span class="mname">Part ${i + 1}: ${esc(f.name)}</span><input data-part="${i}" value="${fmtTime(mergeOffsets![i])}" aria-label="Start part ${i + 1} at" spellcheck="false" /></div>`)
+      .join('');
+    $('mHint').textContent = ok.length < 2
+      ? 'Merging needs two or more files. Use "Add files" at the top to load the next one.'
+      : parts
+        ? 'Each part starts at the time on its right. Parts that restart at zero are placed after the one before, so check the gap against your video.'
+        : $<HTMLInputElement>('mTop').checked
+          ? 'The second language gets a top-of-screen tag. SRT and ASS players honor it. VTT and the rest show both at the bottom.'
+          : 'Where lines from both files are on screen together, they are stacked into one subtitle.';
+  }
+
+  function mergeCaps(): Caption[] {
+    const ok = okFiles();
+    if (ok.length < 2) return entry().doc!.captions; // the hint under the options asks for a second file
+    if (mkind() === 'parts') {
+      const order = partOrder();
+      const offs = order.map((_, i) => {
+        const el = $('mParts').querySelector<HTMLInputElement>(`[data-part="${i}"]`);
+        const raw = el?.value.trim() ?? '';
+        const ms = /^-?\d+(\.\d+)?$/.test(raw) ? Math.round(parseFloat(raw) * 1000) : parseTime(raw);
+        if (isNaN(ms)) throw new Error(`Part ${i + 1}: type a start time like 00:52:10,000.`);
+        return ms;
+      });
+      mergeOffsets = offs;
+      return mergeParts(order.map((f) => f.doc!.captions), offs);
+    }
+    const a = ok[+$<HTMLSelectElement>('mA').value], b = ok[+$<HTMLSelectElement>('mB').value];
+    if (!a || !b || a === b) throw new Error('Pick two different files.');
+    return ($<HTMLInputElement>('mTop').checked ? mergeTop : mergeStack)(a.doc!.captions, b.doc!.captions);
+  }
+  root.querySelectorAll<HTMLInputElement>('input[name="mkind"]').forEach((r) => r.addEventListener('change', renderMerge));
+  $('mTop').addEventListener('change', renderMerge);
+
   function targets(): Entry[] {
     return BATCH_MODES.has(mode) ? okFiles() : [entry()];
   }
@@ -632,20 +798,22 @@ const ART: Record<string, string> = {
   function updateBatchNote() {
     const many = files.length > 1;
     const t = targets();
-    $('download').textContent = t.length > 1 ? `Download ${t.length} files as a zip` : 'Download fixed file';
+    $('download').textContent = mode === 'merge' ? 'Download merged file' : t.length > 1 ? `Download ${t.length} files as a zip` : 'Download fixed file';
     const note = $('batchNote');
     note.hidden = !many;
     if (!many) return;
-    note.textContent = BATCH_MODES.has(mode)
+    note.textContent = mode === 'merge'
+      ? `The files are combined into one download. The map above shows ${entry().name} before and the merged file after.`
+      : BATCH_MODES.has(mode)
       ? `These settings apply to all ${files.length} files. The preview shows ${entry().name}.${mode === 'shift' && +$<HTMLSelectElement>('fromLine').value > 0 ? ' "Starting at line" uses that line’s time in every file.' : ''}`
       : `This fix works on one file at a time, so only ${entry().name} is downloaded.`;
   }
 
   function outName(f: Entry, fmt: string) {
-    const base = f.name.replace(/\.[^.]+$/, '');
+    const base = f.name.replace(/\.[^.]+$/, '') + (mode === 'merge' ? '.merged' : '');
     const ext = isDocFormat(fmt) ? DOC_FORMATS.find((d) => d.value === fmt)!.ext : fmt;
     const srcExt = (f.name.match(/\.([^.]+)$/)?.[1] ?? '').toLowerCase();
-    return srcExt === ext ? `${base}.fixed.${ext}` : `${base}.${ext}`;
+    return srcExt === ext && mode !== 'merge' ? `${base}.fixed.${ext}` : `${base}.${ext}`;
   }
 
   async function produce(f: Entry): Promise<string | Uint8Array> {
@@ -694,8 +862,12 @@ const ART: Record<string, string> = {
   function renderCands() {
     const f = entry();
     if (!f) return;
-    f.cands ??= encodingCandidates(f.buf, ENCODINGS);
     const list = $('candList');
+    if (f.doc?.format === 'stl') {
+      list.innerHTML = '<p class="hint">EBU STL files name their own character set, and this one was read with it. Nothing to pick here.</p>';
+      return;
+    }
+    f.cands ??= encodingCandidates(f.buf, ENCODINGS);
     const li = $<HTMLSelectElement>('lang').value;
     let cands = f.cands;
     if (li !== '') {
@@ -874,6 +1046,18 @@ const ART: Record<string, string> = {
     if (fl?.length) takeFiles(fl);
   });
 
+  $<HTMLInputElement>('addFile').addEventListener('change', async (e) => {
+    const inp = e.target as HTMLInputElement;
+    if (inp.files?.length) await takeFiles(inp.files, true);
+    inp.value = '';
+  });
+  $('srcFps').addEventListener('change', () => reparse(true));
+  $('txtCps').addEventListener('change', () => reparse(true));
+  $('txtStart').addEventListener('change', () => reparse(true));
+  $('track').addEventListener('change', () => {
+    entry().track = $<HTMLSelectElement>('track').value;
+    reparse(false);
+  });
   encSel.addEventListener('change', async () => {
     await loadEntry(entry(), encSel.value);
     showFile();
@@ -890,6 +1074,7 @@ const ART: Record<string, string> = {
     $('fileNote').hidden = true;
     root.classList.remove('has-file');
     $('pick').hidden = false;
+    mergeOffsets = null;
   });
   $('download').addEventListener('click', download);
   $('swap').addEventListener('click', () => {
@@ -905,7 +1090,7 @@ const ART: Record<string, string> = {
       render();
     }),
   );
-  const quiet = new Set(['enc', 'file', 'filePick', 'lang', 'onlyIssues']);
+  const quiet = new Set(['enc', 'file', 'filePick', 'lang', 'onlyIssues', 'addFile', 'srcFps', 'txtCps', 'txtStart', 'track']);
   const inPanel = (el: HTMLElement) => el.closest('#editor, #candList, .pick');
   root.addEventListener('input', (e) => {
     const t = e.target as HTMLElement;

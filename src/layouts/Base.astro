@@ -280,6 +280,8 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .tk-art text.inv { fill: var(--paper); }
   .tk-art text.keep { font-weight: 800; }
   .tk-art text.warn { font: 700 11px var(--mono); }
+  .tk-art .tx { stroke: var(--print); stroke-width: 3; stroke-linecap: round; opacity: .8; }
+  .tk-art .tx.inv { stroke: var(--paper); opacity: 1; }
   .tk-text { font-size: 16px; font-weight: 600; line-height: 1.35; }
   .tk-punch {
     position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase;
@@ -374,6 +376,17 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .filepick select { height: 36px; max-width: min(420px, 80vw); color: var(--ink); }
   .note { color: var(--soft); font-size: 15px; margin: 14px 0 0; }
   .note[hidden], .batchnote[hidden] { display: none; }
+  .srcopts { margin-top: 12px; background: var(--raise); border-radius: var(--r); padding: 16px 18px; }
+  .srcopts[hidden], .srcopts label[hidden], .outrow label[hidden], #mStack[hidden] { display: none; }
+  .addfiles { position: relative; }
+  .addfiles:focus-within { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .mkind { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+  .mkind label.check { width: auto; }
+  .mparts { display: grid; gap: 10px; }
+  .mparts[hidden] { display: none; }
+  .mpart { display: grid; grid-template-columns: minmax(0, 1fr) 11ch; gap: 6px 16px; align-items: center; }
+  .mpart .mname { font-size: 15px; overflow-wrap: anywhere; }
+  .mpart input { width: 100%; font-family: var(--mono); }
   .batchnote { margin: 14px 0 0; }
 
   .panel.stack { display: block; }

@@ -4,7 +4,7 @@ export const SITE = {
   url: 'https://subfixer.app',
 };
 
-export type Mode = 'shift' | 'fps' | 'sync' | 'encoding' | 'clean' | 'edit' | 'convert';
+export type Mode = 'shift' | 'fps' | 'sync' | 'encoding' | 'clean' | 'edit' | 'convert' | 'merge';
 export type Group = 'Timing' | 'Text' | 'Convert';
 export const GROUPS: Group[] = ['Timing', 'Text', 'Convert'];
 
@@ -16,7 +16,7 @@ export interface ToolPage {
   h1: string;
   lede: string;
   description: string; // meta description
-  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean };
+  preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string };
   steps: string[];
   faq: { q: string; a: string }[];
 }
@@ -470,6 +470,172 @@ export const PAGES: ToolPage[] = [
     faq: [
       { q: 'Is there a limit?', a: 'Up to 100 files, each under 20 MB. Subtitle files are usually well under 1 MB.' },
       { q: 'Each file needs a different offset.', a: 'Then fix them one at a time. A batch applies the same settings to every file.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'microdvd-sub-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'MicroDVD SUB to SRT: convert frame-based .sub subtitles online',
+    h1: 'Convert MicroDVD .sub to SRT',
+    lede: 'MicroDVD files count frames instead of seconds, so they only line up at one frame rate. Pick that rate and get an SRT with real timestamps that any player reads.',
+    description: 'Convert MicroDVD .sub subtitles with {frame}{frame} lines to SRT. Pick the frame rate, keep italics. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .sub file. Lines look like {1025}{1090}Hello.',
+      'If the file does not name its frame rate, pick the rate of your video. 23.976 is the usual one.',
+      'Download the .srt file.',
+    ],
+    faq: [
+      { q: 'My .sub file came with an .idx file.', a: 'That is a VobSub file: pictures of text taken from a DVD, not text. It needs OCR, which is a different job from this converter.' },
+      { q: 'The SRT is in sync at the start and drifts later.', a: 'The frame rate was wrong. Pick a different one at the top of the tool and download again, or use "Change frame rate" afterwards.' },
+      { q: 'Can I go the other way, SRT to MicroDVD?', a: 'Yes. Choose MicroDVD (.sub) under "Save as" and pick the frame rate of the video it will play with.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'smi-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'SMI to SRT converter: convert SAMI subtitles online',
+    h1: 'Convert SAMI .smi to SRT',
+    lede: 'SAMI files often hold more than one language. Pick the one you want and save it as SRT, or keep both on screen with "Merge files".',
+    description: 'Convert SAMI (.smi, .sami) subtitles to SRT, VTT or ASS. Choose the language when the file holds several. Free, nothing is uploaded.',
+    steps: [
+      'Drop in your .smi or .sami file.',
+      'If the file holds several languages, pick one at the top.',
+      'Download the .srt file.',
+    ],
+    faq: [
+      { q: 'The file is in Korean and the letters look broken.', a: 'Many older SAMI files are saved in EUC-KR. Open "Fix characters" and pick the version that reads correctly before you download.' },
+      { q: 'Can I make a SAMI file?', a: 'Yes. Choose SAMI (.smi) under "Save as". It is written as one English track, which Windows Media Player and most TVs read.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'ttml-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'TTML to SRT converter: convert TTML and XML captions online',
+    h1: 'Convert TTML to SRT',
+    lede: 'TTML is the XML caption format used by streaming services and broadcasters. Turn it into SRT for VLC, Plex, TVs and video editors.',
+    description: 'Convert TTML (.ttml, .xml) captions to SRT or VTT. Reads clock times, frames, ticks and italics. Free, and it runs in your browser.',
+    steps: ['Drop in your .ttml or .xml file.', 'Output is preset to SRT.', 'Download the .srt file.'],
+    faq: [
+      { q: 'What happens to colors and positions?', a: 'SRT has neither, so they are dropped. Italics are kept, and line breaks stay where they were.' },
+      { q: 'Some times in my file end in "t" or "f".', a: 'Those are ticks and frames. The converter reads the tick and frame rate from the file header and turns them into normal timestamps.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'dfxp-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'DFXP to SRT converter: convert DFXP captions online',
+    h1: 'Convert DFXP to SRT',
+    lede: 'DFXP is the older name for TTML. Many caption downloads still use it. Convert it to SRT, or the other way round.',
+    description: 'Convert DFXP (.dfxp) captions to SRT, VTT or ASS, or SRT to DFXP. Italics carry over. Free, in your browser, with no upload.',
+    steps: ['Drop in your .dfxp file.', 'Output is preset to SRT. Pick DFXP instead to convert the other way.', 'Download the file.'],
+    faq: [
+      { q: 'Is DFXP the same as TTML?', a: 'Nearly. DFXP is the draft version of TTML and uses a slightly different XML namespace. This tool reads both and can write either one.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'xml-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'YouTube XML to SRT: convert XML subtitles and transcripts online',
+    h1: 'Convert XML subtitles to SRT',
+    lede: 'Saved captions from YouTube as XML? Drop the file in and get an SRT back. TTML files with an .xml name work too.',
+    description: 'Convert YouTube XML captions (transcript and timedtext) and TTML .xml files to SRT or VTT. Free, and the file stays on your computer.',
+    steps: ['Drop in your .xml file.', 'Output is preset to SRT.', 'Download the .srt file.'],
+    faq: [
+      { q: 'Why do the lines overlap in the original?', a: 'YouTube auto captions roll, so each line stays up while the next one starts. The converter cuts each line off when the next one begins, so players show one at a time.' },
+      { q: 'Characters like &#39; show up in my file.', a: 'Those are escaped quotes and accents. They are turned back into the real characters during the conversion.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'stl-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'STL to SRT converter: EBU STL and Spruce STL subtitles online',
+    h1: 'Convert STL to SRT',
+    lede: 'Reads both kinds of STL: the binary EBU files used in broadcast and the text Spruce files from DVD authoring. You get a plain SRT back.',
+    description: 'Convert EBU STL (binary) and Spruce STL subtitles to SRT or VTT. Keeps accents and italics. Free, and nothing leaves your browser.',
+    steps: [
+      'Drop in your .stl file. The tool works out which kind it is.',
+      'For a Spruce file, check the frame rate at the top matches your video.',
+      'Download the .srt file.',
+    ],
+    faq: [
+      { q: 'My EBU file starts at 10:00:00.', a: 'Broadcast files usually start the programme at ten hours. When every line is after that point, the converter counts from there, so the first line lands near zero.' },
+      { q: 'Accented letters came out wrong.', a: 'EBU files name their own character set. The tool reads the Latin, Cyrillic, Greek, Arabic and Hebrew sets.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'txt-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt', symptom: 'transcript' },
+    title: 'TXT to SRT: turn a text transcript into subtitles online',
+    h1: 'Turn a text transcript into SRT subtitles',
+    lede: 'Drop in a .txt file and each sentence becomes a subtitle line. If the text has timestamps like 0:05, they are used. If not, each line gets time to read it.',
+    description: 'Convert a plain text transcript to SRT subtitles. Uses timestamps in the text, or times lines by reading speed. Free, in your browser.',
+    steps: [
+      'Drop in your .txt file.',
+      'With no times in the text, pick a reading speed and when the first line starts.',
+      'Download the .srt file, then shift or sync it to the video if needed.',
+    ],
+    faq: [
+      { q: 'Which timestamps does it understand?', a: 'A time at the start of a line, like 0:05, 01:02:03 or [00:01:05.300], and ranges like [0:05 - 0:09]. Lines without a time join the line above.' },
+      { q: 'How is a line timed without timestamps?', a: 'About 15 characters per second, at least one second and at most seven per line. Lines wrap at 42 characters, two rows per subtitle, and a new subtitle starts at the end of a sentence where it can.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'txt-to-vtt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'vtt', symptom: 'transcript' },
+    title: 'TXT to VTT: turn a text transcript into WebVTT captions online',
+    h1: 'Turn a text transcript into VTT captions',
+    lede: 'Make WebVTT captions for a web video from a plain transcript. Timestamps in the text are used when they are there. Otherwise lines are timed by reading speed.',
+    description: 'Convert a plain text transcript to WebVTT (.vtt) captions for HTML5 video, YouTube or Vimeo. Free, and nothing is uploaded.',
+    steps: [
+      'Drop in your .txt file.',
+      'With no times in the text, pick a reading speed and when the first line starts.',
+      'Download the .vtt file.',
+    ],
+    faq: [
+      { q: 'Will the timing match my video?', a: 'Only roughly when the text has no timestamps. Load the .vtt again and use "Sync two points" with a line near the start and one near the end to line it up.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'merge-subtitles',
+    mode: 'merge',
+    group: 'Convert',
+    title: 'Merge subtitles online: dual-language SRT or join CD1 and CD2',
+    h1: 'Merge two subtitle files into one',
+    lede: 'Show two languages at once for learning or watching together, or join CD1 and CD2 subtitles into one file for a single video.',
+    description: 'Merge two SRT files into dual-language subtitles, or join split CD1 and CD2 subtitles with the right offset. Free, and it runs in your browser.',
+    steps: [
+      'Drop in both files at once, or add the second with "Add files".',
+      'Pick two languages on screen together, or parts one after another.',
+      'Check the preview, then download the merged file.',
+    ],
+    faq: [
+      { q: 'Can the second language go at the top of the screen?', a: 'Yes. Tick "Put the second language at the top". That adds a position tag that VLC and ASS players follow. VTT players ignore it and show both at the bottom.' },
+      { q: 'Where does part 2 start?', a: 'If part 2 restarts at zero, it is placed one second after the last line of part 1. Change the start time to match where CD2 begins in your joined video.' },
       PRIVACY_FAQ,
     ],
   },

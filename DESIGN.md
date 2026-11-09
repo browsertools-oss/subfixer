@@ -15,7 +15,7 @@ top bar) and from subtitlefixer.com. SubFixer uses none of those.
   No sign-up). Right: the screen, a night still with a yellow subtitle and two lanes
   (Subtitle, Speech) where the cue slides from its late ghost into line with the speech.
 - Below: "What is wrong with your subtitles?" as ticket rolls, one row per group (Timing,
-  Text, Format). Each ticket has a vertical stub with the fix name, a perforation, a drawing
+  Text, Format). Nine tickets today. Each ticket has a vertical stub with the fix name, a perforation, a drawing
   and the symptom in plain words. Rolls use an auto-fill grid, so new fixes just add tickets.
   On phones each roll is a sideways scroll strip.
 - After a file loads, the screen and drop ticket go away (`.tool.has-file`) and the tool
@@ -23,6 +23,11 @@ top bar) and from subtitlefixer.com. SubFixer uses none of those.
   line as a block, before in gray above, after in the group color below, overlaps in red, a
   yellow playhead you drag or move with arrow keys), fix tabs, the counter panel, Save as
   and Download, then the preview table.
+- Reading options (`#srcOpts`) sit under the file bar and only appear when the file needs one:
+  the frame rate for MicroDVD or Spruce files without one, the language for multi-language SAMI,
+  reading speed and start time for plain text. Changing one re-reads the file in place.
+- Merge files is a tab like the others. "Add files" on the file bar appends files without
+  dropping the ones already loaded.
 - Below the tool: `.adslot` (empty, hidden until an ad exists), How it works as three
   numbered columns, Questions as hairline details, then the home-only sections.
 - Footer: a sunk band with the link rolls in columns, each headed by its roll color dot.

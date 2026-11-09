@@ -1,14 +1,28 @@
 // Core subtitle logic. Runs entirely in the browser (and in Node for tests).
 import subsrt from 'subsrt-ts';
+import {
+  isMicroDvd, parseMicroDvd, buildMicroDvd, isSami, parseSami, buildSami, isTtml, isDfxp, parseTtml, buildTtml,
+  isYouTubeXml, parseYouTubeXml, isSpruceStl, parseSpruceStl, parseTxt, txtHasTimes, type TxtOptions,
+} from './formats.ts';
 
 export type Caption = { start: number; end: number; text: string };
-export type OutFormat = 'srt' | 'vtt' | 'ass' | 'ssa' | 'sbv' | 'sub';
+export type OutFormat = 'srt' | 'vtt' | 'ass' | 'ssa' | 'sbv' | 'sub' | 'smi' | 'ttml' | 'dfxp';
 
 export interface Doc {
   format: string; // detected input format
   captions: Caption[];
   raw: string; // decoded source text
+  /** Frame-based input: 'header' when the file names its rate, 'guess' when the rate came from the picker. */
+  frames?: 'header' | 'guess';
+  fps?: number;
+  /** SAMI files can carry several languages. */
+  tracks?: { id: string; label: string }[];
+  track?: string;
+  /** Plain text: 'times' when the file has timestamps, 'speed' when timed by reading speed. */
+  txt?: 'times' | 'speed';
 }
+
+export interface ParseOptions { name?: string; track?: string; txt?: TxtOptions }
 
 export const FORMAT_LABEL: Record<string, string> = {
   srt: 'SubRip (.srt)',
@@ -19,6 +33,12 @@ export const FORMAT_LABEL: Record<string, string> = {
   sub: 'MicroDVD (.sub)',
   smi: 'SAMI (.smi)',
   lrc: 'Lyrics (.lrc)',
+  ttml: 'TTML (.ttml)',
+  dfxp: 'DFXP (.dfxp)',
+  ytxml: 'YouTube XML (.xml)',
+  stl: 'EBU STL (.stl)',
+  spruce: 'Spruce STL (.stl)',
+  txt: 'Plain text (.txt)',
 };
 
 // ---------- decoding ----------
@@ -102,10 +122,35 @@ function cleanText(c: any, format: string): string {
   return t.replace(/\s+$/g, '').replace(/^\s+/g, '');
 }
 
-export function parse(raw: string, fps = 23.976): Doc {
-  const text = raw.replace(/^﻿/, '');
+const done = (doc: Doc): Doc => {
+  doc.captions = doc.captions.filter((c) => c.text.trim() !== '');
+  if (!doc.captions.length) throw new Error('No subtitle lines were found in this file.');
+  return doc;
+};
+
+export function parse(raw: string, fps = 23.976, o: ParseOptions = {}): Doc {
+  const text = raw.replace(/^\uFEFF/, '');
+  const name = (o.name ?? '').toLowerCase();
+  if (isMicroDvd(text)) {
+    const r = parseMicroDvd(text, fps);
+    return done({ format: 'sub', captions: r.captions, raw: text, frames: r.fromHeader ? 'header' : 'guess', fps: r.fps });
+  }
+  if (isSami(text)) {
+    const tracks = parseSami(text);
+    if (!tracks.length) throw new Error('No subtitle lines were found in this file.');
+    const t = tracks.find((x) => x.id === o.track) ?? tracks[0];
+    return done({ format: 'smi', captions: t.captions, raw: text, tracks: tracks.map(({ id, label }) => ({ id, label })), track: t.id });
+  }
+  if (isTtml(text)) return done({ format: isDfxp(text) || name.endsWith('.dfxp') ? 'dfxp' : 'ttml', captions: parseTtml(text), raw: text });
+  if (isYouTubeXml(text)) return done({ format: 'ytxml', captions: parseYouTubeXml(text), raw: text });
+  if (isSpruceStl(text)) return done({ format: 'spruce', captions: parseSpruceStl(text, fps), raw: text, frames: 'guess', fps });
   const format = subsrt.detect(text) || '';
-  if (!format) throw new Error("This doesn't look like a subtitle file we can read.");
+  if (!format || (name.endsWith('.txt') && format !== 'srt' && format !== 'vtt')) {
+    if (name.endsWith('.txt') && text.trim()) {
+      return done({ format: 'txt', captions: parseTxt(text, o.txt), raw: text, txt: txtHasTimes(text) ? 'times' : 'speed' });
+    }
+    throw new Error("This doesn't look like a subtitle file we can read.");
+  }
   const parsed: any[] = subsrt.parse(text, { format, fps } as any);
   const captions = parsed
     .filter((c) => c.type === 'caption' || (c.start !== undefined && c.end !== undefined))
@@ -127,6 +172,9 @@ export function parse(raw: string, fps = 23.976): Doc {
 }
 
 export function build(captions: Caption[], format: OutFormat, fps = 23.976): string {
+  if (format === 'sub') return buildMicroDvd(captions, fps);
+  if (format === 'smi') return buildSami(captions.map((c) => ({ ...c, text: c.text.replace(/\{\\[^}]*\}/g, '') })));
+  if (format === 'ttml' || format === 'dfxp') return buildTtml(captions, format);
   const items = captions.map((c, i) => {
     const text =
       format === 'ass' || format === 'ssa' ? htmlToAss(c.text)

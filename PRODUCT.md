@@ -25,10 +25,10 @@ fix. Free, with no account.
 
 ## Capabilities and Constraints
 - Fixes: shift timing (all lines or from a line), change frame rate, sync two points, fix
-  characters (encoding), clean up, check and edit, convert format. Merge and more are coming,
+  characters (encoding), clean up, check and edit, convert format, merge files. More are coming,
   so the fix count grows past 7. Layouts must not hard-code seven.
 - Batch: up to 100 files, downloaded as one zip.
-- Formats in: SRT, VTT, ASS, SSA, SUB, SBV, SMI, LRC (phase 2 adds TTML, DFXP, YouTube XML, STL, TXT).
+- Formats in: SRT, VTT, ASS, SSA, MicroDVD SUB, SBV, SAMI, LRC, TTML, DFXP, YouTube XML, EBU and Spruce STL, TXT.
   Formats out: subtitle formats plus TXT, CSV, DOCX and XLSX.
 - Static Astro site on Cloudflare Pages. No server processing, no paid APIs ($50/mo cap).
   Heavy libraries are lazy-loaded.

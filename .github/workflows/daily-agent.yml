@@ -35,3 +35,17 @@ jobs:
             --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
             --max-turns 30
             --allowedTools "Bash(npm run build),Bash(npm test),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
+      - name: Daily report
+        if: always()
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create report --color 0E8A16 2>/dev/null || true
+          gh label create decision --color D93F0B 2>/dev/null || true
+          git pull --rebase -q || true
+          node scripts/report.mjs
+          git config user.name "subfixer-agent"
+          git config user.email "subfixer-agent@users.noreply.github.com"
+          git add ops/metrics.csv ops/.llm_usage_total 2>/dev/null || true
+          git commit -qm "Daily metrics $(date -u +%F)" && git push -q || true

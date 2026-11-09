@@ -6,9 +6,10 @@ Monetization model: free tools for traffic, a paid tier on the tools that get tr
 - Offer: batch fixing (many files at once, zip in and out), saved presets. About $4/month or $24/year.
 - Checkout: Lemon Squeezy (merchant of record, handles sales tax). Costs nothing until someone pays.
 - Stays client-side: files never leave the browser. The license key only unlocks features.
-- Start when: the site is live and has steady search traffic (roughly 1,000 visits a month).
-- Before that: you may build the batch feature behind a flag and test it, but don't show pricing.
-- When the trigger is hit: open a `decision` issue asking the owner to create the Lemon Squeezy account and product. Never sign up yourself.
+- Trigger: 1,000 or more visits in the last 30 days, summed from the visitors column of ops/metrics.csv. Check it every morning run.
+- Only owner decision: when the trigger is hit, open one `decision` issue titled "Paid tier ready: create the Lemon Squeezy account and product" (it needs his identity, bank and tax details). Never sign up yourself, and don't open it twice.
+- Everything else is yours to decide: the offer, the price, the copy and the build. Before the trigger, build the batch feature behind a flag and test it, but show no pricing.
+- After he creates the product: wire the checkout and license key check, keep files client-side, and turn the flag on.
 
 ## Later
 - The same paid-tier pattern on the file-tools site once it has traffic.

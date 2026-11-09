@@ -67,7 +67,7 @@ main > p:not(.lede) { max-width: 62ch; }
 .drop:hover .drop-btn, .primary:hover { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
 .primary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
 .primary:active, .drop:active .drop-btn { transform: translateY(1px); }
-.primary:disabled { background: var(--color-paper); color: var(--color-muted); border-color: var(--color-rule); cursor: not-allowed; transform: none; }
+.primary:disabled { background: transparent; color: var(--color-muted); border-color: var(--color-rule); cursor: not-allowed; transform: none; }
 .drop-fix { font-weight: 600; }
 .drop-fix:empty { display: none; }
 

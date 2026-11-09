@@ -696,7 +696,7 @@ const ART: Record<string, string> = {
       $('fileCount').textContent = `${files.length} files, showing`;
     }
     const c = d.captions;
-    $('fmeta').textContent = `${FORMAT_LABEL[d.format] ?? d.format} · ${n(c.length, 'line')} · ${fmtTime(c[0].start)} → ${fmtTime(c[c.length - 1].end)} · ${f.encoding === 'OCR' ? 'read with OCR' : `read as ${f.encoding}`}`;
+    $('fmeta').textContent = `${FORMAT_LABEL[d.format] ?? d.format}, ${n(c.length, 'line')} from ${fmtTime(c[0].start)} to ${fmtTime(c[c.length - 1].end)}, ${f.encoding === 'OCR' ? 'read with OCR' : `read as ${f.encoding}`}`;
     encSel.value = f.forced;
     encSel.disabled = d.format === 'stl' || d.format === 'sup';
     encSel.closest('label')!.hidden = encSel.disabled;
@@ -831,7 +831,7 @@ const ART: Record<string, string> = {
   }
   const firstNum = () => Math.max(0, Math.floor(+$<HTMLInputElement>('firstNum').value) || 1);
   const sec = (ms: number) => `${(ms / 1000).toFixed(1).replace(/\.0$/, '')} s`;
-  const sentence = (parts: string[], none: string) => (parts.length ? (parts.join(' · ') + '.').replace(/^./, (c) => c.toUpperCase()) : none);
+  const sentence = (parts: string[], none: string) => (parts.length ? (parts.join(', ') + '.').replace(/^./, (c) => c.toUpperCase()) : none);
 
   function compute(f: Entry, report = false): { caps: Caption[]; text: string | null } {
     const d = f.doc!;
@@ -852,7 +852,7 @@ const ART: Record<string, string> = {
         if (r.fixedOverlaps) parts.push(`${n(r.fixedOverlaps, 'overlap')} fixed`);
         if (r.extended) parts.push(`${n(r.extended, 'short line')} lengthened`);
         if (r.sorted) parts.push('lines put back in time order');
-        $('cleanReport').textContent = parts.length ? (parts.join(' · ') + '.').replace(/^./, (c) => c.toUpperCase()) : 'Nothing needed fixing with these options.';
+        $('cleanReport').textContent = parts.length ? (parts.join(', ') + '.').replace(/^./, (c) => c.toUpperCase()) : 'Nothing needed fixing with these options.';
       }
     }
     if (mode === 'timing') {
@@ -1031,7 +1031,7 @@ const ART: Record<string, string> = {
     const x = ((c.start - mapT0) * W) / (mapT1 - mapT0);
     $('cmHead').setAttribute('d', `M${x.toFixed(1)} 0V${H}`);
     $('vsub').textContent = stripTags(c.text);
-    $('vtime').textContent = `Line ${headIdx + 1} of ${mapAfter.length} · ${fmtTime(c.start)}`;
+    $('vtime').textContent = `Line ${headIdx + 1} of ${mapAfter.length} at ${fmtTime(c.start)}`;
     map.setAttribute('aria-valuenow', String(headIdx));
     map.setAttribute('aria-valuetext', `Line ${headIdx + 1}, ${fmtTime(c.start)}`);
     if (videoOn() && seek) video.currentTime = c.start / 1000;
@@ -1487,7 +1487,7 @@ const ART: Record<string, string> = {
     $('vsub').textContent = k >= 0 ? stripTags(mapAfter[k].text) : '';
     const x = ((t - mapT0) * W) / (mapT1 - mapT0);
     $('cmHead').setAttribute('d', `M${Math.max(0, Math.min(W, x)).toFixed(1)} 0V${H}`);
-    $('vtime').textContent = `${fmtTime(t)}${k >= 0 ? ` · line ${k + 1}` : ''}`;
+    $('vtime').textContent = `${fmtTime(t)}${k >= 0 ? `, line ${k + 1}` : ''}`;
     if (k >= 0) headIdx = k;
   }
   let raf = 0;

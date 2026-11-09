@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../site';
+---
+<Base title={`About | ${SITE.name}`} description="A free, private subtitle fixer that runs in your browser." path="/about/">
+  <h1>About {SITE.name}</h1>
+  <p class="lede">A small, fast tool for the most common subtitle problems: wrong timing, frame-rate drift, garbled characters and the wrong format.</p>
+  <p>Everything runs on your own device, so it is instant, works with private files, and keeps working offline once loaded. It is built on open-source libraries including subsrt-ts and jschardet.</p>
+</Base>

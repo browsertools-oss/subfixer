@@ -1,0 +1,6 @@
+---
+import ToolPage from '../components/ToolPage.astro';
+import { PAGES } from '../site';
+const page = PAGES.find((p) => p.slug === '')!;
+---
+<ToolPage page={page} />

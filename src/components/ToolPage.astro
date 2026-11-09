@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Tool from './Tool.astro';
+import { SITE, type ToolPage } from '../site';
+interface Props { page: ToolPage }
+const { page } = Astro.props;
+const path = page.slug ? `/${page.slug}/` : '/';
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: `${SITE.name}: ${page.h1}`,
+    url: new URL(path, SITE.url).href,
+    applicationCategory: 'MultimediaApplication',
+    operatingSystem: 'Any (runs in the browser)',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: page.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base title={page.title} description={page.description} path={path} jsonld={jsonld}>
+  <h1>{page.h1}</h1>
+  <p class="lede">{page.lede}</p>
+  <Tool mode={page.mode} preset={page.preset} />
+  <h2>How it works</h2>
+  <ol class="steps">{page.steps.map((s) => <li>{s}</li>)}</ol>
+  <h2>Questions</h2>
+  {page.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+</Base>

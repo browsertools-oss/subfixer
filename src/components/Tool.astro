@@ -1,5 +1,4 @@
 ---
-// avoid-ai-design-ignore-file: K7 (every :focus-visible rule lives in src/styles/site.css, loaded on every page by Base.astro)
 import type { Mode } from '../site';
 import { LANG_ENCODINGS } from '../lib/subs';
 import { DOC_FORMATS } from '../lib/export';
@@ -102,10 +101,11 @@ const ART: Record<string, string> = {
 
       <label class="drop" id="drop">
         <input type="file" id="file" class="visually-hidden" multiple accept={ACCEPT} />
+        <span class="drop-stub" aria-hidden="true"><span>Admit one or many</span></span>
         <span class="drop-body">
           <span class="drop-main">Drop subtitle files here</span>
           <span class="drop-sub">One file or a whole season. Nothing leaves your device.</span>
-          <span class="chips">Reads {FORMATS.slice(0, -1).join(', ')} and {FORMATS[FORMATS.length - 1]}.</span>
+          <span class="chips" aria-label="Formats it reads">{FORMATS.map((f) => <span class="chip">{f}</span>)}</span>
           <span class="drop-row">
             <span class="drop-btn" aria-hidden="true">Choose files</span>
             <span class="drop-fix" id="dropFix" aria-live="polite">{picked ? `Fix: ${LABEL[mode]}` : ''}</span>
@@ -131,14 +131,14 @@ const ART: Record<string, string> = {
           <rect x="102" y="140" width="8" height="10" /><rect x="122" y="160" width="8" height="10" /><rect x="292" y="132" width="8" height="10" /><rect x="312" y="152" width="8" height="10" />
           <rect x="292" y="172" width="8" height="10" /><rect x="498" y="150" width="8" height="10" /><rect x="518" y="170" width="8" height="10" /><rect x="190" y="182" width="8" height="10" />
         </g>
-        <text x="320" y="268" text-anchor="middle" class="line">I said ten o’clock, not ten past.</text>
+        <text x="320" y="268" text-anchor="middle" class="line">I said ten o'clock, not ten past.</text>
       </svg>
       <svg class="lanes" viewBox="0 0 640 92">
         <text x="0" y="30" class="lab">Subtitle</text>
         <text x="0" y="72" class="lab">Speech</text>
         <path class="track" d="M84 22H640M84 66H640" />
         <rect class="ghost" x="330" y="12" width="168" height="22" rx="4" />
-        <g class="snap"><rect class="cue" x="250" y="12" width="168" height="22" rx="4" /><text x="334" y="28" text-anchor="middle" class="cuetext">ten o’clock</text></g>
+        <g class="snap"><rect class="cue" x="250" y="12" width="168" height="22" rx="4" /><text x="334" y="28" text-anchor="middle" class="cuetext">ten o'clock</text></g>
         <path class="speech" d={(() => { let d = ''; for (let x = 88; x < 638; x += 6) { const on = x >= 250 && x <= 418; const h = on ? 10 + ((x * 7) % 22) : 2 + ((x * 3) % 4); d += `M${x} ${66 - h / 2}v${h}`; } return d; })()} />
         <path class="head" d="M250 4V88" />
       </svg>
@@ -155,10 +155,10 @@ const ART: Record<string, string> = {
           <div class="tickets">
             {symptoms.filter((s) => GROUP_OF[s.go] === r.g).map((s) => (
               <button type="button" class="tk" data-group={r.g} data-sym={s.id} data-go={s.go}>
+                <span class="tk-stub" aria-hidden="true"><span>{LABEL[s.go]}</span></span>
                 <span class="tk-paper">
                   <svg class="tk-art" viewBox="0 0 240 64" aria-hidden="true" set:html={ART[s.id]} />
                   <span class="tk-text">{s.text}</span>
-                  <span class="tk-fix">{LABEL[s.go]}</span>
                 </span>
               </button>
             ))}
@@ -325,7 +325,7 @@ const ART: Record<string, string> = {
         <label class="check"><input type="checkbox" id="rWord" checked /> Whole words only</label>
         <label class="check"><input type="checkbox" id="rRegex" /> Use patterns (regular expressions)</label>
       </div>
-      <p class="hint" id="replReport">Leave “Replace with” empty to delete what you find. Every loaded file gets the same changes.</p>
+      <p class="hint" id="replReport">Leave "Replace with" empty to delete what you find. Every loaded file gets the same changes.</p>
     </div>
 
     <div class="panel stack" data-panel="edit">
@@ -894,7 +894,7 @@ const ART: Record<string, string> = {
       caps = r.captions;
       if (report)
         $('replReport').textContent = !rules.length
-          ? 'Type what to find. Leave “Replace with” empty to delete it. Every loaded file gets the same changes.'
+          ? 'Type what to find. Leave "Replace with" empty to delete it. Every loaded file gets the same changes.'
           : r.hits
             ? `${n(r.hits, 'match', 'matches')} in ${n(r.lines, 'line')} of this file.${r.emptied ? ` ${n(r.emptied, 'line')} left empty will be deleted.` : ''}`
             : 'No matches in this file.';

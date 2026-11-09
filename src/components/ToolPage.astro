@@ -1,5 +1,4 @@
 ---
-// avoid-ai-design-ignore-file: K7 (every :focus-visible rule lives in src/styles/site.css, loaded on every page by Base.astro)
 import Base from '../layouts/Base.astro';
 import Tool from './Tool.astro';
 import { SITE, GUIDES, type ToolPage } from '../site';
@@ -29,7 +28,7 @@ const jsonld = [
   <div class="adslot" aria-hidden="true"></div>
   <section class="block">
     <h2>How it works</h2>
-    <ol class="steps">{page.steps.map((s, i) => <li><span class="stepno" aria-hidden="true">{i + 1}</span><span>{s}</span></li>)}</ol>
+    <ol class="steps">{page.steps.map((s, i) => <li><span class="stepno" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{s}</span></li>)}</ol>
   </section>
   <section class="block">
     <h2>Questions</h2>

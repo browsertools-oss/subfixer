@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --experimental-strip-types --test test/core.test.ts",
+    "test": "node --experimental-strip-types --test test/core.test.ts test/flow.test.ts",
     "build": "astro build",
     "dev": "astro dev"
   },

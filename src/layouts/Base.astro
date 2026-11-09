@@ -163,7 +163,8 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .tool.has-file .hero { grid-template-columns: 1fr; }
   .tool.has-file .screen, .tool.has-file .drop, .tool.has-file .trust { display: none; }
   .tool.has-file h1 { font-size: clamp(30px, 3.4vw, 40px); }
-  .tool.has-file .lede { margin-bottom: 0; }
+  .tool.has-file .lede { display: none; }
+  .tool.has-file .viewer { margin-top: 28px; }
 
   .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
@@ -251,6 +252,9 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .pick { margin: 72px 0 0; }
   .pick[hidden], .enc[hidden] { display: none; }
   .pick legend { font-size: 26px; line-height: 1.2; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 22px; }
+  .pick-q { display: block; }
+  #loaded, #pick { scroll-margin-top: 20px; }
+  .pick-how { display: block; margin-top: 6px; font-size: 16px; font-weight: 400; letter-spacing: 0; color: var(--soft); }
   .rolls { display: grid; gap: 26px; }
   .roll { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: start; }
   .roll-name { margin: 12px 0 0; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
@@ -263,6 +267,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
     --cut: 40px; --notch: 7px; --dot: var(--bg);
     display: grid; grid-template-columns: 40px 1fr; position: relative; cursor: pointer;
     background: var(--paper); color: var(--print); border-radius: 10px; min-height: 150px;
+    border: 0; padding: 0; margin: 0; width: 100%; font: inherit; text-align: left; appearance: none;
     transition: transform 180ms cubic-bezier(.2,.7,.2,1);
   }
   .tk:hover { transform: translateY(-3px) rotate(-0.4deg); }
@@ -283,14 +288,9 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .tk-art .tx { stroke: var(--print); stroke-width: 3; stroke-linecap: round; opacity: .8; }
   .tk-art .tx.inv { stroke: var(--paper); opacity: 1; }
   .tk-text { font-size: 16px; font-weight: 600; line-height: 1.35; }
-  .tk-punch {
-    position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase;
-    padding: 3px 7px; border: 2px solid var(--print); border-radius: 4px; transform: rotate(6deg); opacity: 0;
-    transition: opacity 160ms, transform 220ms cubic-bezier(.22,1,.36,1);
-  }
-  .tk:has(input:checked) { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--ink); }
-  .tk:has(input:checked) .tk-punch { opacity: 1; transform: rotate(-4deg); }
-  .tk:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 4px; }
+  .tk:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+  .tk:active { transform: translateY(-1px) scale(.99); }
+  .tk.over { box-shadow: 0 0 0 4px var(--sub); transform: translateY(-4px) rotate(-0.6deg); }
 
   /* ---------- loaded: file bar, viewer, fix tabs, the counter ---------- */
   .loaded { margin-top: 28px; }
@@ -320,7 +320,11 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .cuemap .cm-head { stroke: var(--sub); stroke-width: 3; vector-effect: non-scaling-stroke; }
   .cuemap:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 
-  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 24px 0 0; }
+  /* tabs sit in the same three rolls as the symptom tickets, so the jargon has a heading */
+  .tabroll { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .tabroll-name { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--soft); display: flex; align-items: center; gap: 6px; margin-right: 2px; }
+  .tabroll-name::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--paper); }
   .tabs button {
     font: inherit; font-size: 15px; font-weight: 600; height: 42px; padding: 0 16px; cursor: pointer;
     background: transparent; color: var(--ink); border: 2px solid var(--paper); border-radius: 8px;
@@ -362,6 +366,27 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .link:hover { text-decoration-color: currentColor; }
 
   .outrow { display: flex; flex-wrap: wrap; gap: 16px 20px; align-items: flex-end; margin-top: 18px; }
+  .dlwhy { margin: 0; flex: 1 1 220px; align-self: center; color: var(--soft); font-size: 15px; }
+  .dlwhy[hidden] { display: none; }
+  .done { margin-top: 16px; background: var(--raise); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; }
+  .done[hidden] { display: none; }
+  .done-msg { margin: 0; font-weight: 600; }
+  .done-act { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  .candmore { margin-top: 12px; }
+
+  /* shift: say which way the subtitles are off, then by how much */
+  .dir { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .dir legend { font-size: 15px; color: var(--soft); padding: 0; margin-bottom: 6px; }
+  .seg { display: inline-flex; border: 1px solid var(--field); border-radius: 8px; overflow: hidden; }
+  .seg label { position: relative; display: block; cursor: pointer; }
+  .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .seg span { display: flex; align-items: center; height: 42px; padding: 0 16px; font-size: 15px; font-weight: 600; color: var(--ink); background: var(--bg); }
+  .seg label + label span { border-left: 1px solid var(--field); }
+  .seg input:checked + span { background: var(--paper); color: var(--print); font-weight: 800; }
+  .seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: -3px; }
+  #offset { width: 9ch; }
+  .panel .nudges button { font-family: inherit; font-size: 15px; }
+  .shiftsay { width: 100%; margin: 0; font-weight: 600; color: var(--ink); }
   .error { color: var(--ink); font-size: 15px; margin: 16px 0 0; border: 1px solid var(--error); border-radius: 8px; padding: 10px 14px; background: var(--raise); }
   .error[hidden] { display: none; }
   .preview { margin-top: 28px; overflow-x: auto; }
@@ -467,7 +492,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .eissue:empty { display: none; }
   .edit-actions { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 14px; }
   .edit-actions [hidden] { display: none; }
-  .primary:disabled { opacity: 0.6; cursor: progress; }
+  .primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
   /* room for one ad later, below the tool. Empty and takes no space now. */
   .adslot:empty { display: none; }
@@ -532,7 +557,21 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
     .vsub { font-size: 18px; }
     th, td { padding-right: 10px; }
     .primary { width: 100%; }
-    .outrow label { flex: 1 1 100%; }
+    /* the tab rolls become one strip that scrolls sideways */
+    .tabs { flex-wrap: nowrap; overflow-x: auto; margin: 18px -16px 0; padding: 2px 16px 8px; gap: 8px 18px; scrollbar-width: none; }
+    .tabroll { flex-wrap: nowrap; flex: 0 0 auto; }
+    .tabs button { white-space: nowrap; height: 40px; padding: 0 12px; }
+    /* Download stays under the thumb while the settings scroll */
+    /* only the Download button stays under the thumb, so the settings keep the screen */
+    .tool.has-file .outrow { display: contents; }
+    .tool.has-file .outrow label { margin-top: 16px; }
+    .tool.has-file .outrow .primary { position: sticky; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 5; margin-top: 18px; box-shadow: 0 0 0 12px var(--bg); }
+    .tool.has-file .dlwhy { margin-top: 10px; }
+    .dir { flex: 1 1 100%; }
+    .seg { display: flex; width: 100%; }
+    .seg span { white-space: nowrap; }
+    .seg label { flex: 1; }
+    .seg span { justify-content: center; }
     .outrow select { width: 100%; }
     .erow { grid-template-columns: 2rem 1fr 1fr; }
     .eact { grid-column: 2 / -1; justify-self: start; }

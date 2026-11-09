@@ -147,22 +147,20 @@ const ART: Record<string, string> = {
   </div>
 
   <fieldset class="pick" id="pick">
-    <legend>What is wrong with your subtitles?</legend>
+    <legend><span class="pick-q" id="pickQ">What is wrong with your subtitles?</span> <span class="pick-how" id="pickHow">Tap the one that fits, then choose your file.</span></legend>
     <div class="rolls">
       {ROLLS.map((r) => (
         <div class="roll" data-group={r.g}>
           <p class="roll-name">{r.name}</p>
           <div class="tickets">
             {symptoms.filter((s) => GROUP_OF[s.go] === r.g).map((s) => (
-              <label class="tk" data-group={r.g}>
-                <input type="radio" name="sym" class="visually-hidden" value={s.id} data-go={s.go} checked={s.id === picked} />
+              <button type="button" class="tk" data-group={r.g} data-sym={s.id} data-go={s.go}>
                 <span class="tk-stub" aria-hidden="true"><span>{LABEL[s.go]}</span></span>
                 <span class="tk-paper">
                   <svg class="tk-art" viewBox="0 0 240 64" aria-hidden="true" set:html={ART[s.id]} />
                   <span class="tk-text">{s.text}</span>
-                  <span class="tk-punch" aria-hidden="true">Picked</span>
                 </span>
-              </label>
+              </button>
             ))}
           </div>
         </div>
@@ -203,52 +201,40 @@ const ART: Record<string, string> = {
       <p class="hint" id="srcHint"></p>
     </div>
 
-    <div class="viewer" id="viewer">
-      <div class="vscreen" id="vscreen"><video id="video" playsinline controls hidden></video><p class="vsub" id="vsub"></p></div>
-      <div class="vctl" id="vctl" hidden>
-        <span class="vnudge" role="group" aria-label="Move the subtitles">
-          <span>Subtitles</span>
-          <button type="button" data-vnudge="-1000">−1 s</button><button type="button" data-vnudge="-100">−0.1 s</button>
-          <button type="button" data-vnudge="100">+0.1 s</button><button type="button" data-vnudge="1000">+1 s</button>
-        </span>
-        <span class="voff" id="vOff" aria-live="polite"></span>
-        <button type="button" class="vlink" id="vClose">Close video</button>
-      </div>
-      <p class="vnote" id="vNote" hidden></p>
-      <div class="vbar">
-        <span class="vtime" id="vtime"></span>
-        <label class={`vlink vpick${preset.video ? ' lead' : ''}`} id="vPick">Watch with your video<input type="file" id="videoFile" class="visually-hidden" accept="video/*,.mkv,.mov,.m4v" /></label>
-        <span class="vkey"><i class="k-before"></i>Before <i class="k-after"></i>After</span>
-      </div>
-      <svg class="cuemap" id="cuemap" tabindex="0" role="slider" aria-label="Position in the subtitles. Arrow keys step through lines." aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" preserveAspectRatio="none">
-        <path class="cm-before" id="cmBefore" />
-        <path class="cm-after" id="cmAfter" />
-        <path class="cm-issue" id="cmIssue" />
-        <path class="cm-head" id="cmHead" />
-      </svg>
-    </div>
-
     <div class="tabs" role="tablist" aria-label="Fix">
-      {tabs.map((t) => (
-        <button type="button" role="tab" data-tab={t.id} data-group={GROUP_OF[t.id]} aria-selected={t.id === mode ? 'true' : 'false'}>{t.label}</button>
+      {ROLLS.map((r) => (
+        <div class="tabroll" role="none" data-group={r.g}>
+          <span class="tabroll-name" aria-hidden="true">{r.name}</span>
+          {tabs.filter((t) => GROUP_OF[t.id] === r.g).map((t) => (
+            <button type="button" role="tab" data-tab={t.id} data-group={GROUP_OF[t.id]} aria-selected={t.id === mode ? 'true' : 'false'}>{t.label}</button>
+          ))}
+        </div>
       ))}
     </div>
 
     <div class="counter">
     <div class="panel" data-panel="shift">
-      <label>Offset
-        <input id="offset" value="0" inputmode="decimal" placeholder="e.g. 2.5 or -00:00:01,200" />
+      <fieldset class="dir">
+        <legend>The subtitles show up</legend>
+        <div class="seg">
+          <label><input type="radio" name="sdir" value="late" checked /><span>Too late</span></label>
+          <label><input type="radio" name="sdir" value="early" /><span>Too early</span></label>
+        </div>
+      </fieldset>
+      <label>By how many seconds
+        <input id="offset" value="" inputmode="decimal" autocomplete="off" spellcheck="false" />
       </label>
-      <div class="nudges">
-        <button type="button" data-nudge="-1000">−1 s</button>
-        <button type="button" data-nudge="-100">−0.1 s</button>
-        <button type="button" data-nudge="100">+0.1 s</button>
-        <button type="button" data-nudge="1000">+1 s</button>
-      </div>
+      <div class="nudges" role="group" aria-label="Nudge">
+    <button type="button" data-nudge="-1000">1 s sooner</button>
+    <button type="button" data-nudge="-100">0.1 s sooner</button>
+    <button type="button" data-nudge="100">0.1 s later</button>
+    <button type="button" data-nudge="1000">1 s later</button>
+  </div>
+      <p class="shiftsay" id="shiftSay" aria-live="polite"></p>
       <label class="wide">Starting at line
         <select id="fromLine"></select>
       </label>
-      <p class="hint">Positive shows subtitles later, negative sooner. Seconds, or a time like 00:01:05,300. To fix only the second half, start at the first wrong line.</p>
+      <p class="hint">Seconds like 2 or 2.5, or a time like 00:01:05,300. To fix only the second half, start at the first wrong line.</p>
     </div>
 
     <div class="panel" data-panel="fps">
@@ -398,10 +384,43 @@ const ART: Record<string, string> = {
         <select id="outFps">{fps.map((f) => <option value={f.v} selected={f.l === '23.976'}>{f.l} fps</option>)}</select>
       </label>
       <button type="button" class="primary" id="download">Download fixed file</button>
+      <p class="dlwhy" id="dlWhy" aria-live="polite" hidden></p>
+    </div>
+    <div class="done" id="done" role="status" hidden>
+      <p class="done-msg" id="doneMsg"></p>
+      <div class="done-act">
+        <button type="button" class="link" id="doneMore">Fix something else in this file</button>
+        <button type="button" class="link" id="doneNew">Fix another file</button>
+      </div>
     </div>
     <p class="hint batchnote" id="batchNote" hidden></p>
 
     <p class="error" id="opError" hidden></p>
+
+    <div class="viewer" id="viewer">
+      <div class="vscreen" id="vscreen"><video id="video" playsinline controls hidden></video><p class="vsub" id="vsub"></p></div>
+      <div class="vctl" id="vctl" hidden>
+        <span class="vnudge" role="group" aria-label="Move the subtitles">
+          <span>Subtitles</span>
+          <button type="button" data-vnudge="-1000">−1 s</button><button type="button" data-vnudge="-100">−0.1 s</button>
+          <button type="button" data-vnudge="100">+0.1 s</button><button type="button" data-vnudge="1000">+1 s</button>
+        </span>
+        <span class="voff" id="vOff" aria-live="polite"></span>
+        <button type="button" class="vlink" id="vClose">Close video</button>
+      </div>
+      <p class="vnote" id="vNote" hidden></p>
+      <div class="vbar">
+        <span class="vtime" id="vtime"></span>
+        <label class={`vlink vpick${preset.video ? ' lead' : ''}`} id="vPick">Watch with your video<input type="file" id="videoFile" class="visually-hidden" accept="video/*,.mkv,.mov,.m4v" /></label>
+        <span class="vkey"><i class="k-before"></i>Before <i class="k-after"></i>After</span>
+      </div>
+      <svg class="cuemap" id="cuemap" tabindex="0" role="slider" aria-label="Position in the subtitles. Arrow keys step through lines." aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" preserveAspectRatio="none">
+        <path class="cm-before" id="cmBefore" />
+        <path class="cm-after" id="cmAfter" />
+        <path class="cm-issue" id="cmIssue" />
+        <path class="cm-head" id="cmHead" />
+      </svg>
+    </div>
 
     <div class="preview" id="preview">
       <div class="pvhead">
@@ -426,6 +445,7 @@ const ART: Record<string, string> = {
   import { isEbuStl, parseEbuStl, mergeStack, mergeTop, mergeParts, autoOffsets } from '../lib/formats';
   import { isSup, isVobSub, parseSup, type SupImage } from '../lib/sup';
   import { fixTiming, reflow, compileRules, findReplace, cps, longestLine } from '../lib/tidy';
+  import { parseAmount, signedOffset, splitOffset, amountText, describeShift, downloadState, quietChange, savedMessage, ticketAction, type Dir } from '../lib/flow';
 
   type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[]; track?: string; sup?: SupImage[]; ocrLang?: string };
 
@@ -447,6 +467,7 @@ const ART: Record<string, string> = {
   let files: Entry[] = [];
   let cur = 0;
   let mergeOffsets: number[] | null = null;
+  let showAllCands = false;
   let editorLimit = EDITOR_PAGE;
   const entry = () => files[cur];
   const doc = () => files[cur]?.doc ?? null;
@@ -461,7 +482,7 @@ const ART: Record<string, string> = {
     mode = id;
     root.dataset.group = GROUP_OF[id] ?? 'timing';
     const tab = root.querySelector<HTMLElement>(`[data-tab="${id}"]`);
-    if (root.querySelector('input[name="sym"]:checked')) $('dropFix').textContent = `Fix: ${tab?.textContent ?? ''}`;
+    if (chosen) $('dropFix').textContent = `Fix: ${tab?.textContent ?? ''}`;
     root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
     root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== id));
     $('preview').hidden = id === 'edit';
@@ -471,21 +492,36 @@ const ART: Record<string, string> = {
     render();
   }
   root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab!)));
-  root.querySelectorAll<HTMLInputElement>('input[name="sym"]').forEach((r) =>
-    r.addEventListener('change', () => {
-      if (r.checked) setTab(r.dataset.go!);
-    }),
-  );
+  // One click on a ticket does the job: with no file yet it opens the file picker in that fix
+  // (or takes a file dropped on it); with a file loaded it jumps straight to that fix.
+  let chosen = !!root.dataset.symptom;
+  function goFix(go: string) {
+    chosen = true;
+    setTab(go);
+  }
+  function landInFix() {
+    $('loaded').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  root.querySelectorAll<HTMLElement>('.tk[data-go]').forEach((t) => {
+    t.addEventListener('click', () => {
+      const act = ticketAction(okFiles().length > 0);
+      goFix(t.dataset.go!);
+      if (act === 'jump') landInFix();
+      else fileInput.click();
+    });
+    ['dragenter', 'dragover'].forEach((ev) => t.addEventListener(ev, (e) => { e.preventDefault(); t.classList.add('over'); }));
+    t.addEventListener('dragleave', () => t.classList.remove('over'));
+    // The page-wide drop handler loads the file; this only says which fix it is for.
+    t.addEventListener('drop', () => { t.classList.remove('over'); goFix(t.dataset.go!); });
+  });
   // Links elsewhere on the page ("which fix do I need") open a tab in place.
   document.addEventListener('click', (e) => {
     const t = (e.target as HTMLElement).closest<HTMLElement>('[data-go-tab]');
     if (!t) return;
     e.preventDefault();
-    const id = t.dataset.goTab!;
-    const r = root.querySelector<HTMLInputElement>(`input[name="sym"][value="${t.dataset.sym ?? ''}"]`) ?? root.querySelector<HTMLInputElement>(`input[name="sym"][data-go="${id}"]`);
-    if (r) r.checked = true;
-    setTab(id);
-    root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    goFix(t.dataset.goTab!);
+    if (okFiles().length) landInFix();
+    else root.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   setTab(mode);
 
@@ -634,9 +670,13 @@ const ART: Record<string, string> = {
     $<HTMLSelectElement>('outFps').value = nearestFps(d.fps);
     if (mode === 'merge') renderMerge();
     showFile();
-    $('pick').hidden = true;
     root.classList.add('has-file');
     $('loaded').hidden = false;
+    // The tickets stay, below the work, so another fix is still one click away.
+    $('loaded').after($('pick'));
+    $('pickQ').textContent = 'Something else wrong with it?';
+    $('pickHow').textContent = 'Tap a ticket to switch to that fix.';
+    if (chosen) landInFix();
   }
 
   function showFile() {
@@ -738,9 +778,8 @@ const ART: Record<string, string> = {
 
   function timeFn(d: Doc): TimeFn | null {
     if (mode === 'shift') {
-      const raw = $<HTMLInputElement>('offset').value.trim();
-      const ms = /^-?\d+(\.\d+)?$/.test(raw) ? Math.round(parseFloat(raw) * 1000) : parseTime(raw);
-      if (isNaN(ms)) throw new Error('Enter the offset in seconds (like 2.5 or -1) or as a time (00:00:02,500).');
+      const ms = shiftMs();
+      if (isNaN(ms)) throw new Error('Type the seconds as a number, like 2 or 2.5, or as a time, like 00:00:02,500.');
       return shiftFn(ms);
     }
     if (mode === 'fps') {
@@ -875,26 +914,49 @@ const ART: Record<string, string> = {
     const d = doc();
     if (!d) return;
     updateBatchNote();
+    $('done').hidden = true;
+    $('shiftSay').textContent = describeShift(isNaN(shiftMs()) ? 0 : shiftMs());
     const err = $('opError');
     try {
       const { caps } = compute(entry(), true);
       err.hidden = true;
       drawMap(d.captions, caps);
-      if (mode === 'edit') return;
+      if (mode === 'edit') return setDownload(false, 0);
       $('outFpsWrap').hidden = outFmt.value !== 'sub';
       $('numWrap').hidden = outFmt.value !== 'srt';
-      renderPreview(d.captions, caps);
+      setDownload(false, renderPreview(d.captions, caps));
     } catch (e: any) {
       $('rows').innerHTML = '';
       err.textContent = e?.message ?? String(e);
       err.hidden = false;
+      setDownload(true, 0);
     }
+  }
+
+  /** Download stays off while it would save the same file that came in, and says why. */
+  function setDownload(error: boolean, changedLines: number) {
+    const f = entry();
+    const st = downloadState({
+      error,
+      changedLines,
+      formatChanged: outFmt.value !== doc()?.format,
+      charsetChanged: !!f && !/^utf-8$/i.test(f.forced || f.encoding || 'utf-8'),
+      mode,
+      files: targets().length,
+      // In a batch, fixes like cleanup can change other files even when this one passes.
+      edited: f?.edited || (files.length > 1 && !['shift', 'fps', 'sync', 'replace'].includes(mode)),
+    });
+    const btn = $<HTMLButtonElement>('download');
+    btn.textContent = st.label;
+    btn.disabled = st.disabled;
+    $('dlWhy').textContent = st.why;
+    $('dlWhy').hidden = !st.why;
   }
 
   // ---------- before and after table ----------
 
   const PREVIEW_ROWS = 60;
-  function renderPreview(before: Caption[], caps: Caption[]) {
+  function renderPreview(before: Caption[], caps: Caption[]): number {
     const plainOut = isDocFormat(outFmt.value) || outFmt.value === 'sbv' || outFmt.value === 'sub';
     const show = (t: string) => (plainOut ? esc(stripTags(t)) : esc(t)).replace(/\n/g, '<br>');
     type Row = { i: number; b?: Caption; a?: Caption; changed: boolean };
@@ -920,7 +982,7 @@ const ART: Record<string, string> = {
     $('pvSum').textContent =
       mode === 'merge' ? `${n(caps.length, 'line')} in the merged file.`
       : changed.length ? `${changed.length} of ${n(before.length, 'line')} change${removed ? ` (${removed} removed)` : ''}.${(only ? changed : items).length > PREVIEW_ROWS ? ` Showing the first ${PREVIEW_ROWS}.` : ''}`
-      : `No line changes${outFmt.value !== doc()?.format ? ', only the format' : ''}.`;
+      : quietChange({ formatChanged: outFmt.value !== doc()?.format, charsetFrom: entry()?.forced || entry()?.encoding || '' });
     $('rows').innerHTML = list.map(({ i, b, a, changed: ch }) => {
       const t0 = b ? fmtTime(b.start) : '';
       if (!a) return `<tr class="gone"><td>${i + 1}</td><td>${t0}</td><td>removed</td><td><del>${show(b!.text)}</del></td></tr>`;
@@ -928,6 +990,7 @@ const ART: Record<string, string> = {
       const text = b && a.text !== b.text ? `<del>${show(b.text)}</del><ins>${show(a.text)}</ins>` : show(a.text);
       return `<tr${ch ? ' class="ch"' : ''}><td>${i + 1}</td><td>${t0}</td><td${moved ? ' class="moved"' : ''}>${fmtTime(a.start)}</td><td>${text}</td></tr>`;
     }).join('');
+    return changed.length;
   }
 
   // ---------- cue map: every line as a block on one timeline, before above, after below ----------
@@ -1095,15 +1158,21 @@ const ART: Record<string, string> = {
       btn.disabled = true;
       const fmt = outFmt.value;
       const list = targets();
+      let savedAs = '';
       if (list.length === 1) {
         const data = await produce(list[0]);
         const mime = isDocFormat(fmt) ? DOC_FORMATS.find((d) => d.value === fmt)!.mime : 'text/plain;charset=utf-8';
-        save(data, outName(list[0], fmt), mime);
+        savedAs = outName(list[0], fmt);
+        save(data, savedAs, mime);
       } else {
         const out = [];
         for (const f of list) out.push({ name: outName(f, fmt), data: await produce(f) });
-        save(await zipFiles(out), 'subtitles-fixed.zip', 'application/zip');
+        savedAs = 'subtitles-fixed.zip';
+        save(await zipFiles(out), savedAs, 'application/zip');
       }
+      $('doneMsg').textContent = savedMessage(savedAs, list.length > 1);
+      $('done').hidden = false;
+      $('done').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       (window as any).plausible?.('download', { props: { mode, fmt, files: String(list.length) } });
     } catch (e: any) {
       err.textContent = e?.message ?? String(e);
@@ -1112,6 +1181,15 @@ const ART: Record<string, string> = {
       btn.disabled = false;
     }
   }
+  $('doneMore').addEventListener('click', () => {
+    $('done').hidden = true;
+    $('pick').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  // Straight to the file picker, still set to the same fix.
+  $('doneNew').addEventListener('click', () => {
+    clearFiles();
+    fileInput.click();
+  });
 
   // ---------- fix characters ----------
 
@@ -1140,6 +1218,10 @@ const ART: Record<string, string> = {
     }
     const langOf = (e: string) => (e === REPAIR_UTF8 ? 'fixes text saved twice, like CafÃ©' : /^utf-8$/i.test(e) ? 'standard' : LANG_ENCODINGS.find((l) => l.encs.some((x) => x.toLowerCase() === e.toLowerCase()))?.lang.replace(/ \(.*/, '') ?? '');
     const current = (f.forced || f.encoding).toLowerCase();
+    // Show the reading that was picked; the rest wait behind one button so Download stays in reach.
+    const others = cands.filter((c) => c.encoding.toLowerCase() !== current).length;
+    if (!showAllCands && others && cands.some((c) => c.encoding.toLowerCase() === current)) cands = cands.filter((c) => c.encoding.toLowerCase() === current);
+    const more = !showAllCands && others ? `<button type="button" class="link candmore" id="candMore">Letters still look wrong? Show ${n(others, 'other reading')}</button>` : '';
     list.innerHTML = cands
       .map((c) => {
         const id = `cand-${c.encoding.replace(/\W/g, '')}`;
@@ -1147,8 +1229,14 @@ const ART: Record<string, string> = {
           <span class="cand-name">${esc(c.encoding)}<span class="cand-lang">${esc(langOf(c.encoding))}</span></span>
           <span class="cand-sample">${c.sample.map(esc).join('<br>') || '<em>no accented letters</em>'}</span></label>`;
       })
-      .join('');
+      .join('') + more;
   }
+  $('candList').addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).id !== 'candMore') return;
+    showAllCands = true;
+    renderCands();
+    $('candList').querySelector<HTMLInputElement>('input:checked')?.focus();
+  });
   $('candList').addEventListener('change', async (e) => {
     const r = e.target as HTMLInputElement;
     if (r.name !== 'cand') return;
@@ -1332,15 +1420,23 @@ const ART: Record<string, string> = {
     showFile();
   });
   $('reset').addEventListener('click', () => {
+    clearFiles();
+    fileInput.click();
+  });
+  function clearFiles() {
     files = [];
     fileInput.value = '';
     $<HTMLSelectElement>('filePick').innerHTML = '';
     $('loaded').hidden = true;
     $('fileNote').hidden = true;
     root.classList.remove('has-file');
-    $('pick').hidden = false;
+    $('loaded').before($('pick'));
+    $('pickQ').textContent = 'What is wrong with your subtitles?';
+    $('pickHow').textContent = 'Tap the one that fits, then choose your file.';
+    $('done').hidden = true;
+    showAllCands = false;
     mergeOffsets = null;
-  });
+  }
   $('download').addEventListener('click', download);
   $('swap').addEventListener('click', () => {
     const a = $<HTMLSelectElement>('fpsFrom'), b = $<HTMLSelectElement>('fpsTo');
@@ -1349,12 +1445,26 @@ const ART: Record<string, string> = {
   });
   root.querySelectorAll<HTMLElement>('[data-nudge]').forEach((b) =>
     b.addEventListener('click', () => {
-      const o = $<HTMLInputElement>('offset');
-      const cur = parseFloat(o.value) || 0;
-      o.value = String(Math.round((cur + +b.dataset.nudge! / 1000) * 1000) / 1000);
+      nudgeShift(+b.dataset.nudge!);
       render();
     }),
   );
+  // ---------- shift: direction and amount ----------
+
+  const curDir = (): Dir => (root.querySelector<HTMLInputElement>('input[name="sdir"]:checked')?.value as Dir) ?? 'late';
+  /** The signed shift from the two controls. NaN when the amount cannot be read. */
+  function shiftMs(): number {
+    const amt = parseAmount($<HTMLInputElement>('offset').value);
+    return isNaN(amt) ? NaN : signedOffset(curDir(), amt);
+  }
+  /** Buttons move the subtitles by a signed step; write the result back as a direction and an amount. */
+  function nudgeShift(step: number) {
+    const now = shiftMs();
+    const { dir, amountMs } = splitOffset((isNaN(now) ? 0 : now) + step, curDir());
+    root.querySelector<HTMLInputElement>(`input[name="sdir"][value="${dir}"]`)!.checked = true;
+    $<HTMLInputElement>('offset').value = amountText(amountMs);
+  }
+
   // ---------- watch with your video: a local file, played here with the fixed subtitles on top ----------
 
   const video = $<HTMLVideoElement>('video');
@@ -1392,9 +1502,8 @@ const ART: Record<string, string> = {
   });
   video.addEventListener('loadeddata', () => { $('vNote').hidden = true; videoTick(); });
   function showOffset() {
-    const raw = $<HTMLInputElement>('offset').value.trim();
-    const v = parseFloat(raw) || 0;
-    $('vOff').textContent = mode === 'shift' && v ? `Moved ${v > 0 ? '+' : ''}${v} s` : '';
+    const v = shiftMs();
+    $('vOff').textContent = mode === 'shift' && v ? describeShift(v).replace('Every line will show', 'Showing every line') : '';
   }
   $<HTMLInputElement>('videoFile').addEventListener('change', (e) => {
     const f = (e.target as HTMLInputElement).files?.[0];
@@ -1425,14 +1534,8 @@ const ART: Record<string, string> = {
   });
   root.querySelectorAll<HTMLElement>('[data-vnudge]').forEach((b) =>
     b.addEventListener('click', () => {
-      if (mode !== 'shift') {
-        const r = root.querySelector<HTMLInputElement>('input[name="sym"][value="early-late"]');
-        if (r && root.querySelector('input[name="sym"]:checked')) r.checked = true;
-        setTab('shift');
-      }
-      const o = $<HTMLInputElement>('offset');
-      const v = parseFloat(o.value) || 0;
-      o.value = String(Math.round((v + +b.dataset.vnudge! / 1000) * 1000) / 1000);
+      if (mode !== 'shift') setTab('shift');
+      nudgeShift(+b.dataset.vnudge!);
       render();
       showOffset();
       videoTick();

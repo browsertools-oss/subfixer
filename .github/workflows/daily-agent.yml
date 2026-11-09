@@ -35,9 +35,10 @@ jobs:
           anthropic_api_key: ${{ secrets.OPENROUTER_API_KEY }}
           prompt: ${{ steps.prompt.outputs.text }}
           github_token: ${{ github.token }}
+          show_full_output: true
           claude_args: >-
             --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
-            --max-turns 30
+            --max-turns 60
             --allowedTools "Bash(npm run build),Bash(npm test),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
       - name: Daily report
         if: always()

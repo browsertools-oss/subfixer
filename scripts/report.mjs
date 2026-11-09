@@ -112,5 +112,11 @@ const title = `Daily report: ${nice(today)}${decisions.length ? ` (${decisions.l
 if (dry) {
   console.log(title + '\n\n' + body);
 } else {
-  execFileSync('gh', ['issue', 'create', '--title', title, '--label', 'report', '--body', body], { stdio: 'inherit' });
+  // One issue per day: update today's if it already exists.
+  const existing = JSON.parse(execFileSync('gh', ['issue', 'list', '--label', 'report', '--state', 'open', '--search', `"Daily report: ${nice(today)}" in:title`, '--json', 'number'], { encoding: 'utf8' }));
+  if (existing.length) execFileSync('gh', ['issue', 'edit', String(existing[0].number), '--title', title, '--body', body], { stdio: 'inherit' });
+  else execFileSync('gh', ['issue', 'create', '--title', title, '--label', 'report', '--body', body], { stdio: 'inherit' });
+  // Close older reports so only the latest stays open.
+  const old = JSON.parse(execFileSync('gh', ['issue', 'list', '--label', 'report', '--state', 'open', '--json', 'number,title'], { encoding: 'utf8' })).filter((i) => !i.title.includes(nice(today)));
+  for (const i of old) execFileSync('gh', ['issue', 'close', String(i.number)]);
 }

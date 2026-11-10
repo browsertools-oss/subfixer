@@ -816,6 +816,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'lrc-to-srt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'srt' },
+    title: 'LRC to SRT converter: turn timed lyrics into subtitles online',
+    h1: 'Convert LRC to SRT',
+    lede: 'LRC is the timed lyric format used by music players. Turn it into SRT to play the words as subtitles in a video.',
+    description: 'Convert LRC lyrics to SRT subtitles. Each line runs until the next one begins. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .lrc file.',
+      'Output is preset to SRT.',
+      'Download the .srt file.',
+    ],
+    faq: [
+      { q: 'How are the end times worked out?', a: 'Each line runs until the next one begins. The last line gets two seconds. Trim it under "Check and edit" if it hangs on too long.' },
+      { q: 'What happens to the [ti] and [ar] tags?', a: 'Title and artist tags are dropped. The words and their times are kept.' },
+      { q: 'Does it apply the [offset:] tag?', a: 'No. If the file is out of step, open the fixed file under "Shift timing" and nudge it into place.' },
+      { q: 'My file has word-by-word timings.', a: 'Enhanced LRC keeps tags like <00:01.00> before each word. They come through as plain text, since SRT has no word timings. Use "Find and replace" with a pattern to strip them.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'stl-to-srt',
     mode: 'convert',
     group: 'Convert',

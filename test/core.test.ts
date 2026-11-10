@@ -8,6 +8,18 @@ import { unzipSync, strFromU8 } from 'fflate';
 const SRT = '1\r\n00:00:01,000 --> 00:00:02,500\r\n<i>Hello</i>\r\n\r\n2\r\n00:00:02,400 --> 00:00:04,000\r\n[DOOR SLAMS]\r\nJOHN: World\r\n\r\n3\r\n00:00:05,000 --> 00:00:05,200\r\n(laughs)\r\n';
 const ASS = `[Script Info]\nScriptType: v4.00+\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:01.00,0:00:02.50,Default,,0,0,0,,{\\i1}Hi{\\i0}\\Nthere\n`;
 
+test('lrc parses into timed captions and builds srt', () => {
+  const d = parse('[00:12.50]first line\n[00:24.00]second line\n', 23.976, { name: 'song.lrc' });
+  assert.equal(d.format, 'lrc');
+  assert.equal(d.captions.length, 2);
+  assert.equal(d.captions[0].start, 12500);
+  assert.equal(d.captions[0].text, 'first line');
+  assert.ok(d.captions[0].end > d.captions[0].start);
+  const srt = build(d.captions, 'srt');
+  assert.match(srt, /00:00:12,500 --> /);
+  assert.match(srt, /first line/);
+});
+
 test('parse srt', () => {
   const d = parse(SRT);
   assert.equal(d.format, 'srt');

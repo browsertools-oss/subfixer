@@ -112,10 +112,12 @@ function build(since) {
     }
   }
   for (const p of readLines(file("phases.jsonl"))) events.push({ t: p.t, kind: "phase", text: p.text });
+  for (const p of readLines(file("notes.jsonl"))) events.push({ t: p.t, kind: "note", text: p.text });
   events.sort((a, b) => a.t.localeCompare(b.t));
   const phases = events.filter((e) => e.kind === "phase");
   const phase = phases.at(-1)?.text ?? (f ? "Agent working" : "Starting the agent");
-  return { phase, todos, events: events.slice(-MAX_EVENTS), started: Boolean(f) };
+  const model = [...events].reverse().find((e) => e.kind === "note" && e.text.startsWith("Using "))?.text.slice(6) ?? null;
+  return { phase, model, todos, events: events.slice(-MAX_EVENTS), started: Boolean(f) };
 }
 
 function output(state, done) {
@@ -123,7 +125,7 @@ function output(state, done) {
   return {
     title: done ? "Run finished" : state.phase,
     summary: `${done ? "Finished." : `Now: ${state.phase}`}\n\n${recent || "Nothing yet."}`.slice(0, 60_000),
-    text: JSON.stringify({ updatedAt: new Date().toISOString(), phase: done ? "Finished" : state.phase, todos: state.todos, events: state.events }).slice(0, 65_000),
+    text: JSON.stringify({ updatedAt: new Date().toISOString(), phase: done ? "Finished" : state.phase, model: state.model, todos: state.todos, events: state.events }).slice(0, 65_000),
   };
 }
 

@@ -20,6 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     # 10 agent minutes x 4 runs a day fits GitHub's 2,000 free private-repo minutes a month with deploys.
     timeout-minutes: ${{ fromJSON(vars.JOB_TIMEOUT || '22') }}
+    env:
+      # Work-session length and request budget; the job timeout above must stay above the minutes.
+      AGENT_MINUTES: ${{ vars.AGENT_MINUTES || '10' }}
+      AGENT_REQUESTS: ${{ vars.AGENT_REQUESTS || '240' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,29 +35,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: nohup node scripts/live.mjs watch > "$RUNNER_TEMP/agent-live.log" 2>&1 &
-      - id: prompt
+      - name: Free model rotation
+        # scripts/model-proxy.mjs sends each request to the best free model in
+        # .github/agent/models.json that isn't rate limited, and ends the session
+        # when the time, the request budget or the day's free quota runs out.
         env:
-          # Work-session length; the job timeout below must stay above it.
-          AGENT_MINUTES: ${{ vars.AGENT_MINUTES || '10' }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          nohup node scripts/model-proxy.mjs > "$RUNNER_TEMP/model-proxy.log" 2>&1 &
+          for i in $(seq 1 20); do curl -fs http://127.0.0.1:8787 >/dev/null && exit 0; sleep 0.5; done
+          echo "model proxy did not start"; cat "$RUNNER_TEMP/model-proxy.log"; exit 1
+      - id: prompt
         run: |
           { echo 'text<<PROMPT_EOF'; sed "s/{{MINUTES}}/${AGENT_MINUTES}/g" .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
       - uses: anthropics/claude-code-action@v1
         env:
-          # OpenRouter's Anthropic-compatible endpoint. To move to Claude direct later:
-          # delete these three lines and set anthropic_api_key to an Anthropic key.
-          ANTHROPIC_BASE_URL: https://openrouter.ai/api
-          ANTHROPIC_AUTH_TOKEN: ${{ secrets.OPENROUTER_API_KEY }}
+          # The local free-model proxy (above), which forwards to OpenRouter with the real key.
+          ANTHROPIC_BASE_URL: http://127.0.0.1:8787
+          ANTHROPIC_AUTH_TOKEN: local-proxy
           ANTHROPIC_API_KEY: ''
-          # Keep Claude Code's background calls on the same model so nothing bills elsewhere.
-          ANTHROPIC_DEFAULT_HAIKU_MODEL: ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
-          ANTHROPIC_DEFAULT_SONNET_MODEL: ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: free-rotation
+          ANTHROPIC_DEFAULT_SONNET_MODEL: free-rotation
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1'
         with:
-          anthropic_api_key: ${{ secrets.OPENROUTER_API_KEY }}
+          anthropic_api_key: local-proxy
           prompt: ${{ steps.prompt.outputs.text }}
           github_token: ${{ github.token }}
           show_full_output: true
           claude_args: >-
-            --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
+            --model free-rotation
             --max-turns ${{ vars.AGENT_MAX_TURNS || '250' }}
             --allowedTools "Bash(date*),Bash(npm run build),Bash(npm test),Bash(npm install *),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
       - name: Commit the agent's work if tests and build pass

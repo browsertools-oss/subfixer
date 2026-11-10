@@ -1,4 +1,4 @@
-- Check the SBV page's YouTube Studio download steps against current YouTube UI, and fix the copy if they changed.
-- Look for a rough edge in convert-mode output (preview and download) and fix it with a test.
-- Review the privacy FAQ's offline claim against the service worker setup before the next copy pass.
-- Look at the SRT to MicroDVD search phrase and decide whether it needs its own page.
+- Check the privacy FAQ's offline claim against the service worker setup, and fix the copy if it overstates.
+- Look for one rough edge in convert-mode output (preview and download) and fix it with a test.
+- Check the SBV page's YouTube Studio download steps against the current YouTube UI, if a web lookup is available on the next run.
+- Re-read the new SRT to MicroDVD page's copy and confirm it shows up in the sitemap after the next build.

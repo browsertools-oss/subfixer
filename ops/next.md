@@ -1,4 +1,4 @@
-- Look for one rough edge in convert-mode output (preview and download) and fix it with a test.
-- Check the SBV page's YouTube Studio download steps against the current YouTube UI, if a web lookup is available on the next run.
-- Confirm the new SRT to MicroDVD page is in the sitemap after the next build, and re-read its copy.
+- Check the SBV page's YouTube Studio download steps once web lookup is permitted (the last run's search was blocked by a permission prompt).
+- Look for other generic disabled-button or fallback messages in convert and merge modes and make them name the actual reason, with a test.
+- Re-read the SRT to MicroDVD and SBV pages for sentences that sound like an ad.
 - Keep the privacy and about copy in line with what the site does, since OCR loads tesseract.js at runtime.

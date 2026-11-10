@@ -1,9 +1,11 @@
 // Starts the ventures' daily-agent workflows on time. GitHub's own cron ran hours late.
 // Secret GH_TOKEN: fine-grained token, Actions read/write on the venture repos only.
-const REPOS = { 17: "stevenlutsky-oss/subfixer", 47: "stevenlutsky-oss/stayfile" };
+// cron/schedule.json is the one schedule: this Worker and the bb Ventures page both read it.
+// If you change a minute there, add it to the crons in wrangler.toml too.
+import schedule from "../schedule.json";
 
-function laHour(date) {
-  return Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", hourCycle: "h23" }).format(date));
+function localHour(date) {
+  return Number(new Intl.DateTimeFormat("en-US", { timeZone: schedule.timeZone, hour: "numeric", hourCycle: "h23" }).format(date));
 }
 
 async function dispatch(repo, run, token) {
@@ -19,9 +21,11 @@ async function dispatch(repo, run, token) {
 export default {
   async scheduled(event, env) {
     const when = new Date(event.scheduledTime);
-    const hour = laHour(when);
-    if (hour !== 6 && hour !== 18) return; // the other UTC hour of the DST pair
-    const repo = REPOS[when.getUTCMinutes()];
-    if (repo) await dispatch(repo, hour === 6 ? "morning" : "evening", env.GH_TOKEN);
+    const run = schedule.hours[localHour(when)];
+    if (!run) return; // the other UTC hour of the daylight-saving pair
+    const minute = when.getUTCMinutes();
+    for (const [repo, m] of Object.entries(schedule.repos)) {
+      if (m === minute) await dispatch(repo, run, env.GH_TOKEN);
+    }
   },
 };

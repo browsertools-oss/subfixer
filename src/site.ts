@@ -686,6 +686,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'srt-to-smi',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'smi' },
+    title: 'SRT to SMI converter: save .srt as SAMI .smi subtitles online',
+    h1: 'Convert SRT to SAMI .smi',
+    lede: 'SAMI (.smi) is an older caption format that some Windows media players and TV set-top boxes still read. Convert your SRT here and keep the timing and text.',
+    description: 'Convert SRT subtitles to SAMI (.smi) files. Keeps the timing and text of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .srt file.',
+      'Output is preset to SAMI (.smi).',
+      'Download the .smi file.',
+    ],
+    faq: [
+      { q: 'Which players read SAMI files?', a: 'Windows Media Player and several TV and set-top devices read SAMI, but support varies by model. Check your device manual or its supported formats list before you rely on it.' },
+      { q: 'Will the styling from my SRT carry over?', a: 'SRT has no colours or positions to carry over, so the SAMI file keeps the timing and text of each line and nothing more.' },
+      { q: 'Can I convert the SAMI file back to SRT?', a: 'Yes. Use the SMI to SRT converter. If the file has more than one language, pick the one you want first.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'smi-to-srt',
     mode: 'convert',
     group: 'Convert',

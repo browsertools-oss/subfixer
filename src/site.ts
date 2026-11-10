@@ -707,6 +707,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'srt-to-ttml',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ttml' },
+    title: 'SRT to TTML converter: save .srt as TTML captions online',
+    h1: 'Convert SRT to TTML',
+    lede: 'TTML is the XML caption format that streaming services and broadcasters often ask for. Convert your SRT here and keep the timing and text.',
+    description: 'Convert SRT subtitles to TTML (.ttml) captions. Keeps the timing, text and italics of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .srt file.',
+      'Output is preset to TTML (.ttml).',
+      'Download the .ttml file.',
+    ],
+    faq: [
+      { q: 'Are italics kept?', a: 'Yes. Italic words in the SRT are written as italic spans in the TTML file. Line breaks are kept too.' },
+      { q: 'Is TTML the same as DFXP?', a: 'Close. DFXP is the earlier name for TTML. If a platform asks for DFXP specifically, use the SRT to DFXP converter instead.' },
+      { q: 'Can I turn the TTML file back into SRT?', a: 'Yes. Use the TTML to SRT converter. Only the text and timing come back.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'srt-to-smi',
     mode: 'convert',
     group: 'Convert',

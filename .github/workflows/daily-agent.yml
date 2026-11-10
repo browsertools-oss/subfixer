@@ -1,9 +1,7 @@
 name: daily-agent
 on:
-  # Fallback until the venture-cron Worker is live; GitHub's own schedule can run hours late.
-  schedule:
-    - cron: '17 14 * * *'
-    - cron: '17 2 * * *' # evening: work only, no report
+  # Started on time by the venture-cron Worker (subfixer repo, cron/) at 6am and 6pm Pacific.
+  # GitHub's own schedule ran up to 9 hours late, so it is not used.
   workflow_dispatch:
     inputs:
       run:
@@ -64,7 +62,7 @@ jobs:
           fi
       - name: Daily report
         # Once a day only; the evening run's commits show in the next morning's report.
-        if: always() && inputs.run != 'evening' && github.event.schedule != '17 2 * * *'
+        if: always() && inputs.run != 'evening'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

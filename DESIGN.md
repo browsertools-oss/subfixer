@@ -15,7 +15,7 @@ top bar) and from subtitlefixer.com. SubFixer uses none of those.
   No sign-up). Right: the screen, a night still with a yellow subtitle and two lanes
   (Subtitle, Speech) where the cue slides from its late ghost into line with the speech.
 - Below: "What is wrong with your subtitles?" as ticket rolls, one row per group (Timing,
-  Text, Format). Twelve tickets today. Each ticket has a vertical stub with the fix name, a perforation, a drawing
+  Text, Convert). Twelve tickets today. Each ticket has a vertical stub with the fix name, a perforation, a drawing
   and the symptom in plain words. Rolls use an auto-fill grid, so new fixes just add tickets.
   On phones each roll is a sideways scroll strip.
 - After a file loads, the screen and drop ticket go away (`.tool.has-file`) and the tool
@@ -35,7 +35,7 @@ top bar) and from subtitlefixer.com. SubFixer uses none of those.
   the frame rate for MicroDVD or Spruce files without one, the language for multi-language SAMI,
   reading speed and start time for plain text. Changing one re-reads the file in place.
 - Picture subtitles (.sup) are read with OCR. While it runs, a raised box under the drop ticket
-  shows the file name, a progress bar in the Format blue, a short warning and a Stop link. The
+  shows the file name, a progress bar in the Convert blue, a short warning and a Stop link. The
   reader (tesseract.js) loads only when a .sup file arrives. The OCR language sits in the reading options.
 - Merge files is a tab like the others. "Add files" on the file bar appends files without
   dropping the ones already loaded.
@@ -52,7 +52,7 @@ be. Same baseline idea as the hero lanes. Drawn in `--print` on the ticket paper
 ## Rules
 
 - Roll colors carry the group everywhere: tickets, tab borders, the selected tab fill, the
-  cue map's after lane, footer dots. Timing red-orange, Text green, Format blue.
+  cue map's after lane, footer dots. Timing red-orange, Text green, Convert blue.
 - One primary action at a time: "Choose files" (yellow on the drop ticket) before a file is
   loaded, "Download fixed file" (ink fill) after.
 - The drop ticket is printed on the opposite stock: ink in light mode, pale in dark mode.

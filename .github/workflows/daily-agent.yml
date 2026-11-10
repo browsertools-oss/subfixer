@@ -13,6 +13,7 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  checks: write
 concurrency: daily-agent
 jobs:
   run:
@@ -24,6 +25,11 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
+      - name: Live feed for the Ventures page
+        # Keeps the "Agent live" check run updated with what the agent is doing.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: nohup node scripts/live.mjs watch > "$RUNNER_TEMP/agent-live.log" 2>&1 &
       - id: prompt
         run: |
           { echo 'text<<PROMPT_EOF'; cat .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
@@ -51,14 +57,19 @@ jobs:
         run: |
           git config user.name "subfixer-agent"
           git config user.email "subfixer-agent@users.noreply.github.com"
+          node scripts/live.mjs phase "Checking tests and build" || true
           if [ -n "$(git status --porcelain)" ]; then
             if npm test && npm run build; then
               git add -A
               git commit -qm "Agent: daily update $(date -u +%F)" && git push -q
+              node scripts/live.mjs phase "Tests and build passed; pushed" || true
             else
               echo "Agent changes failed tests/build; discarded." | tee -a ops/discarded.txt
               git checkout -- . && git clean -fdq -e ops/discarded.txt
+              node scripts/live.mjs phase "Tests or build failed; changes discarded" || true
             fi
+          else
+            node scripts/live.mjs phase "Nothing left to commit" || true
           fi
       - name: Daily report
         # Once a day only; the evening run's commits show in the next morning's report.
@@ -68,6 +79,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GH_TOKEN: ${{ github.token }}
         run: |
+          node scripts/live.mjs phase "Writing the daily report" || true
           gh label create report --color 0E8A16 2>/dev/null || true
           gh label create decision --color D93F0B 2>/dev/null || true
           git pull --rebase -q || true
@@ -76,3 +88,6 @@ jobs:
           git config user.email "subfixer-agent@users.noreply.github.com"
           git add ops/metrics.csv ops/.llm_usage_total 2>/dev/null || true
           git commit -qm "Daily metrics $(date -u +%F)" -- ops/metrics.csv ops/.llm_usage_total && git push -q || true
+      - name: Close the live feed
+        if: always()
+        run: node scripts/live.mjs phase "Run finished" && node scripts/live.mjs finish

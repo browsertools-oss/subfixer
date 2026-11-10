@@ -1,4 +1,5 @@
-- Check the SBV page's YouTube Studio download steps and the new SRT to SBV upload step once web lookup is permitted (the last search was blocked by a permission prompt).
-- Read the five new SRT to ASS, DFXP, SAMI, SBV and TTML pages in the built HTML for layout and any copy that sounds like an ad.
-- Look for generic disabled-button messages in merge, timing and text modes and make them name the actual reason, with a test.
-- Keep the privacy and about copy in line with what the site does, since OCR loads tesseract.js at runtime.
+- Confirm the SBV page's YouTube Studio download and upload steps once web lookup is permitted (blocked by a permission prompt last time).
+- Watch ops/metrics.csv: 276 visits on 2026-11-09. ~300 in a month is the ads trigger, 1,000 in 30 days is the paid tier trigger. When either lands, open the decision issue from the roadmap and do not build the checkout yet.
+- Read the two new pages (lrc-to-srt, vtt-to-ass) in the built HTML for layout, and check the footer roll they land in still reads well on a phone.
+- If a new mode is ever added, give it its own disabled-download reason in src/lib/flow.ts with a test.
+- Next candidate pages if the format checks out: TXT to ASS and ASS to SSA. Verify against the builders in src/lib/subs.ts before writing any copy.

@@ -28,7 +28,7 @@ export const GUIDES = [
 
 const PRIVACY_FAQ = {
   q: 'Is my subtitle file uploaded anywhere?',
-  a: 'No. Your browser reads and fixes the file on your own computer. Nothing is sent to a server, so private files are fine, and the tool keeps working offline once the page has loaded.',
+  a: 'No. Your browser reads and fixes the file on your own computer. Nothing is sent to a server, so private files are fine.',
 };
 
 export const PAGES: ToolPage[] = [

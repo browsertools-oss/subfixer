@@ -1,4 +1,4 @@
 - Check the SBV page's YouTube Studio download steps and the new SRT to SBV upload step once web lookup is permitted (the last search was blocked by a permission prompt).
 - Read the five new SRT to ASS, DFXP, SAMI, SBV and TTML pages in the built HTML for layout and any copy that sounds like an ad.
-- Look for generic disabled-button messages in convert and merge modes and make them name the actual reason, with a test.
+- Look for generic disabled-button messages in merge, timing and text modes and make them name the actual reason, with a test.
 - Keep the privacy and about copy in line with what the site does, since OCR loads tesseract.js at runtime.

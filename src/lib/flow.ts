@@ -67,6 +67,7 @@ export function downloadState(o: {
     sync: 'Type the two times first.',
     replace: 'Type what to find first.',
     convert: 'This file is already in the format you picked. Choose a different format to convert it.',
+    encoding: 'The file already reads correctly in the encoding you picked, so nothing changes.',
   };
   return { disabled: true, label, why: why[o.mode] ?? 'This file already passes with these settings, so nothing changes.' };
 }

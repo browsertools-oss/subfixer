@@ -49,6 +49,7 @@ test('download is off when the file would come out unchanged, with a reason', ()
   assert.equal(downloadState({ ...base, mode: 'clean' }).disabled, true);
   assert.match(downloadState({ ...base, mode: 'clean' }).why, /already passes/);
   assert.match(downloadState({ ...base, mode: 'convert' }).why, /already in the format you picked/);
+  assert.match(downloadState({ ...base, mode: 'encoding' }).why, /already reads correctly/);
 });
 
 test('download is off on an error and on when anything differs', () => {

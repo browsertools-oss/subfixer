@@ -18,7 +18,8 @@ concurrency: daily-agent
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 10 agent minutes x 4 runs a day fits GitHub's 2,000 free private-repo minutes a month with deploys.
+    timeout-minutes: ${{ fromJSON(vars.JOB_TIMEOUT || '22') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,8 +32,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: nohup node scripts/live.mjs watch > "$RUNNER_TEMP/agent-live.log" 2>&1 &
       - id: prompt
+        env:
+          # Work-session length; the job timeout below must stay above it.
+          AGENT_MINUTES: ${{ vars.AGENT_MINUTES || '10' }}
         run: |
-          { echo 'text<<PROMPT_EOF'; cat .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
+          { echo 'text<<PROMPT_EOF'; sed "s/{{MINUTES}}/${AGENT_MINUTES}/g" .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
       - uses: anthropics/claude-code-action@v1
         env:
           # OpenRouter's Anthropic-compatible endpoint. To move to Claude direct later:
@@ -50,8 +54,8 @@ jobs:
           show_full_output: true
           claude_args: >-
             --model ${{ vars.AGENT_MODEL || 'cohere/north-mini-code:free' }}
-            --max-turns 60
-            --allowedTools "Bash(npm run build),Bash(npm test),Bash(npm install *),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
+            --max-turns ${{ vars.AGENT_MAX_TURNS || '250' }}
+            --allowedTools "Bash(date*),Bash(npm run build),Bash(npm test),Bash(npm install *),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
       - name: Commit the agent's work if tests and build pass
         if: always()
         run: |
@@ -71,6 +75,8 @@ jobs:
           else
             node scripts/live.mjs phase "Nothing left to commit" || true
           fi
+          # The agent commits each finished item; push them all once so each run deploys once.
+          git push -q || true
       - name: Daily report
         # Once a day only; the evening run's commits show in the next morning's report.
         if: always() && inputs.run != 'evening'

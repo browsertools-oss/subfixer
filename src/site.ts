@@ -665,6 +665,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'srt-to-dfxp',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'dfxp' },
+    title: 'SRT to DFXP converter: save .srt as DFXP captions online',
+    h1: 'Convert SRT to DFXP',
+    lede: 'DFXP is the older name for TTML, the XML caption format that some broadcasters and streaming platforms ask for. Convert your SRT here and keep the timing and text.',
+    description: 'Convert SRT subtitles to DFXP (.dfxp) captions. Keeps the timing and text of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .srt file.',
+      'Output is preset to DFXP (.dfxp).',
+      'Download the .dfxp file.',
+    ],
+    faq: [
+      { q: 'Is DFXP the same as TTML?', a: 'Mostly. DFXP is the earlier name for TTML, and the W3C standard came out of it. Most players and upload forms accept either one.' },
+      { q: 'Will italics carry over?', a: 'Yes. Italic tags in the SRT are written as DFXP italics. Line breaks are kept too.' },
+      { q: 'Can I turn the DFXP file back into SRT?', a: 'Yes. Use the DFXP to SRT converter. Only the text and timing come back, since SRT has no styling.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'smi-to-srt',
     mode: 'convert',
     group: 'Convert',

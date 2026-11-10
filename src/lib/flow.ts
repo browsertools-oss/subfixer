@@ -68,6 +68,10 @@ export function downloadState(o: {
     replace: 'Type what to find first.',
     convert: 'This file is already in the format you picked. Choose a different format to convert it.',
     encoding: 'The file already reads correctly in the encoding you picked, so nothing changes.',
+    timing: 'No line moves. The file already keeps to the gap and length limits you set.',
+    clean: 'Nothing matches what you ticked, so the file is already clean.',
+    reading: 'No line is over the reading speed you picked.',
+    edit: 'Nothing has been edited yet.',
   };
   return { disabled: true, label, why: why[o.mode] ?? 'This file already passes with these settings, so nothing changes.' };
 }

@@ -47,7 +47,10 @@ test('download is off when the file would come out unchanged, with a reason', ()
   assert.equal(s.disabled, true);
   assert.match(s.why, /Nothing moves yet/);
   assert.equal(downloadState({ ...base, mode: 'clean' }).disabled, true);
-  assert.match(downloadState({ ...base, mode: 'clean' }).why, /already passes/);
+  assert.match(downloadState({ ...base, mode: 'clean' }).why, /Nothing matches what you ticked/);
+  assert.match(downloadState({ ...base, mode: 'timing' }).why, /No line moves/);
+  assert.match(downloadState({ ...base, mode: 'reading' }).why, /No line is over the reading speed/);
+  assert.match(downloadState({ ...base, mode: 'edit' }).why, /Nothing has been edited yet/);
   assert.match(downloadState({ ...base, mode: 'convert' }).why, /already in the format you picked/);
   assert.match(downloadState({ ...base, mode: 'encoding' }).why, /already reads correctly/);
 });

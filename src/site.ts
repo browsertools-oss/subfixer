@@ -686,6 +686,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'srt-to-sbv',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'sbv' },
+    title: 'SRT to SBV converter: make a YouTube .sbv caption file online',
+    h1: 'Convert SRT to YouTube SBV',
+    lede: 'YouTube Studio accepts SBV caption files. Convert your SRT here and upload the result as a caption track for your video.',
+    description: 'Convert SRT subtitles to YouTube SBV (.sbv) caption files. Keeps the timing and text of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .srt file.',
+      'Output is preset to SBV (.sbv).',
+      'Download the .sbv file, then upload it in YouTube Studio under Subtitles.',
+    ],
+    faq: [
+      { q: 'Are italics kept?', a: 'No. SBV has no styling, so italic and other tags are removed. Line breaks and timing stay.' },
+      { q: 'How is SBV different from SRT?', a: 'SBV puts the start and end time on one line separated by a comma and has no line numbers. SRT numbers each line and uses an arrow between the times. The text is the same.' },
+      { q: 'Can I convert a YouTube SBV file back to SRT?', a: 'Yes. Use the SBV to SRT converter on this site.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'srt-to-smi',
     mode: 'convert',
     group: 'Convert',

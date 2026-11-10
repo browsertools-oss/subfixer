@@ -140,7 +140,7 @@ async function watch() {
   });
   fs.writeFileSync(file("id"), String(check.id));
   let last = "";
-  const deadline = Date.now() + 45 * 60_000;
+  const deadline = Date.now() + 100 * 60_000;
   while (!fs.existsSync(file("stop")) && Date.now() < deadline) {
     await sleep(TICK_MS);
     const out = output(build(since), false);

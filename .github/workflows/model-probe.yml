@@ -1,0 +1,47 @@
+name: model-probe
+# Temporary: checks which free OpenRouter models can drive Claude Code's tools.
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        model:
+          - thinkingmachines/inkling-2-small:free
+          - recursive/flint-v1.0:free
+          - xingchen-agi/xing4.0-29b-a4b:free
+          - nvidia/nemotron-3.5-super-vl:free
+          - dots-studio/dots-3-note-preview:free
+          - nvidia/nemotron-3.5-lightning:free
+          - cohere/north-mini-code:free
+          - nvidia/nemotron-3-ultra-550b-a55b:free
+          - nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+          - google/gemma-4-26b-a4b-it:free
+          - google/gemma-4-31b-it:free
+          - anthropic/claude-haiku-5.5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - name: Probe
+        env:
+          ANTHROPIC_BASE_URL: https://openrouter.ai/api
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY: ''
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: ${{ matrix.model }}
+          ANTHROPIC_DEFAULT_SONNET_MODEL: ${{ matrix.model }}
+        run: |
+          start=$(date +%s)
+          timeout 300 npx -y @anthropic-ai/claude-code -p 'Do these steps with your tools. 1) Run `npm test` and note how many tests passed. 2) Use Grep to count the lines in src/site.ts that contain "slug:". 3) Edit the file probe.txt so its only line reads DONE (create it with Write). Then reply with exactly one line: TESTS=<passed count> SLUGS=<count>' \
+            --model "${{ matrix.model }}" --max-turns 15 --output-format json \
+            --allowedTools "Bash(npm test),Read,Write,Edit,Grep,Glob" > out.json 2> err.txt || true
+          secs=$(( $(date +%s) - start ))
+          node -e '
+            const fs=require("fs"); let o={}; try{o=JSON.parse(fs.readFileSync("out.json","utf8"))}catch{}
+            const probe=fs.existsSync("probe.txt")?fs.readFileSync("probe.txt","utf8").trim():null;
+            console.log("PROBE_RESULT", JSON.stringify({model:process.argv[1], secs:+process.argv[2], result:(o.result||"").slice(-200), turns:o.num_turns, error:o.is_error, cost:o.total_cost_usd, probe, stderr:fs.readFileSync("err.txt","utf8").slice(-300)}))
+          ' "${{ matrix.model }}" "$secs"

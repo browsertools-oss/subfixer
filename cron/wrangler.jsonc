@@ -1,8 +1,0 @@
-{
-  "name": "venture-cron",
-  "main": "src/index.js",
-  "compatibility_date": "2026-10-01",
-  // UTC hours 1, 2, 13 and 14 cover 6am and 6pm Pacific in both PST and PDT;
-  // the code fires only when it is actually 6 o'clock in Los Angeles.
-  "triggers": { "crons": ["17 1,2,13,14 * * *", "47 1,2,13,14 * * *"] }
-}

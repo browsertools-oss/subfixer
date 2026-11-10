@@ -1,5 +1,5 @@
 {
   "timeZone": "America/Los_Angeles",
   "hours": { "6": "morning", "18": "evening" },
-  "repos": { "stevenlutsky-oss/subfixer": 17, "stevenlutsky-oss/stayfile": 47 }
+  "repos": { "browsertools-oss/subfixer": 17, "browsertools-oss/stayfile": 47 }
 }

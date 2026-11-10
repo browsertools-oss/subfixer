@@ -383,6 +383,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'txt-to-ass',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ass' },
+    title: 'TXT to ASS converter: turn a text transcript into subtitles online',
+    h1: 'Convert TXT to ASS',
+    lede: 'Have the words of a video as plain text and want to style them in Aegisub? Turn the transcript into ASS first.',
+    description: 'Convert a plain text file (.txt) to ASS subtitles. Timestamps in the text are used, or cues are timed by reading speed. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .txt file.',
+      'Output is preset to ASS. If the text has no timings, set the reading speed and start time under the file bar.',
+      'Download the .ass file.',
+    ],
+    faq: [
+      { q: 'Where do the timings come from?', a: 'If a line starts with a time like 00:01:02,500 or [00:00.00], it is used as the cue start and the cue runs to the next timed line. Otherwise each cue is timed at fifteen characters per second, two rows to a cue. Set the speed and start time under the file bar.' },
+      { q: 'What happens to the cue styling?', a: 'Nothing is styled. ASS carries text and timing only, and the player uses its default look until you change styles in Aegisub.' },
+      { q: 'I only want SRT.', a: 'Use the TXT to SRT converter instead.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'vtt-to-ass',
     mode: 'convert',
     group: 'Convert',

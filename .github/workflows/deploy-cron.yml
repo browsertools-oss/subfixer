@@ -1,0 +1,20 @@
+name: deploy-cron
+# Deploys the venture-cron Worker (cron/), which starts both ventures' daily-agent runs on time.
+on:
+  push:
+    branches: [main]
+    paths: ['cron/**', '.github/workflows/deploy-cron.yml']
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cron
+          secrets: GH_TOKEN
+        env:
+          GH_TOKEN: ${{ secrets.VENTURE_CRON_TOKEN }}

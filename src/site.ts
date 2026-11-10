@@ -644,6 +644,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'srt-to-ass',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ass' },
+    title: 'SRT to ASS converter: save .srt as .ass subtitles online',
+    h1: 'Convert SRT to ASS',
+    lede: 'ASS files open in Aegisub, VLC and most anime players, and they support styling that SRT does not. Convert your SRT here and keep the same timing and text.',
+    description: 'Convert SRT subtitles to ASS (.ass) files online. Keeps the timing and text of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .srt file.',
+      'Output is preset to ASS (.ass).',
+      'Download the .ass file.',
+    ],
+    faq: [
+      { q: 'Does the conversion add any styling?', a: 'No. Each line becomes a Dialogue line with its start and end time and its text. Fonts and colours are not set by this tool, so the player uses its default style. You can change those in Aegisub.' },
+      { q: 'Will italics and bold carry over?', a: 'Italic and bold tags in the SRT are written as ASS tags. Line breaks are kept too.' },
+      { q: 'Can I go back to SRT?', a: 'Yes. Use the ASS to SRT converter. Positioning and styling are dropped on the way back, and only the text and timing remain.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'smi-to-srt',
     mode: 'convert',
     group: 'Convert',

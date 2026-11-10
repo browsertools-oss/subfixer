@@ -15,6 +15,13 @@ test('parse srt', () => {
   assert.equal(d.captions[1].text, '[DOOR SLAMS]\nJOHN: World');
 });
 
+test('srt to ass keeps each line with its times, and italics become ASS tags', () => {
+  const ass = build(parse(SRT).captions, 'ass');
+  assert.match(ass, /Dialogue: .*0:00:01\.00,0:00:02\.50/);
+  assert.match(ass, /\{\\i1\}Hello\{\\i0\}/);
+  assert.match(ass, /\[DOOR SLAMS\]\\NJOHN: World/);
+});
+
 test('shift', () => {
   const c = retime(parse(SRT).captions, shiftFn(-1500));
   assert.equal(c[0].start, 0); // clamped

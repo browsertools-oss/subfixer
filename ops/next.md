@@ -1,5 +1,5 @@
 - Confirm the SBV page's YouTube Studio download and upload steps once web lookup is permitted (blocked by a permission prompt last time).
 - Watch ops/metrics.csv: 276 visits on 2026-11-09. ~300 in a month is the ads trigger, 1,000 in 30 days is the paid tier trigger. When either lands, open the decision issue from the roadmap and do not build the checkout yet.
-- Read the two new pages (lrc-to-srt, vtt-to-ass) in the built HTML for layout, and check the footer roll they land in still reads well on a phone.
+- Read the three new pages (lrc-to-srt, vtt-to-ass, txt-to-ass) in the built HTML for layout, and check the footer roll they land in still reads well on a phone.
 - If a new mode is ever added, give it its own disabled-download reason in src/lib/flow.ts with a test.
-- Next candidate pages if the format checks out: TXT to ASS and ASS to SSA. Verify against the builders in src/lib/subs.ts before writing any copy.
+- Next candidate page if the layout holds up: ASS to SSA (reverse of an existing convert path). Verify build support in src/lib/subs.ts before writing copy.

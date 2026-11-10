@@ -383,6 +383,23 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'vtt-to-ass',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ass' },
+    title: 'VTT to ASS converter: WebVTT to SubStation subtitles online',
+    h1: 'Convert VTT to ASS',
+    lede: 'Turn a WebVTT file into ASS for Aegisub and for players and editors that read SubStation tags.',
+    description: 'Convert WebVTT (.vtt) subtitles to ASS (.ass). Italic and bold tags are kept, line breaks stay. Free, and it runs in your browser.',
+    steps: ['Drop in your .vtt file.', 'Output is preset to ASS.', 'Download the .ass file.'],
+    faq: [
+      { q: 'Does VTT styling carry over?', a: 'VTT cue settings and classes are dropped, since ASS has no direct match for them. Tags inside the lines, like <i> and <b>, become ASS tags. Line breaks are kept.' },
+      { q: 'Why would I want ASS?', a: 'Aegisub works with ASS, and so do many anime players. Convert first, then style the file in Aegisub and export from there.' },
+      { q: 'Can I convert it back?', a: 'Yes. Use the ASS to VTT converter on this site.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'srt-to-txt',
     mode: 'convert',
     group: 'Convert',

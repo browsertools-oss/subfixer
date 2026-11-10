@@ -61,6 +61,16 @@ test('fix common', () => {
   assert.equal(report.removedEmpty, 1);
 });
 
+test('vtt parse keeps i and b tags, and they become ass tags on build', () => {
+  const vtt = 'WEBVTT\r\n\r\n00:00:01.000 --> 00:00:02.500\r\n<i>Hello</i> and <b>bold</b> <u>under</u>\r\n\r\n00:00:03.000 --> 00:00:04.000\r\n<font color="red">plain</font>\r\n\r\n';
+  const d = parse(vtt, 23.976, { name: 'movie.vtt' });
+  assert.equal(d.format, 'vtt');
+  assert.equal(d.captions[0].text, '<i>Hello</i> and <b>bold</b> <u>under</u>');
+  assert.equal(d.captions[1].text, 'plain');
+  const ass = build(d.captions, 'ass');
+  assert.match(ass, /\{\\i1\}Hello\{\\i0\} and \{\\b1\}bold\{\\b0\} \{\\u1\}under\{\\u0\}/);
+});
+
 test('build vtt and srt roundtrip', () => {
   const caps = parse(SRT).captions;
   const vtt = build(caps, 'vtt');

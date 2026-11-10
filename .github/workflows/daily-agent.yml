@@ -1,9 +1,14 @@
 name: daily-agent
 on:
-  schedule:
-    - cron: '17 14 * * *' # 6:17am Pacific
-    - cron: '17 2 * * *' # 6:17pm Pacific: evening work run, no report
+  # Triggered on time by the venture-cron Cloudflare Worker (6am and 6pm Pacific);
+  # GitHub's own schedule ran up to 9 hours late, so it is not used.
   workflow_dispatch:
+    inputs:
+      run:
+        description: morning posts the daily report, evening only works
+        default: morning
+        type: choice
+        options: [morning, evening]
 permissions:
   contents: write
   issues: write
@@ -57,7 +62,7 @@ jobs:
           fi
       - name: Daily report
         # Once a day only; the evening run's commits show in the next morning's report.
-        if: always() && github.event.schedule != '17 2 * * *'
+        if: always() && inputs.run != 'evening'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

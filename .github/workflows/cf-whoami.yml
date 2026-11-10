@@ -9,8 +9,6 @@ jobs:
           A: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           H="Authorization: Bearer $T"
-          curl -s -H "$H" https://api.cloudflare.com/client/v4/accounts/$A | jq '{ok: .success, name: .result.name, err: .errors}'
-          curl -s -H "$H" https://api.cloudflare.com/client/v4/user | jq '{ok: .success, email: .result.email, err: .errors}'
-          curl -s -H "$H" "https://api.cloudflare.com/client/v4/accounts/$A/members?per_page=20" | jq '{ok: .success, members: [.result[]?.user.email], err: .errors}'
-          curl -s -H "$H" https://api.cloudflare.com/client/v4/user/tokens/verify | jq '{ok: .success, status: .result.status}'
-          curl -s -H "$H" "https://api.cloudflare.com/client/v4/accounts/$A/workers/scripts" | jq '{workersOk: .success, err: .errors}'
+          curl -s -H "$H" "https://api.cloudflare.com/client/v4/zones?name=subfixer.app" | jq '{ok: .success, acct: [.result[]?.account.name], err: .errors}'
+          curl -s -H "$H" "https://api.cloudflare.com/client/v4/accounts/$A/pages/projects" | jq '{ok: .success, projects: [.result[]?.name]}'
+          curl -s -H "$H" "https://api.cloudflare.com/client/v4/accounts/$A/workers/subdomain" | jq '{ok: .success, sub: .result.subdomain}'

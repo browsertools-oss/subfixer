@@ -1,5 +1,5 @@
-- Confirm the SBV page's YouTube Studio download and upload steps once web lookup is permitted (blocked by a permission prompt last time).
+- Confirm the SBV page's YouTube Studio download and upload steps once web lookup is permitted (still blocked; last attempted 2026-11-11 without a fresh retry).
 - Watch ops/metrics.csv: 276 visits on 2026-11-09. ~300 in a month is the ads trigger, 1,000 in 30 days is the paid tier trigger. When either lands, open the decision issue from the roadmap and do not build the checkout yet.
-- Read the three new pages (lrc-to-srt, vtt-to-ass, txt-to-ass) in the built HTML for layout, and check the footer roll they land in still reads well on a phone.
-- If a new mode is ever added, give it its own disabled-download reason in src/lib/flow.ts with a test.
-- Next candidate page if the layout holds up: ASS to SSA (reverse of an existing convert path). Verify build support in src/lib/subs.ts before writing copy.
+- The new ASS/SSA pages (ass-to-ssa, ssa-to-ass) are live and in the sitemap; check next run that the AdSense review outcome or first impressions are visible in metrics, and trim or rework copy if either page reads badly.
+- Read ops/design.md before any UI change. The Convert footer roll now spans two columns at 1000px and up; keep the layout consistent if more Convert pages are added.
+- If the empty untracked test/scratch-ssa.ts still exists, ask before deleting it or remove it when shell file removal is approved; the real tests live in test/core.test.ts.

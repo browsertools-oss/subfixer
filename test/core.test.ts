@@ -206,6 +206,14 @@ test('microdvd with fps header, italics and line breaks', () => {
   assert.equal(build([{ start: 1001, end: 3003, text: '<i>A</i>\nB' }], 'sub', 24000 / 1001), '{24}{72}{y:i}A|B\r\n');
 });
 
+test('microdvd times stretch for a frame rate change, then land in frames at the picked rate', () => {
+  const d = parse('{25}{50}Hi\r\n', 25);
+  const stretched = retime(d.captions, fpsFn(25, 24000 / 1001));
+  assert.equal(stretched[0].start, 1043);
+  // The default save rate is the source rate, so the frame numbers stretch by the same ratio.
+  assert.equal(build(stretched, 'sub', 25), '{26}{52}Hi\r\n');
+});
+
 test('sami with two languages', () => {
   const smi = `<SAMI><HEAD><STYLE TYPE="text/css"><!--
 .ENCC { Name: English; lang: en-US; }

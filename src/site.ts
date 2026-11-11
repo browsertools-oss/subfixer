@@ -136,7 +136,7 @@ export const PAGES: ToolPage[] = [
       },
       {
         q: 'Does this work for frame-based .sub (MicroDVD) files?',
-        a: 'Yes. MicroDVD files store frame numbers, so the tool reads them at the source frame rate and writes the result with real timestamps.',
+        a: 'Yes. The frames are read at the frame rate you pick and the lines are re-timed at the new rate. Pick SRT under "Save as" if you also want real timestamps.',
       },
       PRIVACY_FAQ,
     ],

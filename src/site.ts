@@ -562,7 +562,7 @@ export const PAGES: ToolPage[] = [
       'Download. Several files come back as one zip.',
     ],
     faq: [
-      { q: 'Is there a limit?', a: 'Up to 100 files, each under 20 MB. Subtitle files are usually well under 1 MB.' },
+      { q: 'Is there a limit?', a: 'There is no fixed file count. The browser reads the files into memory, so a season of normal subtitle files, usually under 1 MB each, is fine. Very large files or a very large batch can run slowly.' },
       { q: 'Each file needs a different offset.', a: 'Then fix them one at a time. A batch applies the same settings to every file.' },
       PRIVACY_FAQ,
     ],

@@ -12,3 +12,11 @@ Read it before any UI change. Record new decisions here so later runs follow the
 - 2026-11-10: The home page "Why it runs in your browser" no longer claims the tool keeps
   working offline. No service worker exists and OCR loads tesseract.js at runtime, so the
   claim was not true there either.
+- 2026-11-11: The Convert footer roll grew to 30+ links, far taller than the other rolls.
+  At 1000px and wider, `.foot-roll[data-group='convert']` spans two grid cells and its
+  links are set in two CSS columns; items keep `break-inside: avoid`. Below 1000px the
+  roll is unchanged (the grid already collapses). Chosen over trimming footer links,
+  because they are the site's internal-link graph.
+- 2026-11-11: The picker and tab roll labels said "Format" while the footer and tabs were
+  meant to say "Convert" (see the 2026-11-10 entry). The remaining label in Tool.astro was
+  renamed, so all three roll displays now read Convert.

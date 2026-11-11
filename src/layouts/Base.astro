@@ -518,9 +518,14 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .foot-name { margin: 0 0 10px; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); display: flex; align-items: center; gap: 8px; }
   .foot-roll[data-group] .foot-name::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--paper); }
   .foot-roll ul { list-style: none; margin: 0; padding: 0; }
-  .foot-roll li { margin-bottom: 6px; }
+  .foot-roll li { margin-bottom: 6px; break-inside: avoid; }
   .foot-roll a { color: var(--ink); text-decoration-color: transparent; }
   .foot-roll a:hover { text-decoration-color: currentColor; }
+  /* the Convert roll is much longer than the others; at wide widths it spans two cells and sets its links in two columns so the footer stays balanced */
+  @media (min-width: 1000px) {
+    .foot-roll[data-group='convert'] { grid-column: span 2; }
+    .foot-roll[data-group='convert'] ul { columns: 2; gap: 24px; }
+  }
   .foot-line { margin: 36px 0 0; padding-top: 18px; border-top: 1px solid var(--rule); }
 
   .plainlist { margin: 0; padding-left: 1.2em; }
@@ -563,7 +568,6 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
     .tabs { flex-wrap: nowrap; overflow-x: auto; margin: 18px -16px 0; padding: 2px 16px 8px; gap: 8px 18px; scrollbar-width: none; }
     .tabroll { flex-wrap: nowrap; flex: 0 0 auto; }
     .tabs button { white-space: nowrap; height: 40px; padding: 0 12px; }
-    /* Download stays under the thumb while the settings scroll */
     /* only the Download button stays under the thumb, so the settings keep the screen */
     .tool.has-file .outrow { display: contents; }
     .tool.has-file .outrow label { margin-top: 16px; }

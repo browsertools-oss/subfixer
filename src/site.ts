@@ -537,7 +537,7 @@ export const PAGES: ToolPage[] = [
     group: 'Convert',
     title: 'Batch convert and fix subtitle files: many SRT files at once',
     h1: 'Fix or convert many subtitle files at once',
-    lede: 'Drop in a whole folder of subtitles, like every episode of a season, and apply the same shift, frame-rate change, cleanup or format to all of them. You get one zip back.',
+    lede: 'Select a whole season of files at once, or drop them together, and apply the same shift, frame-rate change, cleanup or format to all of them. You get one zip back.',
     description:
       'Batch convert SRT, VTT, ASS and SBV subtitles, or shift and clean many files at once. Download them together as a zip. Free, and nothing is uploaded.',
     steps: [

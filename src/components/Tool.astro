@@ -1084,7 +1084,7 @@ const ART: Record<string, string> = {
       : parts
         ? 'Each part starts at the time on its right. Parts that restart at zero are placed after the one before, so check the gap against your video.'
         : $<HTMLInputElement>('mTop').checked
-          ? 'The second language gets a top-of-screen tag. SRT and ASS players honor it. VTT and the rest show both at the bottom.'
+          ? 'The second language gets the ASS top-of-screen tag, {\\an8}. Players with ASS rendering, like VLC and mpv, put it on top. Other players ignore it or show both at the bottom. VTT drops the tag.'
           : 'Where lines from both files are on screen together, they are stacked into one subtitle.';
   }
 

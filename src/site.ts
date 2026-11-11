@@ -1058,7 +1058,7 @@ export const PAGES: ToolPage[] = [
       'Check the preview, then download the merged file.',
     ],
     faq: [
-      { q: 'Can the second language go at the top of the screen?', a: 'Yes. Tick "Put the second language at the top". That adds a position tag that VLC and ASS players follow. VTT players ignore it and show both at the bottom.' },
+      { q: 'Can the second language go at the top of the screen?', a: 'Yes. Tick "Put the second language at the top". That adds the ASS tag {\\an8}. Players with ASS rendering, like VLC and mpv, put the second language on top; other players ignore it or show both at the bottom. VTT output drops the tag.' },
       { q: 'Where does part 2 start?', a: 'If part 2 restarts at zero, it is placed one second after the last line of part 1. Change the start time to match where CD2 begins in your joined video.' },
       PRIVACY_FAQ,
     ],

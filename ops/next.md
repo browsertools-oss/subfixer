@@ -1,5 +1,5 @@
-- Confirm the SBV page's YouTube Studio download and upload steps once web lookup is permitted (still blocked; last attempted 2026-11-11 without a fresh retry).
+- Confirm the SBV page's YouTube Studio download and upload steps once web lookup is permitted (still blocked; not retried this run).
 - Watch ops/metrics.csv: 276 visits on 2026-11-09. ~300 in a month is the ads trigger, 1,000 in 30 days is the paid tier trigger. When either lands, open the decision issue from the roadmap and do not build the checkout yet.
-- The new ASS/SSA pages (ass-to-ssa, ssa-to-ass) are live and in the sitemap; check next run that the AdSense review outcome or first impressions are visible in metrics, and trim or rework copy if either page reads badly.
-- Read ops/design.md before any UI change. The Convert footer roll now spans two columns at 1000px and up; keep the layout consistent if more Convert pages are added.
-- If the empty untracked test/scratch-ssa.ts still exists, ask before deleting it or remove it when shell file removal is approved; the real tests live in test/core.test.ts.
+- The three new convert pages (ttml-to-vtt, sbv-to-vtt, vtt-to-ttml) are live and in the sitemap; next run check indexing and impressions, and rework copy if any page reads badly. Do the same for the ASS/SSA pair.
+- test/scratch-ssa.ts is tracked (committed in b6b72f9), not untracked as the old note said; ask before deleting it. Real tests live in test/core.test.ts.
+- Read ops/design.md before any UI change. The Convert footer roll spans two columns at 1000px and up; keep that consistent if more Convert pages are added.

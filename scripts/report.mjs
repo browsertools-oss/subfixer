@@ -38,20 +38,25 @@ async function madeToday() {
   return 0;
 }
 
-// --- visitors: yesterday's unique visitors from Cloudflare zone analytics (null if the token can't read them) ---
-async function visitorsYesterday() {
+// --- visitors: real visits per day from Cloudflare Web Analytics (browser beacon, bots excluded) ---
+// Zone "uniques" counted every IP that hit the site, crawlers included, which overstated traffic ~30x.
+// Returns { "YYYY-MM-DD": visits } for the last 30 days, or null if the token can't read them.
+async function visitsByDay() {
   const token = process.env.CLOUDFLARE_API_TOKEN;
   if (!token) return null;
   const H = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
   try {
-    const z = await (await fetch('https://api.cloudflare.com/client/v4/zones?name=subfixer.app', { headers: H })).json();
-    const zone = z?.result?.[0]?.id;
-    if (!zone) return null;
-    const day = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
-    const query = `{ viewer { zones(filter: {zoneTag: "${zone}"}) { httpRequests1dGroups(limit: 1, filter: {date: "${day}"}) { uniq { uniques } } } } }`;
+    const a = await (await fetch('https://api.cloudflare.com/client/v4/accounts', { headers: H })).json();
+    const account = a?.result?.[0]?.id;
+    if (!account) return null;
+    const from = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+    const query = `{ viewer { accounts(filter: {accountTag: "${account}"}) { rumPageloadEventsAdaptiveGroups(limit: 100, filter: {date_geq: "${from}", requestHost: "subfixer.app", bot: 0}) { sum { visits } dimensions { date } } } } }`;
     const g = await (await fetch('https://api.cloudflare.com/client/v4/graphql', { method: 'POST', headers: H, body: JSON.stringify({ query }) })).json();
-    const u = g?.data?.viewer?.zones?.[0]?.httpRequests1dGroups?.[0]?.uniq?.uniques;
-    return u == null ? null : { day, visitors: u };
+    const groups = g?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups;
+    if (!Array.isArray(groups)) return null;
+    const out = {};
+    for (const x of groups) out[x.dimensions.date] = (out[x.dimensions.date] ?? 0) + (x.sum?.visits ?? 0);
+    return out;
   } catch { return null; }
 }
 
@@ -70,11 +75,17 @@ const made = await madeToday();
 
 const without = rows.filter((r) => r.date !== today);
 without.push({ date: today, spent: aiToday, made, visitors: null });
-const seen = await visitorsYesterday();
+const seen = await visitsByDay();
 if (seen) {
-  const row = without.find((r) => r.date === seen.day);
-  if (row) row.visitors = seen.visitors;
-  else without.unshift({ date: seen.day, spent: 0, made: 0, visitors: seen.visitors });
+  // Rewrite every finished day in the window (days with no beacon hits are 0); today stays blank until tomorrow.
+  const from = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+  const dates = new Set([...without.map((r) => r.date), ...Object.keys(seen)]);
+  for (const d of dates) {
+    if (d < from || d >= today) continue;
+    const row = without.find((r) => r.date === d);
+    if (row) row.visitors = seen[d] ?? 0;
+    else without.push({ date: d, spent: 0, made: 0, visitors: seen[d] });
+  }
   without.sort((a, b) => a.date.localeCompare(b.date));
 }
 const hist = without.slice(-90);

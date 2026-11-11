@@ -38,6 +38,18 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
     {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
     <meta name="google-adsense-account" content="ca-pub-3033001375409079" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3033001375409079" crossorigin="anonymous"></script>
+    <!-- Umami (cookie-free analytics): page views plus two events, a file added and a download, with the file type only. Never file names or contents. -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="b1124074-6131-4fe6-b306-cd7260c0ef67" data-domains="subfixer.app"></script>
+    <script is:inline>
+      (() => {
+        const ext = (n) => ((/\.([a-z0-9]{1,8})$/i.exec(n || '') || [])[1] || 'none').toLowerCase();
+        const track = (name, data) => { try { window.umami && window.umami.track(name, data); } catch {} };
+        const added = (files) => { if (files && files.length) track('file-added', { ext: ext(files[0].name), count: files.length }); };
+        document.addEventListener('change', (e) => { const t = e.target; if (t instanceof HTMLInputElement && t.type === 'file') added(t.files); }, true);
+        document.addEventListener('drop', (e) => added(e.dataTransfer && e.dataTransfer.files), true);
+        document.addEventListener('click', (e) => { const a = e.target; if (a instanceof HTMLAnchorElement && a.hasAttribute('download')) track('download', { ext: ext(a.download) }); }, true);
+      })();
+    </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to the tool</a>

@@ -241,6 +241,19 @@ test('ttml and dfxp: clock, offset and frame times, italics by style, round trip
   const back = parse(out, 25, { name: 'x.dfxp' });
   assert.equal(back.format, 'dfxp');
   assert.equal(back.captions[0].text, '<i>Hi</i>\nA & B');
+  const vtt = build(parse(ttml).captions, 'vtt');
+  assert.match(vtt, /<i>Leaning<\/i> words/);
+  assert.match(vtt, /00:00:01\.500 --> 00:00:03\.000/);
+});
+
+test('sbv parses and keeps its times into vtt', () => {
+  const d = parse('0:00:01.000,0:00:03.500\nHello there\n\n0:00:05.250,0:00:07.000\nSecond line\n', 23.976, { name: 'youtube.sbv' });
+  assert.equal(d.format, 'sbv');
+  assert.deepEqual(d.captions.map((c) => [c.start, c.end, c.text]), [[1000, 3500, 'Hello there'], [5250, 7000, 'Second line']]);
+  const vtt = build(d.captions, 'vtt');
+  assert.match(vtt, /WEBVTT/);
+  assert.match(vtt, /00:00:01\.000 --> 00:00:03\.500/);
+  assert.match(vtt, /Second line/);
 });
 
 test('youtube xml, both flavors', () => {

@@ -53,7 +53,7 @@ export const PAGES: ToolPage[] = [
       },
       {
         q: 'Subtitles are a fixed amount early or late the whole way through.',
-        a: 'Use "Shift timing" and enter the offset. A positive number makes them appear later, a negative number earlier.',
+        a: 'Use "Shift timing", pick "Too late" or "Too early", and enter the offset. The preview shows the file moved the way you picked.',
       },
       {
         q: 'Can I fix a whole season at once?',
@@ -73,7 +73,7 @@ export const PAGES: ToolPage[] = [
       'Delay or advance every subtitle in an SRT, VTT or ASS file by a fixed number of seconds. Free, and the file never leaves your browser.',
     steps: [
       'Drop in your subtitle file.',
-      'Enter the offset: 2.5 delays by two and a half seconds, -1.2 shows them 1.2 seconds sooner. You can also type 00:01:05,300 or 1500ms.',
+      'Pick "Too late" or "Too early", then enter the amount: 2.5 shifts by two and a half seconds. You can also type 00:01:05,300 or 1500ms.',
       'Download the shifted file.',
     ],
     faq: [

@@ -10,7 +10,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>1. The same error the whole way through</h2>
     <p>The first line is two seconds early, a line in the middle is two seconds early, and so is the last one. This is a plain offset. It happens when the video has a different intro, a studio logo or a few seconds of black at the start that the subtitle maker's copy did not have.</p>
-    <p>Fix: <a href="/shift-subtitle-timing/">shift the timing</a> by that amount. Play the video to the first spoken line, note the time, and compare it with that line's time in the preview. A positive offset makes subtitles appear later.</p>
+    <p>Fix: <a href="/shift-subtitle-timing/">shift the timing</a> by that amount. Play the video to the first spoken line, note the time, and compare it with that line's time in the preview. Pick "Too early" or "Too late" to say which way they move.</p>
 
     <h2>2. Right at the start, wrong later, and getting worse</h2>
     <p>The first few minutes look fine, but by the end the subtitles are several seconds ahead or behind. The error grows steadily. This is a frame-rate mismatch: the subtitles were timed against a video running at a different speed.</p>

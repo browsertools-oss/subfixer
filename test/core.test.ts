@@ -381,6 +381,32 @@ test('ttml keeps italics inside a line', () => {
   for (const f of ['ttml', 'dfxp'] as const) assert.deepEqual(parse(build(caps, f)).captions, caps);
 });
 
+test('ssa in, ass out: v4.00+ with a default style, times kept', () => {
+  const raw = [
+    '[Script Info]',
+    'Title: Probe SSA',
+    'ScriptType: v4.00',
+    'Collisions: Normal',
+    '',
+    '[V4 Styles]',
+    'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, TertiaryColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, AlphaLevel, Encoding',
+    'Style: Default, Arial,28,11861244,11861244,11861244,-2147483640,-1,0,1,1,2,2,30,30,30,0,0',
+    '',
+    '[Events]',
+    'Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text',
+    'Dialogue: Marked=0,0:00:01.00,0:00:03.50,Default, NTP,0000,0000,0000,,{\\i1}Hello{\\i0} world',
+    'Dialogue: Marked=0,0:00:04.00,0:00:06.00,Default, NTP,0000,0000,0000,,Second line',
+  ].join('\r\n');
+  const d = parse(raw);
+  assert.equal(d.format, 'ssa');
+  const ass = build(d.captions, 'ass');
+  assert.match(ass, /ScriptType: v4\.00\+/);
+  assert.match(ass, /\[V4\+ Styles\]/);
+  assert.match(ass, /\{\\i1\}Hello\{\\i0\} world/);
+  assert.equal((ass.match(/^Style:/gm) ?? []).length, 1);
+  assert.deepEqual(parse(ass).captions.map((c) => [c.start, c.end]), [[1000, 3500], [4000, 6000]]);
+});
+
 test('ass to ssa writes v4.00 with a default style and keeps text and times', () => {
   const raw = [
     '[Script Info]',

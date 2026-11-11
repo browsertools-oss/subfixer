@@ -45,7 +45,7 @@ const symptoms: { id: string; go: Mode; text: string }[] = [
 const ROLLS: { g: Group; name: string }[] = [
   { g: 'timing', name: 'Timing' },
   { g: 'text', name: 'Text' },
-  { g: 'convert', name: 'Format' },
+  { g: 'convert', name: 'Convert' },
 ];
 const picked = home ? '' : preset.symptom ?? (preset.fromLine ? 'one-scene' : symptoms.find((s) => s.go === mode)?.id ?? '');
 const fps = [

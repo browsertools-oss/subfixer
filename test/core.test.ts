@@ -380,3 +380,33 @@ test('ttml keeps italics inside a line', () => {
   const caps = [{ start: 1000, end: 2000, text: '<i>Fine.</i> Come in & sit' }];
   for (const f of ['ttml', 'dfxp'] as const) assert.deepEqual(parse(build(caps, f)).captions, caps);
 });
+
+test('ass to ssa writes v4.00 with a default style and keeps text and times', () => {
+  const raw = [
+    '[Script Info]',
+    'Title: Probe',
+    'ScriptType: v4.00+',
+    'PlayResX: 640',
+    'PlayResY: 360',
+    '',
+    '[V4+ Styles]',
+    'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
+    'Style: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1',
+    '',
+    '[Events]',
+    'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text',
+    'Dialogue: 0,0:00:01.00,0:00:03.50,Default,,0,0,0,,{\\i1}Hello{\\i0} world',
+    'Dialogue: 0,0:00:04.00,0:00:06.00,Default,,0,0,0,,Second line',
+  ].join('\n');
+  const d = parse(raw);
+  assert.equal(d.format, 'ass');
+  const ssa = build(d.captions, 'ssa');
+  assert.match(ssa, /ScriptType: v4\.00\r?\n/);
+  assert.match(ssa, /\[V4 Styles\]/);
+  assert.match(ssa, /Dialogue: Marked=0,0:00:01\.00,0:00:03\.50/);
+  assert.match(ssa, /Dialogue: Marked=0,0:00:04\.00,0:00:06\.00/);
+  assert.match(ssa, /\{\\i1\}Hello\{\\i0\} world/);
+  // The fresh file is written with one default style, not the source's.
+  assert.equal((ssa.match(/^Style:/gm) ?? []).length, 1);
+  assert.deepEqual(parse(ssa).captions.map((c) => [c.start, c.end]), [[1000, 3500], [4000, 6000]]);
+});

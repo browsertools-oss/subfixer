@@ -53,6 +53,13 @@ test('srt builds ssa v4.00 with one default style and italics as override tags',
   assert.match(ssa, /Marked=0,0:00:01\.00,0:00:02\.50/);
 });
 
+test('ass builds ttml with italic runs as italic spans and other tags dropped', () => {
+  const ttml = build(parse(ASS).captions, 'ttml');
+  assert.match(ttml, /<span tts:fontStyle="italic">Hi<\/span>/);
+  assert.doesNotMatch(ttml, /\{\\\\i1\}/);
+  assert.match(ttml, /<br\/>there/);
+});
+
 test('shift', () => {
   const c = retime(parse(SRT).captions, shiftFn(-1500));
   assert.equal(c[0].start, 0); // clamped

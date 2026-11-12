@@ -861,6 +861,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'ass-to-ttml',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ttml' },
+    title: 'ASS to TTML converter: save .ass as .ttml captions online',
+    h1: 'Convert ASS to TTML',
+    lede: 'A platform asks for TTML but your subtitles are .ass. Convert them here and keep the timing, the text and the italics.',
+    description: 'Convert ASS subtitles to TTML (.ttml) captions. Keeps the timing, text and italics of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .ass file.',
+      'Output is preset to TTML (.ttml).',
+      'Download the .ttml file.',
+    ],
+    faq: [
+      { q: 'Are italics kept?', a: 'Yes. Italic runs become italic spans in the TTML file. Bold and underline come out as plain text, since the TTML writer only marks italics.' },
+      { q: 'What happens to fonts, colors and positions?', a: 'They are dropped. The TTML file carries timing, text and italics, so the target platform styles the captions its own way.' },
+      { q: 'My file is .ssa, not .ass. Does that work?', a: 'Yes. SSA is read the same way, and the same limits apply.' },
+      { q: 'Can I turn the TTML file back into VTT or SRT?', a: 'Yes. Use the TTML to VTT or TTML to SRT converter. Only the text, the timing and the italics come back.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'srt-to-smi',
     mode: 'convert',
     group: 'Convert',

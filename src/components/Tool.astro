@@ -1173,7 +1173,7 @@ const ART: Record<string, string> = {
       $('doneMsg').textContent = savedMessage(savedAs, list.length > 1);
       $('done').hidden = false;
       $('done').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      (window as any).plausible?.('download', { props: { mode, fmt, files: String(list.length) } });
+      // Umami's document listener in Base.astro counts this download; the created anchor carries a download attribute.
     } catch (e: any) {
       err.textContent = e?.message ?? String(e);
       err.hidden = false;

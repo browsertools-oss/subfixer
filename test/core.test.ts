@@ -60,6 +60,13 @@ test('ass builds ttml with italic runs as italic spans and other tags dropped', 
   assert.match(ttml, /<br\/>there/);
 });
 
+test('ttml builds ass with italic spans as override tags', () => {
+  const T = '<?xml version="1.0"?><tt xmlns="http://www.w3.org/ns/ttml"><body><div><p begin="00:00:01.000" end="00:00:02.500"><span tts:fontStyle="italic">Hi</span> there</p></div></body></tt>';
+  const ass = build(parse(T, 23.976, { name: 'cap.ttml' }).captions, 'ass');
+  assert.match(ass, /\{\\i1\}Hi\{\\i0\} there/);
+  assert.match(ass, /0:00:01\.00,0:00:02\.50/);
+});
+
 test('shift', () => {
   const c = retime(parse(SRT).captions, shiftFn(-1500));
   assert.equal(c[0].start, 0); // clamped

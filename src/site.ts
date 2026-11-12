@@ -883,6 +883,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'ttml-to-ass',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ass' },
+    title: 'TTML to ASS converter: save .ttml captions as .ass subtitles online',
+    h1: 'Convert TTML to ASS',
+    lede: 'TTML files from streaming services or broadcasters lose nothing you need to keep. Turn one into ASS to open it in Aegisub or VLC.',
+    description: 'Convert TTML (.ttml, .dfxp) captions to ASS (.ass). Keeps the timing, text and italics of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .ttml or .dfxp file.',
+      'Output is preset to ASS (.ass).',
+      'Download the .ass file.',
+    ],
+    faq: [
+      { q: 'Are italics kept?', a: 'Yes. Italic spans in the TTML file become italic override tags in the ASS file. Line breaks are kept too.' },
+      { q: 'What about bold, colors and positions?', a: 'They come out as plain text. The TTML reader keeps fonts, colors and positions out, so the ASS file carries timing, text and italics only.' },
+      { q: 'I have a lot of files. Can I do them at once?', a: 'Yes. Drop them all on the tool at once. Every file converts with the same settings, and you get one zip back.' },
+      { q: 'My file is .dfxp. Does that count as TTML?', a: 'Yes. DFXP is the older draft of TTML. The converter reads both the same way.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'srt-to-smi',
     mode: 'convert',
     group: 'Convert',

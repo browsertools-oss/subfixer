@@ -3,5 +3,5 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://subfixer.app',
   trailingSlash: 'always',
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/404') })],
 });

@@ -5,8 +5,9 @@ interface Props {
   description: string;
   path: string;
   jsonld?: object[];
+  noindex?: boolean;
 }
-const { title, description, path, jsonld = [] } = Astro.props;
+const { title, description, path, jsonld = [], noindex = false } = Astro.props;
 const canonical = new URL(path, SITE.url).href;
 const ROLL: Record<string, string> = { Timing: 'timing', Text: 'text', Convert: 'convert' };
 const others = GROUPS.map((g) => ({
@@ -26,6 +27,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />

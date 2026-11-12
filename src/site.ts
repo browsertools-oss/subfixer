@@ -966,6 +966,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'lrc-to-vtt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'vtt' },
+    title: 'LRC to VTT converter: timed lyrics into WebVTT online',
+    h1: 'Convert LRC to VTT',
+    lede: 'LRC is the timed lyric format used by music players. Turn it into WebVTT to show the words as a track in a video.',
+    description: 'Convert LRC lyrics to WebVTT. Each line runs until the next one begins. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .lrc file.',
+      'Output is preset to VTT.',
+      'Download the .vtt file.',
+    ],
+    faq: [
+      { q: 'How are the end times worked out?', a: 'Each line runs until the next one begins. The last line gets two seconds. Trim it under "Check and edit" if it hangs on too long.' },
+      { q: 'What happens to the [ti] and [ar] tags?', a: 'Title and artist tags are dropped. The words and their times are kept.' },
+      { q: 'Does it apply the [offset:] tag?', a: 'No. If the file is out of step, open the fixed file under "Shift timing" and nudge it into place.' },
+      { q: 'My file has word-by-word timings.', a: 'Enhanced LRC keeps tags like <00:01.00> before each word. WebVTT has no word timings, so those tags are dropped and the line text is kept.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'stl-to-srt',
     mode: 'convert',
     group: 'Convert',

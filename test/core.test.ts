@@ -20,6 +20,16 @@ test('lrc parses into timed captions and builds srt', () => {
   assert.match(srt, /first line/);
 });
 
+test('lrc builds vtt with a webvtt header and word tags dropped', () => {
+  const d = parse('[00:12.50]<00:12.50>first <00:12.90>line\n[00:24.00]second line\n', 23.976, { name: 'song.lrc' });
+  assert.equal(d.format, 'lrc');
+  const vtt = build(d.captions, 'vtt');
+  assert.match(vtt, /^WEBVTT/);
+  assert.match(vtt, /00:00:12\.500 --> 00:00:24\.000/);
+  assert.match(vtt, /first line/);
+  assert.doesNotMatch(vtt, /<00:12\.50>/);
+});
+
 test('parse srt', () => {
   const d = parse(SRT);
   assert.equal(d.format, 'srt');

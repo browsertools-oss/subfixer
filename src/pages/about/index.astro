@@ -2,8 +2,11 @@
 import Base from '../../layouts/Base.astro';
 import { SITE } from '../../site';
 ---
-<Base title={`About | ${SITE.name}`} description="A free, private subtitle fixer that runs in your browser." path="/about/">
+<Base title={`About | ${SITE.name}`} description="SubFixer is a free subtitle tool that runs in your browser. It fixes timing, frame rate, encoding and format." path="/about/">
   <h1>About {SITE.name}</h1>
   <p class="lede">A small tool for the subtitle problems people run into most: wrong timing, frame-rate drift, garbled characters and the wrong format.</p>
-  <p>It runs on your own device, so files are processed right away and private files never get uploaded. It uses open-source libraries, including subsrt-ts and jschardet.</p>
+  <p>It reads and writes common subtitle formats: SRT, WebVTT, ASS, SSA, SBV, SAMI, TTML, DFXP, MicroDVD, EBU and Spruce STL, LRC, and Blu-ray picture subtitles through OCR. It shifts or stretches timing, repairs garbled characters, cleans up hearing-impaired text, renumbers lines, checks reading speed, finds and replaces text, merges dual-language files, and converts between formats or exports to Word, Excel or CSV.</p>
+  <p>Every fix runs on your own device. Files are processed in your browser and are never uploaded, stored or shared. The only things downloaded are the page itself and, for picture subtitles, the text reader and its language data.</p>
+  <p>It is built on open-source libraries, including subsrt-ts, jschardet, fflate and tesseract.js. The type is Atkinson Hyperlegible Next, under the SIL Open Font License.</p>
+  <p>The tool is free because ads may appear on the page once Google approves them. Questions: <a href="mailto:hello@subfixer.app">hello@subfixer.app</a></p>
 </Base>

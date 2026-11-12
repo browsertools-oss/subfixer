@@ -20,3 +20,8 @@ Read it before any UI change. Record new decisions here so later runs follow the
 - 2026-11-11: The picker and tab roll labels said "Format" while the footer and tabs were
   meant to say "Convert" (see the 2026-11-10 entry). The remaining label in Tool.astro was
   renamed, so all three roll displays now read Convert.
+- 2026-11-12: Added src/pages/404.astro, a noindex page in the site's own look (h1, lede,
+  "Fix a subtitle problem", "Convert a file", "Or read the guides" sections, links to the
+  common fixes). Base.astro gained a `noindex` prop that writes a robots meta tag;
+  the sitemap filter excludes /404. For hosts that serve 404.html. The page adds no new
+  layout: it reuses the block sections and plainlist styles from the guides and home.

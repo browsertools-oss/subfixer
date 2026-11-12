@@ -42,7 +42,7 @@ export const PAGES: ToolPage[] = [
     description:
       'Free online subtitle fixer. Shift SRT timing, convert 25 fps to 23.976, resync by two points, fix encoding and convert SRT, VTT, ASS. Runs in your browser.',
     steps: [
-      'Drop your .srt, .vtt, .ass or .sub file onto the box.',
+      'Drop your subtitle file onto the box. Every format listed on it works.',
       'Pick what is wrong with it: the timing, a slow drift, garbled characters or the format.',
       'Check the preview, then download the fixed file. It is saved as UTF-8.',
     ],

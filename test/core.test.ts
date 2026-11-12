@@ -44,6 +44,15 @@ test('srt to ass keeps each line with its times, and italics become ASS tags', (
   assert.match(ass, /\[DOOR SLAMS\]\\NJOHN: World/);
 });
 
+test('srt builds ssa v4.00 with one default style and italics as override tags', () => {
+  const ssa = build(parse(SRT).captions, 'ssa');
+  assert.match(ssa, /ScriptType: v4\.00\r?\n/);
+  assert.doesNotMatch(ssa, /V4\+ Styles/);
+  assert.match(ssa, /\[V4 Styles\]/);
+  assert.match(ssa, /\{\\i1\}Hello\{\\i0\}/);
+  assert.match(ssa, /Marked=0,0:00:01\.00,0:00:02\.50/);
+});
+
 test('shift', () => {
   const c = retime(parse(SRT).captions, shiftFn(-1500));
   assert.equal(c[0].start, 0); // clamped

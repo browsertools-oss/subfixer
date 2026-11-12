@@ -755,6 +755,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'srt-to-ssa',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ssa' },
+    title: 'SRT to SSA converter: save .srt as .ssa subtitles online',
+    h1: 'Convert SRT to SSA',
+    lede: 'SSA is the older SubStation Alpha format. Some older players and tools only read SSA. Convert your SRT here and keep the same timing and text.',
+    description: 'Convert SRT subtitles to SSA (.ssa) online. Keeps the timing and text of each line. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .srt file.',
+      'Output is preset to SSA (.ssa).',
+      'Download the .ssa file.',
+    ],
+    faq: [
+      { q: 'Does the conversion add any styling?', a: 'No. Each line becomes a Dialogue line with its start and end time and its text. One default style is written; fonts and colours are not set by this tool, so the player uses its defaults.' },
+      { q: 'Will italics and bold carry over?', a: 'Yes. Italic and bold tags in the SRT are written as SSA override tags. Line breaks are kept too.' },
+      { q: 'What is the difference between SSA and ASS?', a: 'ASS is the newer SubStation Alpha format, v4.00+, with more style options. SSA is v4.00. If your player reads ASS, use the SRT to ASS converter instead.' },
+      { q: 'Can I go back to SRT?', a: 'Yes. Use the ASS to SRT converter; it reads both ASS and SSA. Styling is dropped on the way back, and only the text and timing remain.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'srt-to-dfxp',
     mode: 'convert',
     group: 'Convert',

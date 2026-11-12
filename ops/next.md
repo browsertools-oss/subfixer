@@ -1,5 +1,5 @@
-- Confirm the SBV page's YouTube Studio download and upload steps once web lookup is permitted (still blocked; not retried this run).
-- Watch ops/metrics.csv: 276 visits on 2026-11-09. ~300 in a month is the ads trigger, 1,000 in 30 days is the paid tier trigger. When either lands, open the decision issue from the roadmap and do not build the checkout yet.
-- The three new convert pages (ttml-to-vtt, sbv-to-vtt, vtt-to-ttml) are live and in the sitemap; next run check indexing and impressions, and rework copy if any page reads badly. Do the same for the ASS/SSA pair.
-- test/scratch-ssa.ts is tracked (committed in b6b72f9), not untracked as the old note said; ask before deleting it. Real tests live in test/core.test.ts.
-- Read ops/design.md before any UI change. The Convert footer roll spans two columns at 1000px and up; keep that consistent if more Convert pages are added.
+- Watch ops/metrics.csv: 29 visitors on 2026-11-09, 9 on 2026-11-10, no count for 2026-11-11 yet. Below the ~300 monthly ads trigger and the 1,000/30-day paid-tier trigger, so no decision issue; when either lands, open the decision issue and do not build checkout yet. Trust the CSV over earlier notes that cited 276.
+- Check indexing of the new convert pages (lrc-to-vtt, srt-to-ssa, ass-to-ttml, ttml-to-ass) once the owner can show Search Console or web lookup is permitted; tune titles and ledes if they get no impressions. Re-verify the SBV YouTube Studio download steps at the same time (still unverified, blocked here).
+- Confirm the host serves the built dist/404.html so broken links hit the new noindex 404 page (Blocks work on the 404 itself if not; no pricing or paywall may appear until the 1,000-visit trigger and owner approval).
+- Ask the owner whether to delete the two stray scratch files: untracked scripts/wordcount.cjs and tracked test/scratch-ssa.ts. Nothing may be removed without approval.
+- No pricing, paywall or Pro pages may ship until the 1,000-visit trigger lands and the owner approves; ads stay gated on Google's approval.

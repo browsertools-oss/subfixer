@@ -311,6 +311,28 @@ test('spruce stl', () => {
   assert.deepEqual(d.captions[0], { start: 1000, end: 2480, text: '<i>Hello</i>\nWorld' });
 });
 
+test('spruce stl builds to vtt', () => {
+  const d = parse('$FontName = Arial\r\n00:00:01:00 , 00:00:02:12 , ^IHello^I|World\r\n', 25);
+  const vtt = build(d.captions, 'vtt');
+  assert.match(vtt, /WEBVTT/);
+  assert.match(vtt, /00:00:01\.000 --> 00:00:02\.480/);
+  assert.match(vtt, /<i>Hello<\/i>/);
+});
+
+test('sami builds to vtt, italics kept', () => {
+  const smi = `<SAMI><HEAD><STYLE TYPE="text/css"><!--
+.ENCC { Name: English; lang: en-US; }
+--></STYLE></HEAD><BODY>
+<SYNC Start=1000><P Class=ENCC>Hello world
+<SYNC Start=3000><P Class=ENCC><i>Bye</i>
+</BODY></SAMI>`;
+  const d = parse(smi);
+  const vtt = build(d.captions, 'vtt');
+  assert.match(vtt, /WEBVTT/);
+  assert.match(vtt, /00:00:01\.000 --> 00:00:03\.000/);
+  assert.match(vtt, /<i>Bye<\/i>/);
+});
+
 test('ebu stl binary: ISO 6937 accents, italics, newline, programme start', () => {
   const buf = new Uint8Array(1024 + 128 * 2).fill(0x20);
   const put = (o: number, s: string) => [...s].forEach((c, i) => (buf[o + i] = c.charCodeAt(0)));

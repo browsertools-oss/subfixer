@@ -889,7 +889,7 @@ export const PAGES: ToolPage[] = [
     preset: { out: 'ass' },
     title: 'TTML to ASS converter: save .ttml captions as .ass subtitles online',
     h1: 'Convert TTML to ASS',
-    lede: 'TTML files from streaming services or broadcasters lose nothing you need to keep. Turn one into ASS to open it in Aegisub or VLC.',
+    lede: 'Turn a TTML caption file into ASS for players that read ASS. The timing, the text and the italics carry over.',
     description: 'Convert TTML (.ttml, .dfxp) captions to ASS (.ass). Keeps the timing, text and italics of each line. Free, and it runs in your browser.',
     steps: [
       'Drop in your .ttml or .dfxp file.',

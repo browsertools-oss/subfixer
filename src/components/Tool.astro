@@ -206,14 +206,14 @@ const ART: Record<string, string> = {
         <div class="tabroll" role="none" data-group={r.g}>
           <span class="tabroll-name" aria-hidden="true">{r.name}</span>
           {tabs.filter((t) => GROUP_OF[t.id] === r.g).map((t) => (
-            <button type="button" role="tab" data-tab={t.id} data-group={GROUP_OF[t.id]} aria-selected={t.id === mode ? 'true' : 'false'}>{t.label}</button>
+            <button type="button" role="tab" id={`tab-${t.id}`} aria-controls={`panel-${t.id}`} data-tab={t.id} data-group={GROUP_OF[t.id]} aria-selected={t.id === mode ? 'true' : 'false'} tabindex={t.id === mode ? 0 : -1}>{t.label}</button>
           ))}
         </div>
       ))}
     </div>
 
     <div class="counter">
-    <div class="panel" data-panel="shift">
+    <div class="panel" data-panel="shift" role="tabpanel" id="panel-shift" aria-labelledby="tab-shift">
       <fieldset class="dir">
         <legend>The subtitles show up</legend>
         <div class="seg">
@@ -237,7 +237,7 @@ const ART: Record<string, string> = {
       <p class="hint">Seconds like 2 or 2.5, or a time like 00:01:05,300. To fix only the second half, start at the first wrong line.</p>
     </div>
 
-    <div class="panel" data-panel="fps">
+    <div class="panel" data-panel="fps" role="tabpanel" id="panel-fps" aria-labelledby="tab-fps">
       <label>Subtitles were made for
         <select id="fpsFrom">{fps.map((f) => <option value={f.v} selected={f.v === from}>{f.l} fps</option>)}</select>
       </label>
@@ -248,7 +248,7 @@ const ART: Record<string, string> = {
       <p class="hint" id="fpsHint"></p>
     </div>
 
-    <div class="panel" data-panel="sync">
+    <div class="panel" data-panel="sync" role="tabpanel" id="panel-sync" aria-labelledby="tab-sync">
       <div class="syncrow">
         <label>Early line <select id="l1"></select></label>
         <label>should appear at <input id="t1" placeholder="00:00:00,000" /></label>
@@ -260,7 +260,7 @@ const ART: Record<string, string> = {
       <p class="hint">Find each line in your video and type when it is actually spoken.</p>
     </div>
 
-    <div class="panel stack" data-panel="encoding">
+    <div class="panel stack" data-panel="encoding" role="tabpanel" id="panel-encoding" aria-labelledby="tab-encoding">
       <label>Language of the subtitles
         <select id="lang">
           <option value="">Not sure</option>
@@ -271,7 +271,7 @@ const ART: Record<string, string> = {
       <p class="hint">Whichever you pick, the download is saved as UTF-8, which every current player reads.</p>
     </div>
 
-    <div class="panel stack" data-panel="clean">
+    <div class="panel stack" data-panel="clean" role="tabpanel" id="panel-clean" aria-labelledby="tab-clean">
       <label class="check"><input type="checkbox" id="brackets" checked={cleanOn('brackets')} /> Sound descriptions in brackets: [door slams], (laughs)</label>
       <label class="check"><input type="checkbox" id="speakers" checked={cleanOn('speakers')} /> Speaker names at the start of a line: JOHN:</label>
       <label class="check"><input type="checkbox" id="music" checked={cleanOn('music')} /> Music and song lines: ♪ la la ♪</label>
@@ -283,7 +283,7 @@ const ART: Record<string, string> = {
       <p class="hint">Lines are put back in time order and numbered again from the first one. To start at another number, change it next to Save as.</p>
     </div>
 
-    <div class="panel stack" data-panel="timing">
+    <div class="panel stack" data-panel="timing" role="tabpanel" id="panel-timing" aria-labelledby="tab-timing">
       <label class="check"><input type="checkbox" id="tOverlap" checked /> Fix lines that overlap</label>
       <div class="optrow">
         <label>Gap between lines
@@ -300,7 +300,7 @@ const ART: Record<string, string> = {
       <p class="hint" id="timingReport"></p>
     </div>
 
-    <div class="panel stack" data-panel="reading">
+    <div class="panel stack" data-panel="reading" role="tabpanel" id="panel-reading" aria-labelledby="tab-reading">
       <div class="optrow">
         <label>Reading speed limit
           <select id="rCps"><option value="15">15 characters a second (relaxed)</option><option value="17" selected>17 characters a second</option><option value="20">20 characters a second</option><option value="25">25 characters a second (quick)</option></select>
@@ -315,7 +315,7 @@ const ART: Record<string, string> = {
       <ol class="slow" id="slowList"></ol>
     </div>
 
-    <div class="panel stack" data-panel="replace">
+    <div class="panel stack" data-panel="replace" role="tabpanel" id="panel-replace" aria-labelledby="tab-replace">
       <div class="rules" id="rules">
         <div class="rule"><label>Find <input data-find spellcheck="false" autocomplete="off" /></label><label>Replace with <input data-repl spellcheck="false" autocomplete="off" /></label></div>
       </div>
@@ -328,7 +328,7 @@ const ART: Record<string, string> = {
       <p class="hint" id="replReport">Leave "Replace with" empty to delete what you find. Every loaded file gets the same changes.</p>
     </div>
 
-    <div class="panel stack" data-panel="edit">
+    <div class="panel stack" data-panel="edit" role="tabpanel" id="panel-edit" aria-labelledby="tab-edit">
       <div id="checks" class="checks" aria-live="polite"></div>
       <label class="check"><input type="checkbox" id="onlyIssues" /> Only lines with problems</label>
       <div class="editor" id="editor"></div>
@@ -338,11 +338,11 @@ const ART: Record<string, string> = {
       </div>
     </div>
 
-    <div class="panel" data-panel="convert">
+    <div class="panel" data-panel="convert" role="tabpanel" id="panel-convert" aria-labelledby="tab-convert">
       <p class="hint">Pick the output format below. Timing and text are kept. Italics and bold carry over where the format allows.</p>
     </div>
 
-    <div class="panel stack" data-panel="merge">
+    <div class="panel stack" data-panel="merge" role="tabpanel" id="panel-merge" aria-labelledby="tab-merge">
       <div class="mkind" role="radiogroup" aria-label="How to merge">
         <label class="check"><input type="radio" name="mkind" value="stack" checked={preset.merge !== 'parts'} /> Two languages on screen together</label>
         <label class="check"><input type="radio" name="mkind" value="parts" checked={preset.merge === 'parts'} /> Parts one after another, like CD1 and CD2</label>
@@ -483,7 +483,11 @@ const ART: Record<string, string> = {
     root.dataset.group = GROUP_OF[id] ?? 'timing';
     const tab = root.querySelector<HTMLElement>(`[data-tab="${id}"]`);
     if (chosen) $('dropFix').textContent = `Fix: ${tab?.textContent ?? ''}`;
-    root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+    root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => {
+      const on = b.dataset.tab === id;
+      b.setAttribute('aria-selected', String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
     root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== id));
     $('preview').hidden = id === 'edit';
     if (id === 'edit') renderEditor();
@@ -492,6 +496,21 @@ const ART: Record<string, string> = {
     render();
   }
   root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab!)));
+  // Arrow keys, Home and End move along the tab strip, like the tabs pattern asks for.
+  root.querySelector('.tabs')!.addEventListener('keydown', (e) => {
+    const all = [...root.querySelectorAll<HTMLElement>('[data-tab]')];
+    const i = all.indexOf(document.activeElement as HTMLElement);
+    if (i < 0) return;
+    let j = -1;
+    if (e.key === 'ArrowRight') j = (i + 1) % all.length;
+    else if (e.key === 'ArrowLeft') j = (i - 1 + all.length) % all.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = all.length - 1;
+    if (j < 0) return;
+    e.preventDefault();
+    all[j].focus();
+    setTab(all[j].dataset.tab!);
+  });
   // One click on a ticket does the job: with no file yet it opens the file picker in that fix
   // (or takes a file dropped on it); with a file loaded it jumps straight to that fix.
   let chosen = !!root.dataset.symptom;

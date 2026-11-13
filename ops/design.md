@@ -25,3 +25,9 @@ Read it before any UI change. Record new decisions here so later runs follow the
   common fixes). Base.astro gained a `noindex` prop that writes a robots meta tag;
   the sitemap filter excludes /404. For hosts that serve 404.html. The page adds no new
   layout: it reuses the block sections and plainlist styles from the guides and home.
+- 2026-11-13: The fix tabs now follow the tabs pattern: each tab has an id and
+  `aria-controls`, each panel is `role="tabpanel"` with `aria-labelledby`, and the selected
+  tab is the only one in the tab order (roving tabindex, arrow keys and Home/End move and
+  activate). On phone width (<=599px) the tab strip keeps its horizontal scroll and fades
+  out at the right edge (mask-image gradient, about 30px) instead of hiding the scrollbar
+  with no cue. The ticket rolls keep their 82% peek instead; no other change.

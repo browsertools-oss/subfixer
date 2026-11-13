@@ -579,7 +579,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
     th, td { padding-right: 10px; }
     .primary { width: 100%; }
     /* the tab rolls become one strip that scrolls sideways; the fade on the right edge is the cue that it does */
-    .tabs { flex-wrap: nowrap; overflow-x: auto; margin: 18px -16px 0; padding: 2px 16px 8px; gap: 8px 18px; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%); mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%); }
+    .tabs { flex-wrap: nowrap; overflow-x: auto; margin: 18px -16px 0; padding: 2px 16px 8px; gap: 8px 18px; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%); mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%); scroll-padding: 2px 32px 8px 16px; }
     .tabroll { flex-wrap: nowrap; flex: 0 0 auto; }
     .tabs button { white-space: nowrap; height: 40px; padding: 0 12px; }
     /* only the Download button stays under the thumb, so the settings keep the screen */

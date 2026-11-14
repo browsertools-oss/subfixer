@@ -207,6 +207,15 @@ test('text exports', () => {
   assert.match(csv, /2,"00:00:02,400","00:00:04,000",1\.600,"\[DOOR SLAMS\]\nJOHN: World"/);
 });
 
+test('ass exports to plain text with override tags stripped', () => {
+  const caps = parse(ASS).captions;
+  const out = toTxt(caps);
+  assert.equal(out.trim(), 'Hi there');
+  assert.ok(!/\\i[01]|\{[^}]*\}|<[^>]+>/.test(out));
+  const timed = toTxt(caps, true);
+  assert.match(timed, /^\[00:00:01,000 - 00:00:02,500\] Hi there/);
+});
+
 test('docx and xlsx are valid zips with the text inside', async () => {
   const caps = parse(SRT).captions;
   for (const table of [false, true]) {

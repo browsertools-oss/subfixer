@@ -906,6 +906,22 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'ass-to-txt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'txt' },
+    title: 'ASS to TXT: turn subtitles into a plain text transcript',
+    h1: 'Convert ASS to plain text',
+    lede: 'Get the words out of an .ass or .ssa file as a plain transcript, one line per subtitle. Override tags and styling are removed.',
+    description: 'Convert ASS and SSA subtitles to a TXT transcript, with or without timestamps. Styling tags are removed. Free, and it runs in your browser.',
+    steps: ['Drop in your .ass or .ssa file.', 'Choose "Plain text" or "Text with times" under Save as.', 'Download the .txt file.'],
+    faq: [
+      { q: 'What does the text look like?', a: 'Each subtitle becomes one line, with its own line breaks joined by a space. With times, each line starts with [00:01:02,500 - 00:01:04,000].' },
+      { q: 'Are the styling tags removed?', a: 'Yes. Override tags like {\\i1} and {\\pos(100,200)} are stripped, and the styles section is not in the output, so only the words are left.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'ass-to-ttml',
     mode: 'convert',
     group: 'Convert',

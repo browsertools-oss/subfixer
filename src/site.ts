@@ -623,6 +623,7 @@ export const PAGES: ToolPage[] = [
     ],
     faq: [
       { q: 'Can I use regular expressions?', a: 'Yes. Tick "Use patterns" to write a JavaScript regular expression. Use $1 for a captured group and \\n for a line break in the replacement.' },
+      { q: 'Can I strip ASS or HTML tags in bulk?', a: 'Yes. Tick "Use patterns" and untick "Whole words only". Put \\{[^}]*\\} in Find to remove ASS tags like {\\i1}, or <[^>]+> to remove HTML-style tags, and leave "Replace with" empty to delete them.' },
       { q: 'What happens to a line I empty?', a: 'A line with nothing left in it is deleted, so the player never shows a blank subtitle.' },
       { q: 'Does it touch the timing?', a: 'No. Only the text changes. Times stay exactly as they were.' },
       PRIVACY_FAQ,

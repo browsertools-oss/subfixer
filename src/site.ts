@@ -989,6 +989,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'smi-to-ass',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ass' },
+    title: 'SMI to ASS converter: SAMI subtitles to ASS online',
+    h1: 'Convert SAMI .smi to ASS',
+    lede: 'SAMI files are common in older Korean and Chinese caption releases. Turn one into ASS and open it in Aegisub or VLC, where styling is easier to work with.',
+    description: 'Convert SAMI (.smi, .sami) subtitles to ASS. Pick the language when the file holds several. Free, nothing is uploaded.',
+    steps: [
+      'Drop in your .smi or .sami file.',
+      'If the file holds several languages, pick one at the top.',
+      'Download the .ass file.',
+    ],
+    faq: [
+      { q: 'The file is in Korean and the letters look broken.', a: 'Many older SAMI files are saved in EUC-KR. Open "Fix characters" and pick the version that reads correctly before you download.' },
+      { q: 'What about the styling?', a: 'Italic, bold and underline come through as ASS tags. Each line becomes a Dialogue line with the default style. Colors, fonts and positions are dropped.' },
+      { q: 'Can I go back to SRT?', a: 'Yes. Use the ASS to SRT converter. Positioning and styling are dropped on the way back, and only the text and timing remain.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'ttml-to-srt',
     mode: 'convert',
     group: 'Convert',

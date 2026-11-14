@@ -1199,6 +1199,27 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'stl-to-ass',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'ass' },
+    title: 'STL to ASS converter: EBU and Spruce STL subtitles to ASS',
+    h1: 'Convert STL to ASS',
+    lede: 'Reads both kinds of STL: the binary EBU files used in broadcast and the text Spruce files from DVD authoring. You get an ASS file for Aegisub or players that style ASS.',
+    description: 'Convert EBU STL (binary) and Spruce STL subtitles to ASS (.ass). Keeps accents and italics. Free, and nothing leaves your browser.',
+    steps: [
+      'Drop in your .stl file. The tool works out which kind it is.',
+      'For a Spruce file, check the frame rate at the top matches your video.',
+      'Download the .ass file.',
+    ],
+    faq: [
+      { q: 'My EBU file starts at 10:00:00.', a: 'Broadcast files usually start the programme at ten hours. When every line is after that point, the converter counts from there, so the first line lands near zero.' },
+      { q: 'Accented letters came out wrong.', a: 'EBU files name their own character set. The tool reads the Latin, Cyrillic, Greek, Arabic and Hebrew sets. For a Spruce file, pick the reading that looks right under "Fix characters".' },
+      { q: 'What carries over?', a: 'The file is written fresh as ASS v4.00+ with one default style. The timing, the text, the line breaks and the italics carry over; Spruce bold and underline markers become ASS bold and underline tags. Colors, fonts, boxes and positions are dropped, and EBU colour and box codes come out as spaces.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'sup-to-srt',
     mode: 'convert',
     group: 'Convert',

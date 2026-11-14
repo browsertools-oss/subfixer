@@ -328,6 +328,14 @@ test('spruce stl builds to vtt', () => {
   assert.match(vtt, /<i>Hello<\/i>/);
 });
 
+test('spruce stl builds to ass, italics as override tags', () => {
+  const d = parse('$FontName = Arial\r\n00:00:01:00 , 00:00:02:12 , ^IHello^I|World\r\n', 25);
+  const ass = build(d.captions, 'ass');
+  assert.match(ass, /ScriptType: v4\.00\+/);
+  assert.equal((ass.match(/^Style:/gm) ?? []).length, 1);
+  assert.match(ass, /\{\\i1\}Hello\{\\i0\}/);
+});
+
 test('sami builds to vtt, italics kept', () => {
   const smi = `<SAMI><HEAD><STYLE TYPE="text/css"><!--
 .ENCC { Name: English; lang: en-US; }

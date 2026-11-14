@@ -243,6 +243,7 @@ export const PAGES: ToolPage[] = [
     steps: ['Drop in your subtitle file.', 'Sound descriptions, speaker names and music lines are ticked already. Untick any you want to keep.', 'Download the cleaned file.'],
     faq: [
       { q: 'Will it remove real dialogue in brackets?', a: 'Anything in [square] or (round) brackets is removed, which is nearly always a sound description. Check the preview before downloading.' },
+      { q: 'Which speaker names and music lines are removed?', a: 'Speaker names are matched in caps at the start of a line, like JOHN: or - JOHN (V.O.):. Mixed-case names are kept. A music line is removed when it starts with a ♪, ♫ or # marker or ends with ♪ or ♫; other lines are kept.' },
       PRIVACY_FAQ,
     ],
   },

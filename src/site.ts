@@ -258,7 +258,7 @@ export const PAGES: ToolPage[] = [
     description: 'Convert YouTube SBV captions to SRT, which works in most players and editors. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to SRT.', 'Download the .srt file.'],
     faq: [
-      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the Subtitles section for your video, pick the language track, and download it as .sbv.' },
+      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the captions for your video and look for a download option on the track. YouTube offers captions in more than one format; pick .sbv. Menu names change from time to time, so if you cannot find one, look for a format picker.' },
       { q: 'How is SBV different from SRT?', a: 'SBV puts the start and end time on one line separated by a comma and has no line numbers. SRT numbers each line and uses an arrow between the times. The text is the same.' },
       PRIVACY_FAQ,
     ],
@@ -274,7 +274,7 @@ export const PAGES: ToolPage[] = [
     description: 'Convert YouTube SBV captions to WebVTT. The timing and text carry over unchanged. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to VTT.', 'Download the .vtt file.'],
     faq: [
-      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the Subtitles section for your video, pick the language track, and download it as .sbv.' },
+      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the captions for your video and look for a download option on the track. YouTube offers captions in more than one format; pick .sbv. Menu names change from time to time, so if you cannot find one, look for a format picker.' },
       { q: 'How is SBV different from VTT?', a: 'SBV writes the start and end on one line with a comma between them and has no header line. VTT starts with a WEBVTT line and an arrow between the times. Both carry millisecond times, so nothing shifts.' },
       PRIVACY_FAQ,
     ],

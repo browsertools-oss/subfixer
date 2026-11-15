@@ -206,7 +206,7 @@ export const PAGES: ToolPage[] = [
     title: 'ASS to SRT converter: convert SSA/ASS subtitles to SRT online',
     h1: 'Convert ASS or SSA to SRT',
     lede: 'Convert Advanced SubStation (.ass) and SubStation Alpha (.ssa) subtitles, common with anime releases, into plain SRT, the format players and editors expect.',
-    description: 'Convert ASS and SSA subtitles to SRT online. Italics, bold and line breaks are kept, and lines stacked on several layers are merged. Free, and the file stays on your computer.',
+    description: 'Convert ASS and SSA subtitles to SRT. Italics, bold and line breaks are kept, and layered lines are merged. Free, in your browser.',
     steps: ['Drop in your .ass or .ssa file.', 'Output is preset to SRT. Italics and bold carry over as SRT tags, other styling is dropped, and \\N becomes a real line break.', 'Download the .srt file.'],
     faq: [
       { q: 'Why are signs and karaoke lines doubled or out of place?', a: 'ASS files often stack the same line on several layers for signs and effects. Copies with the same time and text are merged into one, but signs still show at the bottom because SRT cannot position text. Remove any you do not want in "Check and edit".' },
@@ -423,7 +423,7 @@ export const PAGES: ToolPage[] = [
     title: 'ASS to SSA: save .ass as .ssa (SubStation Alpha) online',
     h1: 'Convert ASS to SSA',
     lede: 'SSA is the older SubStation Alpha format. Turn your .ass file into it when a tool you have to use only offers SSA.',
-    description: 'Convert ASS subtitles to SSA (.ssa). Text, timing, line breaks and italics are kept. The file is written as SubStation Alpha v4.00 with a default style. Free, and it runs in your browser.',
+    description: 'Convert ASS (.ass) subtitles to SSA v4.00. Text, timing, line breaks and italics are kept. Free, and it runs in your browser.',
     steps: ['Drop in your .ass file.', 'Output is preset to SSA (.ssa).', 'Download the .ssa file.'],
     faq: [
       { q: 'What changes in the conversion?', a: 'The file is written fresh as SubStation Alpha v4.00 with one default style. Your script info, named styles, positions and effects do not carry over. The timing, the text, the line breaks and the italics, bold and underline do.' },
@@ -441,7 +441,7 @@ export const PAGES: ToolPage[] = [
     title: 'SSA to ASS converter: save .ssa as .ass online',
     h1: 'Convert SSA to ASS',
     lede: 'Turn an old SubStation Alpha (.ssa) file into the Advanced SubStation Alpha (.ass) format that current subtitle tools write.',
-    description: 'Convert SSA (.ssa) subtitles to ASS (.ass). Timing, text, line breaks, italics and bold are kept. The file is written with one default style. Free, and it runs in your browser.',
+    description: 'Convert SSA (.ssa) subtitles to ASS. Text, timing, line breaks, italics and bold are kept. Free, and it runs in your browser.',
     steps: ['Drop in your .ssa file.', 'Output is preset to ASS (.ass).', 'Download the .ass file.'],
     faq: [
       { q: 'What changes in the conversion?', a: 'The file is rewritten as v4.00+ with one default style. Your named styles, positions and effects do not carry over. The timing, the text, the line breaks and the italics, bold and underline do.' },

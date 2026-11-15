@@ -1,5 +1,7 @@
 # Roadmap (owner-approved, Nov 8th, 2026)
 
+Owner direction (11-15-2026): everything is designed and optimized for revenue first and foremost. The weekly planner may change the triggers, order and offers below when the evidence says revenue comes sooner; owner-only steps (sign-ins, spending, tax and payment details) stay with the owner.
+
 Monetization model: free tools for traffic, a paid tier on the tools that get traffic. No dropshipping, no standalone apps.
 
 

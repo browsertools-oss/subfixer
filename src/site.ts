@@ -205,7 +205,7 @@ export const PAGES: ToolPage[] = [
     preset: { out: 'srt' },
     title: 'ASS to SRT converter: convert SSA/ASS subtitles to SRT online',
     h1: 'Convert ASS or SSA to SRT',
-    lede: 'Convert Advanced SubStation (.ass) and SubStation Alpha (.ssa) subtitles, common with anime releases, into plain SRT that every player supports.',
+    lede: 'Convert Advanced SubStation (.ass) and SubStation Alpha (.ssa) subtitles, common with anime releases, into plain SRT, the format players and editors expect.',
     description: 'Convert ASS and SSA subtitles to SRT online. Italics, bold and line breaks are kept, and lines stacked on several layers are merged. Free, and the file stays on your computer.',
     steps: ['Drop in your .ass or .ssa file.', 'Output is preset to SRT. Italics and bold carry over as SRT tags, other styling is dropped, and \\N becomes a real line break.', 'Download the .srt file.'],
     faq: [
@@ -219,7 +219,7 @@ export const PAGES: ToolPage[] = [
     group: 'Text',
     title: 'Fix subtitle encoding: repair garbled characters (Ã©, ð, ?) in SRT',
     h1: 'Fix garbled subtitle characters',
-    lede: 'Accents showing up as Ã© or Ä‡, or letters turned into question marks? The file uses an old encoding. Pick the right one and save it as UTF-8, which every player reads.',
+    lede: 'Accents showing up as Ã© or Ä‡, or letters turned into question marks? The file uses an old encoding. Pick the right one and save it as UTF-8, what current players expect.',
     description:
       'Repair SRT subtitles with broken accents and symbols. It detects Windows-1250/1251/1252, ISO-8859 and other encodings and saves the file as UTF-8. Free, in your browser.',
     steps: [

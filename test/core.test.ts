@@ -67,6 +67,14 @@ test('ttml builds ass with italic spans as override tags', () => {
   assert.match(ass, /0:00:01\.00,0:00:02\.50/);
 });
 
+test('ttml exported to plain text: styling spans strip to the words', () => {
+  const T = '<?xml version="1.0"?><tt xmlns="http://www.w3.org/ns/ttml"><body><div><p begin="00:00:01.000" end="00:00:02.500"><span tts:fontStyle="italic">Hi</span> there</p></div></body></tt>';
+  const caps = parse(T, 23.976, { name: 'cap.ttml' }).captions;
+  const txt = toTxt(caps).trim();
+  assert.equal(txt, 'Hi there');
+  assert.match(toTxt(caps, true), /^\[00:00:01,000 - 00:00:02,500\] Hi there/);
+});
+
 test('shift', () => {
   const c = retime(parse(SRT).captions, shiftFn(-1500));
   assert.equal(c[0].start, 0); // clamped

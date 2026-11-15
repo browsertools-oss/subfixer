@@ -30,6 +30,25 @@ test('lrc builds vtt with a webvtt header and word tags dropped', () => {
   assert.doesNotMatch(vtt, /<00:12\.50>/);
 });
 
+test('txt output for lrc, sbv and sami keeps one line per cue and strips tags, with optional times', () => {
+  const lrc = parse('[00:12.50]<00:12.50>first <00:12.90>line\n[00:24.00]second line\n', 23.976, { name: 'song.lrc' });
+  assert.equal(toTxt(lrc.captions).trim(), 'first line\r\nsecond line');
+  assert.match(toTxt(lrc.captions, true), /^\[00:00:12,500 - 00:00:24,000\] first line/);
+  const sbv = parse('0:00:01.000,0:00:03.500\nHello there\n\n0:00:05.250,0:00:07.000\nSecond line\n', 23.976, { name: 'youtube.sbv' });
+  assert.equal(toTxt(sbv.captions).trim(), 'Hello there\r\nSecond line');
+  const smi = `<SAMI><HEAD><STYLE TYPE="text/css"><!--
+.ENCC { Name: English; lang: en-US; }
+.FRCC { Name: French; lang: fr-FR; }
+--></STYLE></HEAD><BODY>
+<SYNC Start=1000><P Class=ENCC>Hello<br>world<P Class=FRCC>Bonjour &amp; salut
+<SYNC Start=4000><P Class=ENCC><i>Bye</i>
+</BODY></SAMI>`;
+  const en = parse(smi);
+  assert.equal(toTxt(en.captions).trim(), 'Hello world\r\nBye');
+  const fr = parse(smi, 25, { track: 'frcc' });
+  assert.equal(toTxt(fr.captions).trim(), 'Bonjour & salut');
+});
+
 test('parse srt', () => {
   const d = parse(SRT);
   assert.equal(d.format, 'srt');

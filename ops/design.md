@@ -45,3 +45,5 @@ Read it before any UI change. Record new decisions here so later runs follow the
   browser is available in this environment, so any change to this pattern needs a render
   check (or the fallback: render the same list twice, once inside the details and once
   outside, both from the same page list).
+- 2026-11-15: The two guides pass `ogType="article"` to Base; every other page keeps the
+  default `website`. Matches their Article JSON-LD. No visual change.

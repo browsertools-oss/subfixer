@@ -698,7 +698,7 @@ export const PAGES: ToolPage[] = [
     preset: { out: 'srt' },
     title: 'MicroDVD SUB to SRT: convert frame-based .sub subtitles online',
     h1: 'Convert MicroDVD .sub to SRT',
-    lede: 'MicroDVD files count frames instead of seconds, so they only line up at one frame rate. Pick that rate and get an SRT with real timestamps that any player reads.',
+    lede: 'MicroDVD files count frames instead of seconds, so they only line up at one frame rate. Pick that rate and get an SRT with real timestamps in the format current players read.',
     description: 'Convert MicroDVD .sub subtitles with {frame}{frame} lines to SRT. Pick the frame rate, keep italics. Free, and it runs in your browser.',
     steps: [
       'Drop in your .sub file. Lines look like {1025}{1090}Hello.',

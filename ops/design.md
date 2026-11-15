@@ -32,8 +32,16 @@ Read it before any UI change. Record new decisions here so later runs follow the
   out at the right edge (mask-image gradient, about 30px) instead of hiding the scrollbar
   with no cue. The ticket rolls keep their 82% peek instead; no other change.
 - 2026-11-15: On screens under 1000px the Convert footer roll folds behind a hairline
-  `<details>` summary reading "Convert (49)", the same disclosure pattern as the FAQ. The
-  list stays in the HTML for crawlers and stays keyboard reachable; only the visual wall
-  of about 50 links is collapsed. At 1000px and up the summary is hidden and the list
-  shows as the two-column roll it was. Chosen over trimming links, for the same reason as
-  the 2026-11-11 entry: the roll is the site's internal-link graph.
+  `<details>` summary reading "Convert (N)" with the live page count (53 as of today), the
+  same disclosure pattern as the FAQ. The count is computed from the page list on every
+  page, so it does not drift. The list stays in the HTML for crawlers and stays keyboard
+  reachable; only the visual wall of links is collapsed. At 1000px and up the summary is
+  hidden and the list shows as the two-column roll it was. Chosen over trimming links, for
+  the same reason as the 2026-11-11 entry: the roll is the site's internal-link graph.
+- 2026-11-15: The fold relies on author CSS beating the UA rule that hides a closed
+  details' content (`details:not([open]) > :not(summary) { display: none }`). The summary
+  is hidden at 1000px and up while `.foot-fold > ul` is forced to `display: block`, and the
+  details itself carries no `open` attribute. Verified by reasoning, not by rendering: no
+  browser is available in this environment, so any change to this pattern needs a render
+  check (or the fallback: render the same list twice, once inside the details and once
+  outside, both from the same page list).

@@ -605,7 +605,7 @@ export const PAGES: ToolPage[] = [
     faq: [
       { q: 'How is reading speed measured?', a: 'Characters per second: every letter, space and punctuation mark the viewer sees, divided by the time the line is up. Tags are not counted.' },
       { q: 'Which limit should I pick?', a: 'Seventeen characters a second is a common choice for adult viewers. Pick fifteen for children or slow readers, and twenty or more for fast dialogue.' },
-      { q: 'Some lines are still too fast.', a: 'They have no free time before the next line. Shorten the words in "Check and edit", or split the line in two.' },
+      { q: 'Some lines are still too fast.', a: 'They have no free time before the next line. Shorten the words in "Check and edit", or split the line into two entries with "Add below".' },
       PRIVACY_FAQ,
     ],
   },

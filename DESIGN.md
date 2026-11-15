@@ -42,6 +42,8 @@ top bar) and from subtitlefixer.com. SubFixer uses none of those.
 - Below the tool: `.adslot` (empty, hidden until an ad exists), How it works as three
   numbered columns, Questions as hairline details, then the home-only sections.
 - Footer: a sunk band with the link rolls in columns, each headed by its roll color dot.
+  The Convert roll folds behind a hairline details summary on screens under 1000px; at
+  1000px and up the summary hides and the roll shows in two columns.
 
 ## Ticket drawings
 

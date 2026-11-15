@@ -12,6 +12,7 @@ const canonical = new URL(path, SITE.url).href;
 const ROLL: Record<string, string> = { Timing: 'timing', Text: 'text', Convert: 'convert' };
 const others = GROUPS.map((g) => ({
   group: g,
+  count: PAGES.filter((p) => p.group === g).length,
   links: PAGES.filter((p) => p.group === g)
     .map((p) => ({ href: p.slug ? `/${p.slug}/` : '/', label: p.h1 }))
     .filter((t) => t.href !== path),
@@ -69,7 +70,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
             <div class="foot-roll" data-group={ROLL[o.group]}>
               {o.group === 'Convert' ? (
                 <details class="foot-fold">
-                  <summary class="foot-fold-summary">Convert ({o.links.length})</summary>
+                  <summary class="foot-fold-summary">Convert ({o.count})</summary>
                   <ul>{o.links.map((t) => <li><a href={t.href}>{t.label}</a></li>)}</ul>
                 </details>
               ) : (

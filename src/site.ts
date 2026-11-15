@@ -280,6 +280,22 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'sbv-to-txt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'txt' },
+    title: 'SBV to TXT converter: YouTube captions to plain text',
+    h1: 'Convert YouTube SBV to plain text',
+    lede: 'YouTube Studio can download captions as .sbv files. Convert them to plain text to keep the words without the times, or as a timed transcript.',
+    description: 'Convert YouTube SBV captions to a plain text file, with or without timestamps. Free, and it runs in your browser.',
+    steps: ['Drop in your .sbv file.', 'Choose "Plain text" or "Text with times" under Save as.', 'Download the .txt file.'],
+    faq: [
+      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the captions for your video and look for a download option on the track. YouTube offers captions in more than one format; pick .sbv. Menu names change from time to time, so if you cannot find one, look for a format picker.' },
+      { q: 'What does the text look like?', a: 'Each caption becomes one line. With "Text with times", each line starts with its window, like [00:01:02,500 - 00:01:04,000]. Line breaks inside a caption are joined with a space.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'shift-subtitles-from-a-line',
     mode: 'shift',
     group: 'Timing',

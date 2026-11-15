@@ -1158,6 +1158,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'lrc-to-txt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'txt' },
+    title: 'LRC to TXT converter: timed lyrics as plain text online',
+    h1: 'Convert LRC to plain text',
+    lede: 'LRC is the timed lyric format used by music players. Turn it into a plain text file to read the words without the times.',
+    description: 'Convert LRC lyrics to a plain text file, with or without the timestamps. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .lrc file.',
+      'Choose "Plain text" or "Text with times" under Save as.',
+      'Download the .txt file.',
+    ],
+    faq: [
+      { q: 'What does the text look like?', a: 'Each lyric line becomes one line of text. With "Text with times", each line starts with its window, like [00:01:02,500 - 00:01:04,000].' },
+      { q: 'What happens to the [ti] and [ar] tags?', a: 'Title and artist tags are dropped. The words and their times are kept.' },
+      { q: 'My file has word-by-word timings.', a: 'Enhanced LRC keeps tags like <00:01.00> before each word. Plain text has no word timings, so those tags are dropped and the line text is kept. With "Text with times" each line starts with its line window instead.' },
+      { q: 'Can I get the times back as a subtitle file?', a: 'Yes. Use the LRC to SRT or LRC to VTT converter. The same words come back with numbered cues.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'stl-to-srt',
     mode: 'convert',
     group: 'Convert',

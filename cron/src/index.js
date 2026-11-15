@@ -8,22 +8,34 @@ function localHour(date) {
   return Number(new Intl.DateTimeFormat("en-US", { timeZone: schedule.timeZone, hour: "numeric", hourCycle: "h23" }).format(date));
 }
 
-async function dispatch(repo, run, token) {
-  const res = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/daily-agent.yml/dispatches`, {
+function localDay(date) {
+  return new Intl.DateTimeFormat("en-US", { timeZone: schedule.timeZone, weekday: "short" }).format(date);
+}
+
+async function dispatch(repo, run, token, workflow = "daily-agent.yml") {
+  const res = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/${workflow}/dispatches`, {
     method: "POST",
     headers: { authorization: `Bearer ${token}`, accept: "application/vnd.github+json", "user-agent": "venture-cron", "x-github-api-version": "2022-11-28" },
-    body: JSON.stringify({ ref: "main", inputs: { run } }),
+    body: JSON.stringify(run ? { ref: "main", inputs: { run } } : { ref: "main" }),
   });
   if (res.status !== 204) throw new Error(`${repo} ${run}: ${res.status} ${await res.text()}`);
-  console.log(`dispatched ${repo} ${run}`);
+  console.log(`dispatched ${repo} ${run || workflow}`);
 }
 
 export default {
   async scheduled(event, env) {
     const when = new Date(event.scheduledTime);
+    const minute = when.getUTCMinutes();
+    // Sunday planner (Opus, owner's Claude account) runs before the 6am daily run.
+    const weekly = schedule.weekly;
+    if (weekly && localDay(when) === weekly.day && localHour(when) === weekly.hour) {
+      for (const [repo, m] of Object.entries(schedule.repos)) {
+        if (m === minute) await dispatch(repo, null, env.GH_TOKEN, weekly.workflow);
+      }
+      return;
+    }
     const run = schedule.hours[localHour(when)];
     if (!run) return; // the other UTC hour of the daylight-saving pair
-    const minute = when.getUTCMinutes();
     for (const [repo, m] of Object.entries(schedule.repos)) {
       if (m === minute) await dispatch(repo, run, env.GH_TOKEN);
     }

@@ -1,0 +1,49 @@
+name: weekly-plan
+on:
+  # Started Sunday 4am Pacific by the venture-cron Worker (subfixer repo, cron/), before the 6am daily run.
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  actions: read
+# Shares the daily agent's group so the two never push over each other.
+concurrency: daily-agent
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Sibling venture, read-only
+        run: git clone -q https://github.com/browsertools-oss/stayfile.git ../sibling
+      - name: Labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh label create weekly-plan --color 5319E7 2>/dev/null || true
+      - id: prompt
+        env:
+          MINUTES: ${{ vars.AGENT_MINUTES || '10' }}
+        run: |
+          TODAY=$(TZ=America/Los_Angeles date +%F)
+          { echo 'text<<PROMPT_EOF'; sed -e "s/{{TODAY}}/${TODAY}/g" -e "s/{{MINUTES}}/${MINUTES}/g" .github/agent/weekly.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
+      - uses: anthropics/claude-code-action@v1
+        with:
+          # Owner's Claude subscription (stevenlutsky@gmail.com), from `claude setup-token`.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: ${{ steps.prompt.outputs.text }}
+          github_token: ${{ github.token }}
+          show_full_output: true
+          claude_args: >-
+            --model ${{ vars.PLANNER_MODEL || 'claude-opus-5-5' }}
+            --max-turns 200
+            --add-dir ../sibling
+            --allowedTools "Bash(date*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git add *),Bash(git commit *),Bash(git -C ../sibling *),Bash(gh issue *),Bash(gh run list*),Bash(gh run view*),Bash(gh label *),Read,Edit,Write,Glob,Grep,WebSearch,WebFetch"
+      - name: Push the plan
+        if: always()
+        run: |
+          git config user.name "subfixer-planner"
+          git config user.email "subfixer-planner@users.noreply.github.com"
+          git pull --rebase -q || true
+          git push -q || true

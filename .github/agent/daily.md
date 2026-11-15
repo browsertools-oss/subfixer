@@ -4,8 +4,8 @@ Time: this is a work session of about {{MINUTES}} minutes. Run `date -u` when yo
 
 Each run:
 1. Run `npm test` and `npm run build`. If either fails, fix it on a branch and open a PR; never push a broken main.
-2. Read ops/log.md for context from earlier runs, and ops/roadmap.md for the owner-approved plan.
-3. Work through items one at a time, starting with ops/next.md. Traffic is the goal until there is revenue, so new pages that target a real search phrase come first when nothing is broken. Pick each next item in this order of preference:
+2. Read ops/log.md for context from earlier runs, and ops/roadmap.md for the owner-approved plan. Read ops/week-plan.md too: it is the plan the weekly planner wrote on Sunday, aimed at getting the venture to profit.
+3. Work through items one at a time. Start with this run's row in ops/week-plan.md (match today's date and morning or evening), then ops/next.md, then the week-plan backlog. When you finish a week-plan item, mark it done there with the commit hash; don't otherwise rewrite that file. Only when all of that is done or blocked, fall back to the preferences below. Traffic is the goal until there is revenue, so new pages that target a real search phrase come first when nothing is broken. Pick each next item in this order of preference:
    - fix a bug or a rough edge in the tool,
    - add or improve one tool page in src/site.ts that targets a real search phrase (a new fix is fine when it is next on ops/roadmap.md),
    - tighten copy, titles or FAQs on an existing page.

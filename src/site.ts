@@ -1321,6 +1321,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'ttml-to-txt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'txt' },
+    title: 'TTML to TXT: turn .ttml captions into a plain text transcript',
+    h1: 'Convert TTML to plain text',
+    lede: 'Get the words out of a .ttml or .dfxp file as a plain transcript, one line per subtitle. Choose whether each line keeps its time.',
+    description: 'Convert TTML (.ttml) or DFXP captions to a plain text transcript, with or without timestamps. Free, and it runs in your browser.',
+    steps: [
+      'Drop in your .ttml or .dfxp file.',
+      'Choose "Plain text" or "Text with times" under Save as.',
+      'Download the .txt file.',
+    ],
+    faq: [
+      { q: 'What does the text look like?', a: 'Each subtitle becomes one line, with its own line breaks joined by a space. With "Text with times", each line starts with its window, like [00:01:02,500 - 00:01:04,000].' },
+      { q: 'What happens to the styling spans and timings?', a: 'Plain text removes them, so only the words are left. The frame rate, tick rate and time base are not in the output either. If you need the timing, pick "Text with times" before you download.' },
+      { q: 'My file is .dfxp. Does that work?', a: 'Yes. DFXP is older TTML and reads the same way.' },
+      { q: 'Can I get the times in SRT form instead?', a: 'Yes. Use the TTML to SRT converter. The same words come back as a subtitle file with numbered lines.' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'merge-subtitles',
     mode: 'merge',
     group: 'Convert',

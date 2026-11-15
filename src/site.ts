@@ -556,7 +556,7 @@ export const PAGES: ToolPage[] = [
     h1: 'Fix or convert many subtitle files at once',
     lede: 'Select a whole season of files at once, or drop them together, and apply the same shift, frame-rate change, cleanup or format to all of them. You get one zip back.',
     description:
-      'Batch convert SRT, VTT, ASS and SBV subtitles, or shift and clean many files at once. Download them together as a zip. Free, and nothing is uploaded.',
+      'Batch convert subtitle files, or shift and clean many files at once. Download them together as a zip. Free, and nothing is uploaded.',
     steps: [
       'Choose or drop all the files at once.',
       'Pick the fix and the output format. The preview shows the file selected in the list.',

@@ -336,6 +336,15 @@ test('spruce stl builds to ass, italics as override tags', () => {
   assert.match(ass, /\{\\i1\}Hello\{\\i0\}/);
 });
 
+test('spruce stl exported to plain text: words only, one line per subtitle', () => {
+  const d = parse('$FontName = Arial\r\n00:00:01:00 , 00:00:02:12 , ^IHello^I|World\r\n', 25);
+  const txt = toTxt(d.captions);
+  const lines = txt.trim().split(/\r?\n/);
+  assert.deepEqual(lines, ['Hello World']);
+  const timed = toTxt(d.captions, true);
+  assert.match(timed, /^\[00:00:01,000 - 00:00:02,480\] Hello World/);
+});
+
 test('sami builds to vtt, italics kept', () => {
   const smi = `<SAMI><HEAD><STYLE TYPE="text/css"><!--
 .ENCC { Name: English; lang: en-US; }

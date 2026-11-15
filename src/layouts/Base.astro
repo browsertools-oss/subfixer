@@ -546,7 +546,7 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .foot-roll a { color: var(--ink); text-decoration-color: transparent; }
   .foot-roll a:hover { text-decoration-color: currentColor; }
   /* the Convert roll folds behind a summary on small screens so the footer is not a wall of links; at 1000px and up the summary hides and the list shows in two columns */
-  .foot-fold-summary { margin: 0 0 10px; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); cursor: pointer; list-style-position: inside; }
+  .foot-fold-summary { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); cursor: pointer; list-style-position: inside; padding: 14px 0 12px; }
   .foot-fold-summary::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--paper); margin-right: 8px; }
   .foot-fold-summary::marker { color: var(--convert); }
   @media (min-width: 1000px) {

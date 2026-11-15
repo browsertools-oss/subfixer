@@ -379,7 +379,7 @@ export const PAGES: ToolPage[] = [
       },
       {
         q: 'What does "repeated lines" do?',
-        a: 'Some files show the same line twice in a row, split into two cues. They are merged into one line that runs for the time of both.',
+        a: 'Some files show the same line twice in a row, split into two cues. Back-to-back copies are merged into one line that runs for the time of both. A repeat that shows up again while the first is still on screen is folded into it too, as long as it is within eight lines of it.',
       },
       PRIVACY_FAQ,
     ],

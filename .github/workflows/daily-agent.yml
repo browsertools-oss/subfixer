@@ -45,6 +45,17 @@ jobs:
           nohup node scripts/model-proxy.mjs > "$RUNNER_TEMP/model-proxy.log" 2>&1 &
           for i in $(seq 1 20); do curl -fs http://127.0.0.1:8787 >/dev/null && exit 0; sleep 0.5; done
           echo "model proxy did not start"; cat "$RUNNER_TEMP/model-proxy.log"; exit 1
+      - name: Boss on call
+        # scripts/boss.mjs answers the agent's questions with Opus on the owner's Claude
+        # account. The token stays in this step; the agent only reaches it on localhost.
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          BOSS_MAX_QUESTIONS: ${{ vars.BOSS_MAX_QUESTIONS || '6' }}
+        run: |
+          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
+          nohup node scripts/boss.mjs > "$RUNNER_TEMP/boss.log" 2>&1 &
+          for i in $(seq 1 20); do curl -fs http://127.0.0.1:8788 >/dev/null && exit 0; sleep 0.5; done
+          echo "boss did not start"; cat "$RUNNER_TEMP/boss.log"
       - id: prompt
         run: |
           { echo 'text<<PROMPT_EOF'; sed "s/{{MINUTES}}/${AGENT_MINUTES}/g" .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
@@ -65,7 +76,7 @@ jobs:
           claude_args: >-
             --model free-rotation
             --max-turns ${{ vars.AGENT_MAX_TURNS || '250' }}
-            --allowedTools "Bash(date*),Bash(npm run build),Bash(npm test),Bash(npm install *),Bash(git *),Bash(gh issue *),Read,Edit,Write,Glob,Grep"
+            --allowedTools "Bash(date*),Bash(npm run build),Bash(npm test),Bash(npm install *),Bash(git *),Bash(gh issue *),Bash(node scripts/ask-boss.mjs *),Read,Edit,Write,Glob,Grep"
       - name: Commit the agent's work if tests and build pass
         if: always()
         run: |

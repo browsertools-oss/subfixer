@@ -6,6 +6,7 @@ permissions:
   contents: write
   issues: write
   actions: read
+  checks: write
 # Shares the daily agent's group so the two never push over each other.
 concurrency: daily-agent
 jobs:
@@ -18,15 +19,20 @@ jobs:
           fetch-depth: 0
       - name: Sibling venture, read-only
         run: git clone -q https://github.com/browsertools-oss/stayfile.git ../sibling
+      - name: Live feed for the Ventures page
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: nohup node scripts/live.mjs watch > "$RUNNER_TEMP/agent-live.log" 2>&1 &
       - name: Labels
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh label create weekly-plan --color 5319E7 2>/dev/null || true
-      - id: prompt
+      - name: Load the instructions
+        id: prompt
         env:
           MINUTES: ${{ vars.AGENT_MINUTES || '10' }}
         run: |
-          TODAY=$(TZ=America/Los_Angeles date +%F)
+          TODAY=$(TZ=America/Los_Angeles date +%m-%d-%Y)
           { echo 'text<<PROMPT_EOF'; sed -e "s/{{TODAY}}/${TODAY}/g" -e "s/{{MINUTES}}/${MINUTES}/g" .github/agent/weekly.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
       - uses: anthropics/claude-code-action@v1
         with:
@@ -43,7 +49,11 @@ jobs:
       - name: Push the plan
         if: always()
         run: |
+          node scripts/live.mjs phase "Pushing the plan" || true
           git config user.name "subfixer-planner"
           git config user.email "subfixer-planner@users.noreply.github.com"
           git pull --rebase -q || true
           git push -q || true
+      - name: Close the live feed
+        if: always()
+        run: node scripts/live.mjs phase "Run finished" && node scripts/live.mjs finish

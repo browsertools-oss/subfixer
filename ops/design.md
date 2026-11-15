@@ -31,3 +31,9 @@ Read it before any UI change. Record new decisions here so later runs follow the
   activate). On phone width (<=599px) the tab strip keeps its horizontal scroll and fades
   out at the right edge (mask-image gradient, about 30px) instead of hiding the scrollbar
   with no cue. The ticket rolls keep their 82% peek instead; no other change.
+- 2026-11-15: On screens under 1000px the Convert footer roll folds behind a hairline
+  `<details>` summary reading "Convert (49)", the same disclosure pattern as the FAQ. The
+  list stays in the HTML for crawlers and stays keyboard reachable; only the visual wall
+  of about 50 links is collapsed. At 1000px and up the summary is hidden and the list
+  shows as the two-column roll it was. Chosen over trimming links, for the same reason as
+  the 2026-11-11 entry: the roll is the site's internal-link graph.

@@ -67,8 +67,17 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
         <div class="foot-rolls">
           {others.map((o) => (
             <div class="foot-roll" data-group={ROLL[o.group]}>
-              <p class="foot-name">{o.group}</p>
-              <ul>{o.links.map((t) => <li><a href={t.href}>{t.label}</a></li>)}</ul>
+              {o.group === 'Convert' ? (
+                <details class="foot-fold">
+                  <summary class="foot-fold-summary">Convert ({o.links.length})</summary>
+                  <ul>{o.links.map((t) => <li><a href={t.href}>{t.label}</a></li>)}</ul>
+                </details>
+              ) : (
+                <>
+                  <p class="foot-name">{o.group}</p>
+                  <ul>{o.links.map((t) => <li><a href={t.href}>{t.label}</a></li>)}</ul>
+                </>
+              )}
             </div>
           ))}
           {guides.length > 0 && (
@@ -535,6 +544,14 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .foot-roll li { margin-bottom: 6px; break-inside: avoid; }
   .foot-roll a { color: var(--ink); text-decoration-color: transparent; }
   .foot-roll a:hover { text-decoration-color: currentColor; }
+  /* the Convert roll folds behind a summary on small screens so the footer is not a wall of links; at 1000px and up the summary hides and the list shows in two columns */
+  .foot-fold-summary { margin: 0 0 10px; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); cursor: pointer; list-style-position: inside; }
+  .foot-fold-summary::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--paper); margin-right: 8px; }
+  .foot-fold-summary::marker { color: var(--convert); }
+  @media (min-width: 1000px) {
+    .foot-fold-summary { display: none; }
+    .foot-fold > ul { display: block; }
+  }
   /* the Convert roll is much longer than the others; at wide widths it spans two cells and sets its links in two columns so the footer stays balanced */
   @media (min-width: 1000px) {
     .foot-roll[data-group='convert'] { grid-column: span 2; }

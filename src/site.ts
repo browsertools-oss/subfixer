@@ -365,7 +365,7 @@ export const PAGES: ToolPage[] = [
     faq: [
       {
         q: 'What counts as a problem?',
-        a: 'Line numbers out of sequence, timestamps not written as 00:00:00,000, a line that overlaps the next, a line with no text, a line on screen for under half a second, and a line that ends before it starts. Files that are not UTF-8 are noted too.',
+        a: 'Line numbers out of sequence, a timestamp not written as 00:00:00,000, a line that starts before the line above it, a line that overlaps the next, a line with no text, a line that starts and ends at the same moment, a line on screen for under half a second, and a line that ends before it starts. Files that are not UTF-8 are noted too.',
       },
       {
         q: 'My player shows nothing at all.',

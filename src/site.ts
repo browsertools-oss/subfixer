@@ -1220,6 +1220,28 @@ export const PAGES: ToolPage[] = [
     ],
   },
   {
+    slug: 'stl-to-txt',
+    mode: 'convert',
+    group: 'Convert',
+    preset: { out: 'txt' },
+    title: 'STL to TXT: EBU and Spruce STL subtitles to a plain text transcript',
+    h1: 'Convert STL to plain text',
+    lede: 'Reads both kinds of STL: the binary EBU files used in broadcast and the text Spruce files from DVD authoring. You get the words as a plain transcript.',
+    description: 'Convert EBU STL (binary) and Spruce STL subtitles to a plain text transcript, with or without timestamps. Free, and nothing leaves your browser.',
+    steps: [
+      'Drop in your .stl file. The tool works out which kind it is.',
+      'For a Spruce file, check the frame rate at the top matches your video.',
+      'Choose "Plain text" or "Text with times" under Save as.',
+      'Download the .txt file.',
+    ],
+    faq: [
+      { q: 'What does the text look like?', a: 'Each subtitle becomes one line, with its own line breaks joined by a space. With "Text with times", each line starts with its window, like [00:01:02,500 - 00:01:04,000].' },
+      { q: 'My EBU file starts at 10:00:00.', a: 'Broadcast files usually start the programme at ten hours. When every line is after that point, the converter counts from there, so the first line lands near zero.' },
+      { q: 'Accented letters came out wrong.', a: 'EBU files name their own character set. The tool reads the Latin, Cyrillic, Greek, Arabic and Hebrew sets. For a Spruce file, pick the reading that looks right under "Fix characters".' },
+      PRIVACY_FAQ,
+    ],
+  },
+  {
     slug: 'sup-to-srt',
     mode: 'convert',
     group: 'Convert',

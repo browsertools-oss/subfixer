@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = 'SRT, VTT and ASS: what is the difference?';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="SRT, WebVTT and ASS subtitle formats compared: what each one stores, which players and sites accept it, and what is lost when you convert between them." path="/guides/srt-vtt-ass/" jsonld={jsonld}>
+<Base title={`${title} | SubFixer`} description="SRT, WebVTT and ASS subtitle formats compared: what each one stores, which players and sites accept it, and what is lost when you convert between them." path="/guides/srt-vtt-ass/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">All three store lines of text with a start and end time. They differ in how much else they can say about each line, and in which players and websites accept them.</p>

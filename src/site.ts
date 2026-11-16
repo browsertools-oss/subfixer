@@ -88,6 +88,14 @@ export const PAGES: ToolPage[] = [
         q: 'The offset is right at the start but wrong at the end.',
         a: 'Then it is not a constant offset. Use the frame-rate or two-point sync tool instead.',
       },
+      {
+        q: 'Can I shift only part of the file?',
+        a: 'No, this tool moves every line by the same amount. To move only the lines after a certain point, use "Shift from a line". Pick the first line to move and enter the offset there.',
+      },
+      {
+        q: 'What if the file is in VTT or ASS?',
+        a: 'It works the same way. VTT, ASS and SSA files shift the same way, and ASS files keep their styling.',
+      },
       PRIVACY_FAQ,
     ],
   },
@@ -188,6 +196,8 @@ export const PAGES: ToolPage[] = [
     faq: [
       { q: 'What changes between SRT and VTT?', a: 'VTT adds a WEBVTT header and uses a dot instead of a comma before milliseconds. The text and timing stay the same.' },
       { q: 'How do I add the VTT file to an HTML5 video?', a: 'Put it in a track element: <track kind="subtitles" src="subs.vtt" srclang="en" label="English" default>, placed inside your <video> tag next to the file.' },
+      { q: 'Does VTT support speaker tags?', a: 'VTT can carry a voice tag with the speaker name, but this tool does not add one. If you need speaker labels, use ASS instead.' },
+      { q: 'Can I use the VTT file in VLC?', a: 'Yes, VLC plays .vtt files. The file is saved as UTF-8, which VLC reads.' },
       PRIVACY_FAQ,
     ],
   },
@@ -1368,6 +1378,8 @@ export const PAGES: ToolPage[] = [
       { q: 'Why are some letters wrong?', a: 'OCR guesses each letter from the picture, so l, I and 1 or rn and m get mixed up now and then. Fix them in Check and edit before you download.' },
       { q: 'Can it read DVD .sub and .idx files?', a: 'Not yet. Those hold DVD pictures in a different layout. Only Blu-ray .sup files work for now.' },
       { q: 'Is my file uploaded?', a: 'No. The pictures are read on this device. The only download is the reader itself and its language data, from a public code library.' },
+      { q: 'How long does the OCR take?', a: 'It processes one picture per line. A feature-length film with hundreds of lines can take a minute or more on a slower device. The first run also downloads the text reader and language data, which is the few MB you see when you start.' },
+      { q: 'Can I use the .sup file directly in VLC?', a: 'VLC can play .sup files embedded in the video or as a sidecar, but you cannot edit them. This tool converts them to SRT so you can fix the text.' },
     ],
     guide: 'sup-to-srt-guide',
   },

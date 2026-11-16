@@ -12,7 +12,7 @@ Targets:
 - Six new guides, each at least 700 words
 - 15 tool pages show a tested before-and-after example
 - No new converter pages (stays at 70)
-- At least one page in Google and 120 visitors in 30 days (needs your Search Console step)
+- 120 visitors in the last 30 days (now 80)
 
 | Run | In plain words |
 |---|---|

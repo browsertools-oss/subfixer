@@ -658,6 +658,11 @@ export const PAGES: ToolPage[] = [
       { q: 'Does it touch the timing?', a: 'No. Only the text changes. Times stay exactly as they were.' },
       PRIVACY_FAQ,
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\nThe Subtille file\n\n2\n00:00:03,000 --> 00:00:04,500\nFix the Subtille\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\nThe Subtitle file\n\n2\n00:00:03,000 --> 00:00:04,500\nFix the Subtitle',
+      note: 'Find "Subtille", replace with "Subtitle", whole words on. Every occurrence is replaced. Timing and line order stay the same.',
+    },
   },
   {
     slug: 'remove-duplicate-subtitles',
@@ -678,6 +683,11 @@ export const PAGES: ToolPage[] = [
       { q: 'Is the file renumbered?', a: 'Yes. Lines are put in time order and numbered again from 1, or from any number you pick next to Save as.' },
       PRIVACY_FAQ,
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\nHello\n\n2\n00:00:03,000 --> 00:00:04,500\nHello\n\n3\n00:00:05,000 --> 00:00:06,000\nGoodbye\n',
+      after: '1\n00:00:01,000 --> 00:00:04,500\nHello\n\n2\n00:00:05,000 --> 00:00:06,000\nGoodbye',
+      note: 'Two identical lines that follow each other within half a second are merged into one line that runs for the time of both. The third line is left alone.',
+    },
   },
   {
     slug: 'renumber-srt',
@@ -698,6 +708,11 @@ export const PAGES: ToolPage[] = [
       { q: 'Does it change the text?', a: 'No. Nothing else changes unless you tick one of the clean-up options. Lines with no text at all are dropped.' },
       PRIVACY_FAQ,
     ],
+    example: {
+      before: '5\n00:00:01,000 --> 00:00:02,500\nFirst line\n\n1\n00:00:04,000 --> 00:00:06,000\nSecond line\n\n10\n00:00:08,000 --> 00:00:09,000\nThird line\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\nFirst line\n\n2\n00:00:04,000 --> 00:00:06,000\nSecond line\n\n3\n00:00:08,000 --> 00:00:09,000\nThird line',
+      note: 'Lines are sorted by time and numbered again from 1. Times and text stay the same.',
+    },
   },
   {
     slug: 'preview-subtitles-with-video',
@@ -719,6 +734,11 @@ export const PAGES: ToolPage[] = [
       { q: 'The subtitles drift instead of being off by the same amount.', a: 'That is a frame-rate problem. Use "Change frame rate" or "Sync two points"; the video keeps playing with the new timing.' },
       PRIVACY_FAQ,
     ],
+    example: {
+      before: '[Script Info]\nScriptType: v4.00\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\nStyle: Title,Arial,28,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:01.00,0:00:02.50,Default,,0,0,0,,{\\i1}Hello{\\i0}\nDialogue: 0,0:00:03.00,0:00:04.00,Title,,0,0,0,,Title line\n',
+      after: '',
+      note: 'The file is rewritten as v4.00+ with one default style. Text, timing and italics stay the same; named styles and positions are dropped.',
+    },
   },
   {
     slug: 'microdvd-sub-to-srt',
@@ -740,6 +760,11 @@ export const PAGES: ToolPage[] = [
       { q: 'Can I go the other way, SRT to MicroDVD?', a: 'Yes. Choose MicroDVD (.sub) under "Save as" and pick the frame rate of the video it will play with.' },
       PRIVACY_FAQ,
     ],
+    example: {
+      before: '{0}{100}First line\n{101}{200}Second line\n',
+      after: '1\n00:00:00,000 --> 00:00:04,171\nFirst line\n\n2\n00:00:04,213 --> 00:00:08,342\nSecond line',
+      note: 'Frame numbers become milliseconds at 23.976 fps, and cue numbers are added. The first line starts at 0 ms and ends at 4171 ms; the second runs from 4171 ms to 8343 ms.',
+    },
   },
   {
     slug: 'microdvd-sub-to-vtt',
@@ -1186,6 +1211,11 @@ export const PAGES: ToolPage[] = [
       { q: 'My file has word-by-word timings.', a: 'Enhanced LRC keeps tags like <00:01.00> before each word. They come through as plain text, since SRT has no word timings. Use "Find and replace" with a pattern to strip them.' },
       PRIVACY_FAQ,
     ],
+    example: {
+      before: '[00:12.50]First line\n[00:24.00]Second line\n',
+      after: '1\n00:00:12,500 --> 00:00:24,000\nFirst line\n\n2\n00:00:24,000 --> 00:00:26,000\nSecond line',
+      note: 'LRC timestamps use minutes:seconds.hundredths. Each line runs until the next one begins, and the last line gets two seconds. Cue numbers are added in the SRT output.',
+    },
   },
   {
     slug: 'lrc-to-vtt',
@@ -1250,6 +1280,11 @@ export const PAGES: ToolPage[] = [
       { q: 'Accented letters came out wrong.', a: 'EBU files name their own character set. The tool reads the Latin, Cyrillic, Greek, Arabic and Hebrew sets.' },
       PRIVACY_FAQ,
     ],
+    example: {
+      before: '00:00:01:00, 00:00:03:00, First line\n00:00:04:00, 00:00:06:00, Second line\n',
+      after: '1\n00:00:01,000 --> 00:00:03,000\nFirst line\n\n2\n00:00:04,000 --> 00:00:06,000\nSecond line',
+      note: 'Spruce STL lines have start and end times in HH:MM:SS:FF format at a given frame rate. The lines become SRT cues with millisecond timestamps.',
+    },
   },
   {
     slug: 'stl-to-vtt',

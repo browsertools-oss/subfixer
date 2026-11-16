@@ -576,3 +576,27 @@ test('convert pages with an example show what the tool actually outputs', () => 
     assert.equal(norm(build(doc.captions, p.preset.out)).trim(), norm(p.example.after).trim(), `${p.slug} example does not match tool output`);
   }
 });
+
+test('renumber-srt example: lines are sorted by time and renumbered from 1', () => {
+  const page = PAGES.find((p) => p.slug === 'renumber-srt');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const { captions } = fixCommon(d.captions, {});
+  const out = build(captions, 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
+test('remove-duplicate-subtitles example: back-to-back identical lines merge', () => {
+  const page = PAGES.find((p) => p.slug === 'remove-duplicate-subtitles');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const { captions } = fixCommon(d.captions, { removeDuplicates: true });
+  const out = build(captions, 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
+test('find-and-replace-subtitles example: word-for-word swaps', () => {
+  const page = PAGES.find((p) => p.slug === 'find-and-replace-subtitles');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const caps = d.captions.map((c) => ({ ...c, text: c.text.replace(/Subtille/g, 'Subtitle') }));
+  const out = build(caps, 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});

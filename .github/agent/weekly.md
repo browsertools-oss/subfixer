@@ -30,6 +30,12 @@ There are 14 agent runs before your next session: a morning and an evening run e
 Rank candidate work by expected revenue per hour of agent time; that is the only ranking. Every item in the plan names the revenue stream it serves (ads, Pro, or another one you find) and the number it should move. Favour: pages for search phrases with proven demand and weak competition, fixes that stop visitors bouncing, things AdSense review needs (real content, clear navigation, privacy and about pages, no thin pages), and work that gets the paid tier ready before its trigger. Cut or drop: near-duplicate pages, polish nobody will see, anything the data says is not working. Say what you cut and why.
 
 Write ops/week-plan.md with:
+- First, right under the title, an "## At a glance" section for the owner, who reads it on a dashboard. Use exactly this shape:
+  - the comment line `<!-- Summary for the owner's dashboard. Agents: follow the Day-by-day table below and mark DONE there, not here. -->`
+  - `Goal: ` and one sentence, at most 25 words, on what this week does for revenue.
+  - `Targets:` and three or four bullets, each under 15 words, with the number that counts as hit.
+  - a table `| Run | In plain words |` with one row per run (1 to 14), numbered like the Day-by-day table. Each line is at most 15 words and says what gets built in everyday language: name the page or guide topic the way a visitor would ("Guide 2: fixing Plex subtitles that are out of sync"), not slugs, file paths, field names or commands.
+  Write it like a person: plain verbs, no hype words, no em or en dashes, no bold, no emojis.
 - The money picture (step 2).
 - Last week in five lines or fewer: shipped, slipped, what the data says.
 - A day-by-day table, Sunday evening through next Sunday morning, one row per run, with the date in MM-DD-YYYY and morning or evening (Pacific) so an agent can find its row from `TZ=America/Los_Angeles date +%m-%d-%Y` and the hour. Each row names one to three concrete items: the file or page, the target search phrase where it applies, what done looks like (a test, a built page, a measurable check). Free models follow specific instructions far better than open goals, so be exact: slugs, titles, the facts the copy needs, the research you already did.

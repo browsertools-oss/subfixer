@@ -2,6 +2,35 @@
 
 Written by the weekly planner on 11-15-2026. Daily runs: find your row in the table below by the Pacific date and run (`TZ=America/Los_Angeles date +%m-%d-%Y`, morning or evening). The UTC column is for reference. When you finish an item, add `DONE <hash>` at the end of that row's cell. Don't otherwise rewrite this file.
 
+## At a glance
+
+<!-- Summary for the owner's dashboard. Agents: follow the Day-by-day table below and mark DONE there, not here. -->
+
+Goal: Give Google pages worth indexing: six real guides and tested before-and-after examples on 15 popular tools, with no new converter pages.
+
+Targets:
+- Six new guides, each at least 700 words
+- 15 tool pages show a tested before-and-after example
+- No new converter pages (stays at 70)
+- At least one page in Google and 120 visitors in 30 days (needs your Search Console step)
+
+| Run | In plain words |
+|---|---|
+| 1 | Add before-and-after examples to the SRT and VTT pages, and fix the YouTube wording on the SBV pages |
+| 2 | Guide 1: turning Blu-ray subtitles (SUP) into SRT |
+| 3 | Examples on three more pages, plus a page that lists every guide |
+| 4 | Guide 2: fixing Plex subtitles that are out of sync |
+| 5 | Examples on the four timing tools |
+| 6 | Guide 3: subtitles that show odd symbols instead of letters |
+| 7 | Examples on four cleanup and import pages |
+| 8 | Guide 4: why subtitles drift between 23.976 and 25 fps |
+| 9 | Examples on four more pages |
+| 10 | Guide 5: saving a VLC subtitle delay into the file |
+| 11 | Examples on three pages, and link the new guides from the older ones |
+| 12 | Guide 6: showing two subtitle languages at once |
+| 13 | Check every guide and example: word counts, links, phone layout |
+| 14 | Finish anything left over, then work down the backlog |
+
 ## Money picture
 
 **Spent so far (cash, from ops/costs.json):**

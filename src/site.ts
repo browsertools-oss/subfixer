@@ -26,6 +26,7 @@ export interface ToolPage {
 export const GUIDES = [
   { slug: 'subtitles-out-of-sync', title: 'Why subtitles go out of sync, and which fix to use' },
   { slug: 'srt-vtt-ass', title: 'SRT, VTT and ASS: what is the difference?' },
+  { slug: 'sup-to-srt-guide', title: 'How to convert Blu-ray SUP subtitles to SRT for free' },
 ];
 
 const PRIVACY_FAQ = {
@@ -1333,6 +1334,7 @@ export const PAGES: ToolPage[] = [
       { q: 'Can it read DVD .sub and .idx files?', a: 'Not yet. Those hold DVD pictures in a different layout. Only Blu-ray .sup files work for now.' },
       { q: 'Is my file uploaded?', a: 'No. The pictures are read on this device. The only download is the reader itself and its language data, from a public code library.' },
     ],
+    guide: 'sup-to-srt-guide',
   },
   {
     slug: 'sup-to-vtt',

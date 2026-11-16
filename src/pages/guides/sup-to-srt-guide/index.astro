@@ -1,0 +1,53 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'How to convert Blu-ray SUP subtitles to SRT for free';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="A .sup file stores Blu-ray subtitles as pictures. How to pull one out of an MKV, read the text with free OCR and fix what OCR gets wrong." path="/guides/sup-to-srt-guide/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">A .sup file from a Blu-ray does not contain words. It contains one picture per subtitle line, so nothing can read it as text until a program looks at those pictures and guesses the letters. That guess is called OCR, and you can do it for free in your browser.</p>
+
+    <h2>What a SUP file is</h2>
+    <p>Blu-ray discs use PGS, short for Presentation Graphic Stream, for their subtitle tracks. PGS stores every line of subtitles as a small bitmap image with a limited color palette, the same way the disc stores menus. A .sup file is that stream lifted out of the disc or out of a video file. If you open one in a text editor you see a short header and then no readable text, because there is no text to show.</p>
+    <p>Picture subtitles look sharp on any device and need no font support, which is why studios use them. The trade is that you cannot edit, translate or search them until they become text again. That is what the conversion step does.</p>
+
+    <h2>Why it needs OCR</h2>
+    <p>OCR stands for optical character recognition. Software looks at each picture and compares the shapes against the letters it knows, then writes down its best guess. Modern readers are accurate on clean, large subtitle text, but the guess is never perfect, because a stylized font or a slightly blurred picture can make two shapes look alike.</p>
+    <p>Expect a small number of wrong letters on every page. The usual suspects are l, I and 1 standing in for each other, and rn read as m. This is normal, and the fix is a quick proofread rather than a different tool.</p>
+
+    <h2>Converting SUP to SRT, step by step</h2>
+    <p>On <a href="/sup-to-srt/">the SUP to SRT converter</a>:</p>
+    <ol>
+      <li>Drop in your .sup file. The first time you do this, the text reader downloads a few MB of language data. It is a public code library, not an upload of your file.</li>
+      <li>Wait while the reader works through each picture. This takes longer than a normal conversion because every line is imaged one at a time.</li>
+      <li>If the words look off, pick the language of the track from the list. The reader supports 24 languages, including English, Spanish, French, German, Russian, Japanese, Korean and Chinese (simplified).</li>
+      <li>Open Check and edit and look over the lines before you download. Fix anything the OCR got wrong, then download the .srt file.</li>
+    </ol>
+    <p>Everything runs on your own computer. The pictures are read on this device, and no subtitle content is sent anywhere. The only network traffic is the reader and its language data, fetched once from the library that provides them.</p>
+
+    <h2>Fixing the mistakes OCR makes</h2>
+    <p>Two habits make this quick. First, read the output with fresh eyes in Check and edit, top to bottom. OCR damage is sparse, so a fast skim catches most of it.</p>
+    <p>Second, if the same error shows up over and over, fix it once for the whole file with <a href="/find-and-replace-subtitles/">Find and replace</a> instead of one line at a time. A common case is the pronoun "I" coming out as a lowercase "l". Set Find to "l", set Replace with to "I", and tick Whole words only, so the swap only touches a standalone letter and leaves words like "loving" alone. Match case keeps a capital letter in its place. For anything rarer, replace the misread word pair directly, for example "rn" mistaken for "m" in a name that repeats.</p>
+    <p>If the track is in a language with accented characters and those come out wrong, the track may be in a different language than you picked. Re-run with the right one selected rather than patching hundreds of letters by hand.</p>
+
+    <h2>Getting the .sup out of an MKV</h2>
+    <p>Most SUP files arrive inside an MKV rip rather than on their own. MKVToolNix is a free set of tools that handles this. Install it, then in a terminal:</p>
+    <ol>
+      <li>Run <code>mkvmerge -i movie.mkv</code> to list the tracks. Each line gets an ID number, and subtitle tracks are listed as subtitles. Note the ID of the PGS track you want.</li>
+      <li>Run <code>mkvextract tracks movie.mkv 3:subs.sup</code>, using your track's ID in place of 3. This writes the track to subs.sup.</li>
+    </ol>
+    <p>That .sup file is what you drop into the converter. If the MKV also carries an SRT or ASS track, grab that instead and skip OCR entirely; text tracks are always worth preferring.</p>
+
+    <h2>Which file is yours</h2>
+    <p>Three formats get called "sub", and picking the wrong page wastes your time. A Blu-ray .sup is picture subtitles and needs OCR, which is what this guide covers. A MicroDVD .sub is plain text with frame numbers instead of times, and SubFixer reads it directly as text; see <a href="/microdvd-sub-to-srt/">MicroDVD SUB to SRT</a>. A VobSub .sub paired with an .idx is the DVD format described above, and this tool does not read it. If you are not sure, open the file in a text editor. Readable numbers and sentences mean MicroDVD. Garbage bytes mean PGS or VobSub, and the folder the file came from usually tells you which disc it was.</p>
+
+    <h2>What about DVD .sub and .idx files</h2>
+    <p>DVDs use a different picture format called VobSub, usually stored as a pair of files, .sub and .idx. SubFixer does not read them. If that is what you have, the free desktop app Subtitle Edit can OCR VobSub into SRT, and the result can be cleaned up here afterwards like any other SRT.</p>
+
+    <h2>After the SRT: VTT and ASS</h2>
+    <p>Once you have a clean SRT, going further is ordinary text conversion. For a website or an HTML5 video player, <a href="/sup-to-vtt/">SUP to VTT</a> does the same OCR and writes WebVTT directly. For a styled editor like Aegisub, <a href="/sup-to-ass/">SUP to ASS</a> produces an ASS file with one default style. You can also convert the SRT you downloaded with <a href="/srt-to-vtt/">SRT to VTT</a> if that is the format you needed.</p>
+
+    <p>See also: <a href="/guides/subtitles-out-of-sync/">Why subtitles go out of sync, and which fix to use</a></p>
+  </article>
+</Base>

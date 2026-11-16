@@ -1,5 +1,5 @@
-- Follow ops/week-plan.md. Row 1 (2026-11-16 02:17 UTC): add the `example` and `guide` fields to ToolPage, render the "What changes in your file" block in ToolPage.astro, add the generic convert test, and fill examples for srt-to-vtt and vtt-to-srt (the "after" comes from running the code, never typed by hand).
-- Same run: put the researched YouTube Studio SBV steps (Subtitles > video > options menu (three dots) on the language row > Download; only for your own channel) on sbv-to-srt, sbv-to-vtt, sbv-to-txt and srt-to-sbv.
-- No new X-to-Y converter pages this week. Effort goes into six guides (700+ words each) and before/after examples on the top 15 pages, so AdSense review sees real content.
-- Metrics: 80 visits in 30 days, against 300 for ads and 1,000 for Pro. Search shows no pages for site:subfixer.app yet. The owner has a decision issue to submit sitemaps and request indexing.
-- Closed: the 404 page is served correctly (status 404), and the scratch files stay where they are. Don't spend time on either.
+- Execute the Tue 11-17 morning row of ops/week-plan.md: Guide 2, slug `plex-subtitles-out-of-sync`, title "Plex subtitles out of sync: fix the file for good", using the Plex facts in the plan. Set `guide` on shift-subtitle-timing.
+- Before that row, take the backlog item 1 remainder if the plan allows: 6 more example blocks are needed on tool pages to reach the 15-example target (ssa-to-ass through find-and-replace-subtitles are already added; remaining high-demand convert pages are candidates).
+- After the guide is done, add two FAQs each to the three top pages if they were not already done this run, and keep moving down the week-plan, then the backlog.
+- Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; nothing is indexed yet. Do not open a decision issue.
+- Step 5 of the run: rewrite ops/next.md as 3-5 bullets for the next report.

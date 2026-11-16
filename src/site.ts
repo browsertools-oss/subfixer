@@ -19,6 +19,8 @@ export interface ToolPage {
   preset?: { from?: number; to?: number; out?: string; fromLine?: boolean; merge?: 'stack' | 'parts'; symptom?: string; clean?: 'dupes' | 'renumber'; video?: boolean };
   steps: string[];
   faq: { q: string; a: string }[];
+  example?: { before: string; after: string; note: string };
+  guide?: string; // slug of a guide in GUIDES
 }
 
 export const GUIDES = [
@@ -177,6 +179,11 @@ export const PAGES: ToolPage[] = [
     lede: 'Turn SubRip .srt files into WebVTT .vtt for HTML5 video, YouTube, Vimeo and most web players.',
     description: 'Convert SRT subtitles to WebVTT (.vtt) in your browser. It is free and needs no account or upload. ASS, SSA and SBV files work too.',
     steps: ['Drop in your .srt file.', 'Output is preset to WebVTT.', 'Download the .vtt file.'],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\n<i>Hello</i>\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      after: 'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.500\n<i>Hello</i>\n\n2\n00:00:04.000 --> 00:00:06.000\nWhat time is it?\n',
+      note: 'A WEBVTT line is added at the top, and the comma before the milliseconds becomes a dot. The text and the timing stay the same.',
+    },
     faq: [
       { q: 'What changes between SRT and VTT?', a: 'VTT adds a WEBVTT header and uses a dot instead of a comma before milliseconds. The text and timing stay the same.' },
       { q: 'How do I add the VTT file to an HTML5 video?', a: 'Put it in a track element: <track kind="subtitles" src="subs.vtt" srclang="en" label="English" default>, placed inside your <video> tag next to the file.' },
@@ -193,6 +200,11 @@ export const PAGES: ToolPage[] = [
     lede: 'Turn WebVTT captions, like ones downloaded from a web player, into SRT files that work in VLC, Plex, TVs and video editors.',
     description: 'Convert WebVTT (.vtt) captions to SRT for VLC, Plex, Premiere and TVs. Free, and it runs in your browser.',
     steps: ['Drop in your .vtt file.', 'Output is preset to SRT.', 'Download the .srt file.'],
+    example: {
+      before: 'WEBVTT\n\n00:00:01.000 --> 00:00:02.500\n<i>Hello</i>\n\n00:00:04.000 --> 00:00:06.000\nWhat time is it?\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\n<i>Hello</i>\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      note: 'The WEBVTT line is dropped, cue numbers are added, and the dot before the milliseconds becomes a comma. The text and the timing stay the same.',
+    },
     faq: [
       { q: 'Will positioning and styling carry over?', a: 'SRT has no positioning, so cue settings like position and alignment are dropped. Italic, bold and underline tags are kept unless you strip them under "Clean up".' },
       PRIVACY_FAQ,

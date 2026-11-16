@@ -536,6 +536,10 @@ const guides = GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, label: g.title }
   .faq summary::marker { color: var(--soft); }
   .faq details p { color: var(--soft); margin: 0 0 18px; max-width: 62ch; }
   .block > p { max-width: 62ch; }
+  .samples { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 14px; }
+  @media (min-width: 900px) { .samples { grid-template-columns: 1fr 1fr; } }
+  .sample-label { font-family: var(--mono); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--soft); margin: 0 0 6px; }
+  .sample { font-family: var(--mono); font-size: 13px; line-height: 1.55; overflow-x: auto; white-space: pre; background: var(--sunk); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0; }
 
   footer { margin-top: 120px; background: var(--sunk); color: var(--soft); font-size: 15px; }
   .foot-in { padding-top: 48px; padding-bottom: 40px; }

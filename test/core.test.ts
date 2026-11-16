@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssRaw, rebuildAss, parseTime, decode, validate, checkSrtRaw, repairDoubleUtf8, encodingCandidates, ENCODINGS, REPAIR_UTF8 } from '../src/lib/subs.ts';
 import { toTxt, toCsv, toDocx, toXlsx, zipFiles } from '../src/lib/export.ts';
 import { unzipSync, strFromU8 } from 'fflate';
+import { PAGES } from '../src/site.ts';
 
 const SRT = '1\r\n00:00:01,000 --> 00:00:02,500\r\n<i>Hello</i>\r\n\r\n2\r\n00:00:02,400 --> 00:00:04,000\r\n[DOOR SLAMS]\r\nJOHN: World\r\n\r\n3\r\n00:00:05,000 --> 00:00:05,200\r\n(laughs)\r\n';
 const ASS = `[Script Info]\nScriptType: v4.00+\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:01.00,0:00:02.50,Default,,0,0,0,,{\\i1}Hi{\\i0}\\Nthere\n`;
@@ -564,4 +565,14 @@ test('ass to ssa writes v4.00 with a default style and keeps text and times', ()
   // The fresh file is written with one default style, not the source's.
   assert.equal((ssa.match(/^Style:/gm) ?? []).length, 1);
   assert.deepEqual(parse(ssa).captions.map((c) => [c.start, c.end]), [[1000, 3500], [4000, 6000]]);
+});
+
+test('convert pages with an example show what the tool actually outputs', () => {
+  const pages = PAGES.filter((p) => p.mode === 'convert' && p.example);
+  for (const p of pages) {
+    const ext = p.slug.split('-')[0]; // srt-to-vtt -> srt
+    const doc = parse(p.example.before, 23.976, { name: `example.${ext}` });
+    const norm = (s) => s.replace(/\r\n/g, '\n');
+    assert.equal(norm(build(doc.captions, p.preset.out)).trim(), norm(p.example.after).trim(), `${p.slug} example does not match tool output`);
+  }
 });

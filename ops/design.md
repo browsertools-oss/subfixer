@@ -47,3 +47,10 @@ Read it before any UI change. Record new decisions here so later runs follow the
   outside, both from the same page list).
 - 2026-11-15: The two guides pass `ogType="article"` to Base; every other page keeps the
   default `website`. Matches their Article JSON-LD. No visual change.
+- 2026-11-15: ToolPage gained an optional `example?: { before, after, note }` field, rendered
+  as "What changes in your file" after "How it works": a note line, then two labelled
+  `<pre class="sample">` blocks (Before and After), monospace, overflow-x:auto, small type,
+  two columns at 900px and up, one column below. An optional `guide` slug renders a
+  "Read the guide: <title>" link under the FAQ. Examples are 2-3 cues and the `after` text is
+  the tool's real output (locked by a test that rebuilds it). Chosen over a screenshot: text
+  stays crawlable and matches the file the visitor gets.

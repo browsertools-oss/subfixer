@@ -30,10 +30,31 @@ const jsonld = [
     <h2>How it works</h2>
     <ol class="steps">{page.steps.map((s, i) => <li><span class="stepno" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{s}</span></li>)}</ol>
   </section>
+  {page.example && (
+    <section class="block">
+      <h2>What changes in your file</h2>
+      <p>{page.example.note}</p>
+      <div class="samples">
+        <div>
+          <p class="sample-label">Before</p>
+          <pre class="sample">{page.example.before}</pre>
+        </div>
+        <div>
+          <p class="sample-label">After</p>
+          <pre class="sample">{page.example.after}</pre>
+        </div>
+      </div>
+    </section>
+  )}
   <section class="block">
     <h2>Questions</h2>
     <div class="faq">{page.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
   </section>
+  {page.guide && GUIDES.some((g) => g.slug === page.guide) && (
+    <section class="block">
+      <p class="guide-link">Read the guide: <a href={`/guides/${page.guide}/`}>{GUIDES.find((g) => g.slug === page.guide)!.title}</a></p>
+    </section>
+  )}
   {home && (
     <section class="block">
       <h2>Why it runs in your browser</h2>

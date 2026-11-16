@@ -43,21 +43,24 @@ async function madeToday() {
 // Returns { "YYYY-MM-DD": visits } for the last 30 days, or null if the token can't read them.
 async function visitsByDay() {
   const token = process.env.CLOUDFLARE_API_TOKEN;
-  if (!token) return null;
+  if (!token) { console.warn('visits: CLOUDFLARE_API_TOKEN is not set'); return null; }
   const H = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
   try {
     const a = await (await fetch('https://api.cloudflare.com/client/v4/accounts', { headers: H })).json();
     const account = a?.result?.[0]?.id;
-    if (!account) return null;
+    if (!account) { console.warn('visits: token cannot list accounts:', JSON.stringify(a?.errors ?? a).slice(0, 300)); return null; }
     const from = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
     const query = `{ viewer { accounts(filter: {accountTag: "${account}"}) { rumPageloadEventsAdaptiveGroups(limit: 100, filter: {date_geq: "${from}", requestHost: "subfixer.app", bot: 0}) { sum { visits } dimensions { date } } } } }`;
     const g = await (await fetch('https://api.cloudflare.com/client/v4/graphql', { method: 'POST', headers: H, body: JSON.stringify({ query }) })).json();
+    if (g?.errors?.length) { console.warn('visits: Cloudflare GraphQL errors:', JSON.stringify(g.errors)); return null; }
     const groups = g?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups;
-    if (!Array.isArray(groups)) return null;
+    if (!Array.isArray(groups)) { console.warn('visits: unexpected Cloudflare response:', JSON.stringify(g).slice(0, 500)); return null; }
+    // The beacon is live on every page, so an empty answer means Cloudflare returned nothing, not zero visits.
+    if (!groups.length) { console.warn('visits: Cloudflare returned no rows; keeping the existing counts'); return null; }
     const out = {};
     for (const x of groups) out[x.dimensions.date] = (out[x.dimensions.date] ?? 0) + (x.sum?.visits ?? 0);
     return out;
-  } catch { return null; }
+  } catch (e) { console.warn('visits: request failed:', e?.message ?? e); return null; }
 }
 
 // --- history ---
@@ -83,7 +86,8 @@ if (seen) {
   for (const d of dates) {
     if (d < from || d >= today) continue;
     const row = without.find((r) => r.date === d);
-    if (row) row.visitors = seen[d] ?? 0;
+    // A day missing from a partial answer keeps the count it already has.
+    if (row) row.visitors = seen[d] ?? row.visitors ?? 0;
     else without.push({ date: d, spent: 0, made: 0, visitors: seen[d] });
   }
   without.sort((a, b) => a.date.localeCompare(b.date));

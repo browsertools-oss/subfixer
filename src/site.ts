@@ -271,7 +271,7 @@ export const PAGES: ToolPage[] = [
     description: 'Convert YouTube SBV captions to SRT, which works in most players and editors. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to SRT.', 'Download the .srt file.'],
     faq: [
-      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the captions for your video and look for a download option on the track. YouTube offers captions in more than one format; pick .sbv. Menu names change from time to time, so if you cannot find one, look for a format picker.' },
+      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open Subtitles and pick the video. On the language row, open the options menu (three dots) and choose Download. YouTube offers .sbv, .srt and .vtt. This works for videos on a channel you can sign into.' },
       { q: 'How is SBV different from SRT?', a: 'SBV puts the start and end time on one line separated by a comma and has no line numbers. SRT numbers each line and uses an arrow between the times. The text is the same.' },
       PRIVACY_FAQ,
     ],
@@ -287,7 +287,7 @@ export const PAGES: ToolPage[] = [
     description: 'Convert YouTube SBV captions to WebVTT. The timing and text carry over unchanged. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to VTT.', 'Download the .vtt file.'],
     faq: [
-      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the captions for your video and look for a download option on the track. YouTube offers captions in more than one format; pick .sbv. Menu names change from time to time, so if you cannot find one, look for a format picker.' },
+      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open Subtitles and pick the video. On the language row, open the options menu (three dots) and choose Download. YouTube offers .sbv, .srt and .vtt. This works for videos on a channel you can sign into.' },
       { q: 'How is SBV different from VTT?', a: 'SBV writes the start and end on one line with a comma between them and has no header line. VTT starts with a WEBVTT line and an arrow between the times. Both carry millisecond times, so nothing shifts.' },
       PRIVACY_FAQ,
     ],
@@ -303,7 +303,7 @@ export const PAGES: ToolPage[] = [
     description: 'Convert YouTube SBV captions to a plain text file, with or without timestamps. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Choose "Plain text" or "Text with times" under Save as.', 'Download the .txt file.'],
     faq: [
-      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open the captions for your video and look for a download option on the track. YouTube offers captions in more than one format; pick .sbv. Menu names change from time to time, so if you cannot find one, look for a format picker.' },
+      { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open Subtitles and pick the video. On the language row, open the options menu (three dots) and choose Download. YouTube offers .sbv, .srt and .vtt. This works for videos on a channel you can sign into.' },
       { q: 'What does the text look like?', a: 'Each caption becomes one line. With "Text with times", each line starts with its window, like [00:01:02,500 - 00:01:04,000]. Line breaks inside a caption are joined with a space.' },
       PRIVACY_FAQ,
     ],

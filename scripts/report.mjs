@@ -131,6 +131,9 @@ try {
 
 const next = existsSync('ops/next.md') ? readFileSync('ops/next.md', 'utf8').trim() : '- (none written)';
 
+const yesterday = hist.length >= 2 ? hist[hist.length - 2] : null;
+const yVisitors = yesterday?.visitors;
+
 const body = `${chart}
 
 The first line is money made and the second is cash spent (domains, credits, plans), both as running totals.
@@ -141,7 +144,7 @@ The first line is money made and the second is cash spent (domains, credits, pla
 | Made | ${usd(made)} | ${usd(mtdMade)} | |
 | Net | ${usd(made - spentToday)} | ${usd(mtdMade - mtdSpent)} | |
 
-Visitors yesterday: ${seen ? seen.visitors : 'not available yet'}. Last 7 days: ${hist.slice(-8).reduce((a, r) => a + (r.visitors ?? 0), 0)}.
+Visitors yesterday: ${yVisitors == null ? 'not counted yet' : yVisitors}. Last 7 days: ${hist.slice(-8).reduce((a, r) => a + (r.visitors ?? 0), 0)}.
 
 LLM spend today: ${llmTotal == null ? 'not available (no key yet)' : usd(llmToday)}${credit && llmTotal != null ? ` (from prepaid credit: ${usd(aiUsedAll)} of ${usd(credit)} used)` : ''}.
 

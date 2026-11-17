@@ -1,0 +1,40 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'VLC subtitle delay: save the fix into the file';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="VLC's G and H keys nudge subtitle delay for the current play only. It never fixes the file. How to set the delay, then write it into the .srt so it stays fixed." path="/guides/vlc-subtitle-delay/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">VLC has two keys for subtitle delay and they are handy while you are watching. But the delay lives in the player, not in the file, so you will be pressing those keys for every session, on every device, forever, unless you fix the file itself.</p>
+
+    <h2>The two delay keys</h2>
+    <p>On Windows and Linux, the G and H keys change the subtitle delay. On a Mac the keys are H and J. Each press moves the delay in steps of 50 ms, which is fine for nudging but tedious for anything larger. Which key delays and which key advances differs between versions and sources, so do not memorize it. Press one of them and watch the "Subtitle delay" message VLC shows on screen; that tells you which direction you moved and by how much.</p>
+    <p>For an exact value instead of key presses, open Tools &gt; Track Synchronization on Windows and Linux, or Window &gt; Track Synchronization on a Mac. Type the delay there and VLC applies it to the current play.</p>
+
+    <h2>Why VLC never fixes the file</h2>
+    <p>Every delay you set in VLC applies to the current play only. Close the player, open it tomorrow, or copy the file to another device, and the subtitles are off again by the same amount. VLC has no option to write the delay back into the subtitle file, so the fix has to happen somewhere else.</p>
+
+    <h2>Read the sign correctly, then fix the file</h2>
+    <p>A positive delay in VLC makes the subtitles show later, which means they were showing too early. If you needed to set +2.5 seconds in VLC to make the video bearable, the subtitles were 2.5 seconds too early.</p>
+    <p>On <a href="/shift-subtitle-timing/">Shift timing</a>, pick "Too early" and enter 2.5 seconds. The tool moves every line later by that amount and saves the result as a new file. Play that file in any player and no delay is needed anywhere. A negative delay in VLC means the subtitles were showing too late; pick "Too late" instead.</p>
+    <p>The rule of thumb: the sign of the delay you needed in VLC tells you which way the file is off, and the amount tells you how far to shift. One pass, done once, fixed for good.</p>
+
+    <h2>Why you needed a delay in the first place</h2>
+    <p>Subtitles are delayed for one of a few reasons. The video you are watching has a longer or shorter intro than the copy the subtitles were timed against. It is a different cut, with a scene added or removed early on. Or the subtitles were released for a release group whose rip starts at a different point. All of these produce a constant offset, fixable in one shift. The <a href="/guides/subtitles-out-of-sync/">out-of-sync guide</a> walks through how to tell the three patterns apart.</p>
+
+    <h2>How the sign and the amount work together</h2>
+    <p>Say the first spoken line should be at 00:01:12 but shows at 00:01:09. The delay you would enter in VLC to correct it is +3 seconds. That means the subtitles were 3 seconds too early, so in the fixer you pick "Too early" and enter 3 seconds. Another example: the line shows at 00:01:15 when it should be at 00:01:12. You would enter a delay of negative 3 seconds in VLC, the subtitles were too late, and in the fixer you pick "Too late" with 3 seconds. The amount is always the size of the error; the direction is always described in terms of how the subtitles behaved before you touched anything.</p>
+
+    <h2>If the delay grows as the video plays</h2>
+    <p>G and H can only add one fixed amount to the timing. If the subtitles start close but drift further and further off as the movie continues, no delay value will hold. That is a frame-rate mismatch, and it needs the times multiplied, not shifted. Read <a href="/guides/23976-vs-25-fps-subtitles/">23.976 vs 25 fps: why subtitles drift, and the fix</a>; the short version is to use <a href="/convert-25-fps-to-23976/">Convert 25 to 23.976 fps</a> on the file.</p>
+
+    <h2>If you do not know the offset at all</h2>
+    <p>Sometimes you know the subtitles are off but not by how much. <a href="/sync-subtitles/">Sync two points</a> handles this without figuring out the number. Play the video to one line near the start, type the time it is actually spoken, do the same for a line near the end, and every line in between is retimed to match. It fixes a constant offset and a frame-rate drift in one go.</p>
+
+    <h2>Saving the result</h2>
+    <p>Download the fixed file next to the video, keeping the same base name plus a language code, like <code>Movie Name (Year).en.srt</code>. Players that auto-load external subtitles will pick it up on their own, and you never touch the delay keys again for that video.</p>
+
+    <p>See also: <a href="/guides/plex-subtitles-out-of-sync/">Plex subtitles out of sync: fix the file for good</a></p>
+  </article>
+</Base>

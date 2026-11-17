@@ -30,6 +30,7 @@ export const GUIDES = [
   { slug: 'plex-subtitles-out-of-sync', title: 'Plex subtitles out of sync: fix the file for good' },
   { slug: 'subtitles-weird-characters', title: 'Subtitles show Ã© or boxes instead of letters: the fix' },
   { slug: '23976-vs-25-fps-subtitles', title: '23.976 vs 25 fps: why subtitles drift, and the fix' },
+  { slug: 'vlc-subtitle-delay', title: 'VLC subtitle delay: save the fix into the file' },
 ];
 
 const PRIVACY_FAQ = {
@@ -198,6 +199,7 @@ export const PAGES: ToolPage[] = [
       },
       PRIVACY_FAQ,
     ],
+    guide: 'vlc-subtitle-delay',
   },
   {
     slug: 'srt-to-vtt',

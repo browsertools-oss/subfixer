@@ -10,7 +10,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>SRT (SubRip)</h2>
     <p>The simplest and most widely supported. Each line has a number, a start and end time like <code>00:01:02,500 --&gt; 00:01:04,000</code>, and the text. Italic, bold and underline tags work in most players. There is no reliable way to position text or set colors.</p>
-    <p>Use it for TVs, media servers like Plex and Jellyfin, VLC, and most video editors. If you are unsure, SRT is the safe choice.</p>
+    <p>Use it for TVs, media servers like Plex and Jellyfin, VLC, and most video editors. If you are unsure, SRT is the safe choice. If your subtitles are pictures instead of text, like a Blu-ray SUP track, see <a href="/guides/sup-to-srt-guide/">How to convert Blu-ray SUP subtitles to SRT for free</a>.</p>
 
     <h2>VTT (WebVTT)</h2>
     <p>The web version of SRT. The file starts with <code>WEBVTT</code>, times use a dot before the milliseconds, and line numbers are optional. It adds settings for position and alignment, voice tags for speakers, and styling through CSS.</p>

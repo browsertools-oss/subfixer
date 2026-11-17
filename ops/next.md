@@ -1,5 +1,5 @@
-- Execute the Tue 11-17 morning row of ops/week-plan.md: Guide 2, slug `plex-subtitles-out-of-sync`, title "Plex subtitles out of sync: fix the file for good", using the Plex facts in the plan. Set `guide` on shift-subtitle-timing.
-- Before that row, take the backlog item 1 remainder if the plan allows: 6 more example blocks are needed on tool pages to reach the 15-example target (ssa-to-ass through find-and-replace-subtitles are already added; remaining high-demand convert pages are candidates).
-- After the guide is done, add two FAQs each to the three top pages if they were not already done this run, and keep moving down the week-plan, then the backlog.
-- Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; nothing is indexed yet. Do not open a decision issue.
+- Row 13 (QA sweep, partial): expand the two old guides under 700 words, srt-vtt-ass (about 614) and subtitles-out-of-sync (about 570), and re-check word counts of all guides; the 360px phone check in the built HTML still needs a browser.
+- scripts/wordcount.cjs needs approval in this environment; if it runs, confirm every guide is 700+ and the sitemap count, otherwise keep measuring from built HTML text nodes.
+- Row 14 (Sun 11-22 morning): finish whatever is left in the week plan, then take the backlog in order; week targets 1-3 are met (6 new guides, 28 tested examples, 70 converter pages), backlog item 4 (saved presets behind ?pro=1) is still gated on its own conditions.
+- Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; nothing indexed yet. Do not open a decision issue.
 - Step 5 of the run: rewrite ops/next.md as 3-5 bullets for the next report.

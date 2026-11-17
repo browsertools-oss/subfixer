@@ -443,6 +443,11 @@ export const PAGES: ToolPage[] = [
     lede: 'Turn styled .ass or .ssa subtitles into WebVTT for web players and HTML5 video. Italics and bold are kept and line breaks come through.',
     description: 'Convert ASS and SSA subtitles to WebVTT (.vtt). Italics, bold and line breaks are kept, and duplicate layer lines are merged. Free, in your browser.',
     steps: ['Drop in your .ass or .ssa file.', 'Output is preset to VTT.', 'Download the .vtt file.'],
+    example: {
+      before: '[Script Info]\nScriptType: v4.00+\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:01.00,0:00:02.50,Default,,0,0,0,,{\\i1}Hello{\\i0}\\Nthere\nDialogue: 0,0:00:04.00,0:00:06.00,Default,,0,0,0,,{\\b1}What time is it?{\\b0}\n',
+      after: 'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.500\n<i>Hello</i>\nthere\n\n2\n00:00:04.000 --> 00:00:06.000\n<b>What time is it?</b>\n',
+      note: 'The override tags become HTML tags that VTT keeps, so italics and bold survive. The \\N line break becomes a real line break, and the header and named styles are dropped.',
+    },
     faq: [
       { q: 'What about fonts, colors and positions?', a: 'VTT has no place for most ASS styling, so fonts, colors, positions and effects are dropped. If you need those, keep the ASS file and use a player that supports it, like VLC or mpv.' },
       PRIVACY_FAQ,

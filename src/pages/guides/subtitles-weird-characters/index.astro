@@ -1,0 +1,45 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Subtitles show Ã© or boxes instead of letters: the fix';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Accents showing as Ã©, letters as boxes or random symbols: your subtitle file was saved in one encoding and read as another. How to spot which, and fix it free in your browser." path="/guides/subtitles-weird-characters/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Garbled accents, boxes or odd symbols in subtitles are almost never a mystery. The file was written in one character encoding and is being read in another. Figure out which pair is involved and the file reads perfectly again.</p>
+
+    <h2>What the broken characters mean</h2>
+    <p>A subtitle file stores letters as bytes, and a byte on its own is meaningless until something decides which character each number stands for. That decision is the encoding. Save a file as UTF-8 and open it as Windows-1252, and every accented character comes out as two odd ones, like "CafÃ©" instead of "Café". Save it in Korean and open it as Western text, and you get random symbols.</p>
+    <p>The good news is that the bytes are all still there. Nothing is lost, so picking the right encoding brings the original text back exactly.</p>
+
+    <h2>Match the symptom to the likely encoding</h2>
+    <table>
+      <thead>
+        <tr><th>What you see</th><th>What it usually is</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>&Atilde; followed by another odd character, like "&Atilde;©"</td><td>UTF-8 text read as Windows-1252</td></tr>
+        <tr><td>Broken accents in Polish, Czech, Croatian or Hungarian text</td><td>Central European text saved as Windows-1250, read as something else, or the other way round</td></tr>
+        <tr><td>Cyrillic text showing as other letters or symbols</td><td>Windows-1251 (or KOI8) text read with the wrong code page</td></tr>
+        <tr><td>Korean text showing as symbols</td><td>EUC-KR text read as a Western encoding</td></tr>
+        <tr><td>Boxes or empty rectangles instead of some letters</td><td>The font has no glyphs for those letters; the file itself may be fine</td></tr>
+      </tbody>
+    </table>
+    <p>If your file is from an old DVD rip or an Eastern European release group, Windows-1250, 1251 and 1252 cover most of the world you will meet.</p>
+
+    <h2>Fix the file in your browser</h2>
+    <p>On <a href="/fix-subtitle-encoding/">the encoding fixer</a>, drop the file in. The encoding is detected automatically, and under "Fix characters" you see the same lines read several ways. Pick the reading that looks right, or choose the language to narrow the list, then download. The fixed file is saved as UTF-8, which Plex, Emby and Jellyfin all read reliably.</p>
+    <p>One option in that list deserves a word of its own: "UTF-8, repaired". It undoes double-encoded text, the "CafÃ©" case where UTF-8 was read as Windows-1252 and then saved again as UTF-8. The tool repairs each run of non-ASCII characters on its own, so lines that were already correct stay correct and only the damaged runs get rewritten. If the file was double-encoded once and is fine otherwise, this is the option that fixes it in one click.</p>
+    <p>If the same misreading shows up everywhere, for example every "Ã©" where there should be an "é", you can also patch it afterwards with <a href="/find-and-replace-subtitles/">Find and replace</a>. Set Find to the broken pair and Replace with the correct character, with whole words off, and every line is fixed at once.</p>
+
+    <h2>If you see boxes instead of letters</h2>
+    <p>Boxes are a different problem. The file may be perfectly valid UTF-8 with the right letters in it, and the player may be showing boxes because its font has no glyphs for them. In VLC, the font and the default subtitle encoding are set under Preferences &gt; Subtitles/OSD. Try a font with wider language coverage there before touching the file. If a different player shows the same file correctly, the file was never broken.</p>
+
+    <h2>Which encoding to save at the end</h2>
+    <p>Whatever the file started as, save the fixed version as UTF-8. It is what current players, browsers and the media servers (Plex, Emby, Jellyfin) read most reliably, and it covers every language. If you meant the fixed file for a website, <a href="/srt-to-vtt/">SRT to VTT</a> converts it to WebVTT, which browsers expect in UTF-8.</p>
+
+    <h2>When picking encodings never helps</h2>
+    <p>If every option in the list produces gibberish, the file is not merely mislabeled. The bytes may come from an encoding nobody tries, or the file may be a different format than its name suggests, like a picture-based subtitle track renamed to .srt. Picture tracks have no characters to recover; they need OCR. The symptom table above is the fastest way to tell those apart from a plain encoding mix-up.</p>
+    <p>See also: <a href="/guides/plex-subtitles-out-of-sync/">Plex subtitles out of sync: fix the file for good</a></p>
+  </article>
+</Base>

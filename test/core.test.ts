@@ -607,6 +607,14 @@ test('fix-subtitle-timing example: overlap closed with a gap, short line given a
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
+test('fix-subtitle-encoding example: double-encoded UTF-8 is repaired run by run', () => {
+  const page = PAGES.find((p) => p.slug === 'fix-subtitle-encoding');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const repaired = d.captions.map((c) => ({ ...c, text: repairDoubleUtf8(c.text) ?? c.text }));
+  const out = build(repaired, 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
 test('renumber-srt example: lines are sorted by time and renumbered from 1', () => {
   const page = PAGES.find((p) => p.slug === 'renumber-srt');
   const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });

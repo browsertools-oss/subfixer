@@ -28,6 +28,7 @@ export const GUIDES = [
   { slug: 'srt-vtt-ass', title: 'SRT, VTT and ASS: what is the difference?' },
   { slug: 'sup-to-srt-guide', title: 'How to convert Blu-ray SUP subtitles to SRT for free' },
   { slug: 'plex-subtitles-out-of-sync', title: 'Plex subtitles out of sync: fix the file for good' },
+  { slug: 'subtitles-weird-characters', title: 'Subtitles show Ã© or boxes instead of letters: the fix' },
 ];
 
 const PRIVACY_FAQ = {
@@ -272,10 +273,16 @@ export const PAGES: ToolPage[] = [
       'Under "Fix characters" you see the same lines read several ways. Pick the one that reads correctly, or choose the language to narrow the list.',
       'Download. The fixed file is UTF-8.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\nCafÃ© owner\n\n2\n00:00:04,000 --> 00:00:06,000\nGrÃ¨tchen spricht Deutsch\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\nCafé owner\n\n2\n00:00:04,000 --> 00:00:06,000\nGrètchen spricht Deutsch\n',
+      note: 'UTF-8 was read as Windows-1252 and saved again, so "UTF-8, repaired" is the option to pick. Each garbled run is rewritten on its own; the times and the rest of each line stay as they are.',
+    },
     faq: [
       { q: 'Which encoding should I pick?', a: 'Western European languages are usually Windows-1252. Polish, Czech, Croatian and Hungarian are usually Windows-1250. Russian and Bulgarian are Windows-1251, Greek is 1253, Turkish 1254.' },
       PRIVACY_FAQ,
     ],
+    guide: 'subtitles-weird-characters',
   },
   {
     slug: 'remove-hearing-impaired-subtitles',

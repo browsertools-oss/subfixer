@@ -27,6 +27,7 @@ export const GUIDES = [
   { slug: 'subtitles-out-of-sync', title: 'Why subtitles go out of sync, and which fix to use' },
   { slug: 'srt-vtt-ass', title: 'SRT, VTT and ASS: what is the difference?' },
   { slug: 'sup-to-srt-guide', title: 'How to convert Blu-ray SUP subtitles to SRT for free' },
+  { slug: 'plex-subtitles-out-of-sync', title: 'Plex subtitles out of sync: fix the file for good' },
 ];
 
 const PRIVACY_FAQ = {
@@ -98,6 +99,7 @@ export const PAGES: ToolPage[] = [
       },
       PRIVACY_FAQ,
     ],
+    guide: 'plex-subtitles-out-of-sync',
   },
   {
     slug: 'convert-25-fps-to-23976',

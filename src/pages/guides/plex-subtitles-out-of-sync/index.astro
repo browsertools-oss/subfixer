@@ -1,0 +1,52 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Plex subtitles out of sync: fix the file for good';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Plex has a subtitle offset, but it only helps on some devices and never fixes the file. How to fix the .srt itself so every device plays in sync." path="/guides/plex-subtitles-out-of-sync/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Plex has a subtitle offset setting, but it is a nudge inside one app, not a repair of the file. If your subtitles are out of sync on Plex, fix the subtitle file itself and every device, and every person using the server, gets the fixed timing.</p>
+
+    <h2>Why Plex's offset is not enough</h2>
+    <p>The offset setting exists, but it has limits that the support article spells out and users bump into every day.</p>
+    <ul>
+      <li>It works only for external, text-based subtitles such as .srt. Subtitles embedded in the video do not respond to it, and neither do picture-based subtitles.</li>
+      <li>The Plex support article lists Fire TV, Android mobile and Android TV. Users report that the offset shows up in Plex Web too, and that older Roku apps never had it.</li>
+      <li>Users complain that the offset moves in steps of 50 ms, so dialing in an odd value like 1.3 seconds is slow going.</li>
+      <li>Most importantly, the offset lives in the app. The file itself stays wrong, so other devices, and other users of the same server, still see out-of-sync subtitles.</li>
+    </ul>
+    <p>Using the offset is fine as a one-off for one show on one TV. It is the wrong tool when the subtitle file itself is off, which is most of the time.</p>
+
+    <h2>First, work out which kind of out of sync you have</h2>
+    <p>There are three distinct patterns, and each has a different fix. If you are not sure which one you have, <a href="/guides/subtitles-out-of-sync/">the out-of-sync guide</a> walks through how to tell them apart. The short version:</p>
+    <ul>
+      <li>The same gap at the start, the middle and the end: a constant offset. The subtitle file was made for a video with a different intro or logo reel.</li>
+      <li>Right at the start and drifting further off as the video plays: a frame-rate mismatch, usually 25 fps subtitles on 23.976 fps video.</li>
+      <li>Fine until one scene, then off by a fixed amount from there on: the two copies of the video were cut differently at that point.</li>
+    </ul>
+
+    <h2>Fix the .srt file</h2>
+    <p>Open the subtitle file on the <a href="/shift-subtitle-timing/">shift timing</a> page if you have a constant offset. Play the video to the first spoken line, note the time it is said, and compare it with that line's time in the preview. Pick "Too early" or "Too late" to say which way the subtitles need to move, and enter the difference.</p>
+    <p>If the subtitles start close but drift further ahead the longer the video runs, you have a frame-rate problem. Use <a href="/convert-25-fps-to-23976/">Convert 25 to 23.976 fps</a> instead. The tool multiplies every timestamp by 25 ÷ 23.976, so a line at 40:00 moves to about 41:42. If you do not know the frame rates, the out-of-sync guide explains how to check them with free tools.</p>
+    <p>If the subtitles are fine until one point and then jump, use <a href="/shift-subtitles-from-a-line/">Shift from a line</a>. Pick the first line after the jump as the starting point and enter the offset there. Lines before it stay as they are. If the video was cut at two points, fix the first, download the result, then load the downloaded file and fix the second.</p>
+    <p>All of this happens in your browser. The file is read on your own computer and no subtitle content is sent anywhere.</p>
+
+    <h2>Name the file so Plex picks it up</h2>
+    <p>Plex is picky about external subtitle file names, and that is where most fixes seem not to work. Put the fixed file in the same folder as the video, with the same base name, followed by the language code:</p>
+    <ol>
+      <li><code>Movie Name (Year).en.srt</code> next to <code>Movie Name (Year).mkv</code>, for English. Use <code>.es.srt</code>, <code>.fr.srt</code> and so on for other languages.</li>
+      <li>On the movie or episode in Plex, open the item's menu and choose Refresh Metadata. Plex scans for external subtitle tracks during that refresh.</li>
+    </ol>
+    <p>After the refresh, the subtitle track named with the language code shows up as one of the item's subtitle options. Play it and check the first line and a line near the end. If both are in sync, you are done, and there is no need to touch the offset setting on any device.</p>
+
+    <h2>If the subtitles are embedded in the video</h2>
+    <p>The offset setting does nothing for embedded subtitles, and neither does renaming anything. You need the track as a file first.</p>
+    <p>For an MKV, MKVToolNix is a free set of tools that can list the tracks (<code>mkvmerge -i movie.mkv</code>) and pull one out (<code>mkvextract tracks movie.mkv 3:subs.srt</code>, using the subtitle track's ID in place of 3). Once you have the .srt, fix it as above and place it next to the video with the language-code name.</p>
+    <p>If the embedded track is picture-based, there is no text to fix. Picture subtitles need OCR to become SRT. The <a href="/guides/sup-to-srt-guide/">SUP to SRT guide</a> covers reading those tracks with a free in-browser tool, and what to do when the file is a DVD .sub and .idx pair instead.</p>
+
+    <h2>Why fixing the file is the better fix</h2>
+    <p>An offset set on one TV fixes one TV. A corrected .srt travels with the video, so every device on the server plays it in sync, including phones, tablets and the TV in the other room. Other users of the library see the fixed timing too, without touching any setting.</p>
+    <p>See also: <a href="/guides/subtitles-out-of-sync/">Why subtitles go out of sync, and which fix to use</a></p>
+  </article>
+</Base>

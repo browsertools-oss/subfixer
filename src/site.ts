@@ -1599,6 +1599,11 @@ export const PAGES: ToolPage[] = [
       'Pick two languages on screen together, or parts one after another.',
       'Check the preview, then download the merged file.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\nHello there\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n\n+\n\n1\n00:00:01,000 --> 00:00:02,500\nHola\n\n2\n00:00:04,000 --> 00:00:06,000\n¿Qué hora es?\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\nHello there\nHola\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n¿Qué hora es?\n',
+      note: 'English above the +, Spanish below it. Where both files cover the same moment, the lines are stacked into one subtitle with English on top.',
+    },
     faq: [
       { q: 'Can the second language go at the top of the screen?', a: 'Yes. Tick "Put the second language at the top". That adds the ASS tag {\\an8}. Players with ASS rendering, like VLC and mpv, put the second language on top; other players ignore it or show both at the bottom. VTT output drops the tag.' },
       { q: 'Where does part 2 start?', a: 'If part 2 restarts at zero, it is placed one second after the last line of part 1. Change the start time to match where CD2 begins in your joined video.' },

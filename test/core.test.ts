@@ -632,6 +632,15 @@ test('subtitle-cleaner example: bracket line deleted, identical lines merged', (
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
+test('merge-subtitles example: stack mode stacks both languages where they overlap', () => {
+  const page = PAGES.find((p) => p.slug === 'merge-subtitles');
+  const [en, es] = page!.example!.before.split('\n+\n').map((s) => s.trim());
+  const a = parse(en, 23.976, { name: 'en.srt' }).captions;
+  const b = parse(es, 23.976, { name: 'es.srt' }).captions;
+  const out = build(mergeStack(a, b), 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
 test('renumber-srt example: lines are sorted by time and renumbered from 1', () => {
   const page = PAGES.find((p) => p.slug === 'renumber-srt');
   const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });

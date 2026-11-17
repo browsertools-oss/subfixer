@@ -582,6 +582,11 @@ export const PAGES: ToolPage[] = [
     lede: 'Get the words out of a subtitle file as a plain transcript, one line per subtitle. Keep the times if you want them.',
     description: 'Convert SRT subtitles to a TXT transcript with or without timestamps. Tags and numbering are removed. Free, and the file stays on your computer.',
     steps: ['Drop in your .srt file.', 'Choose "Plain text" or "Text with times" under Save as.', 'Download the .txt file.'],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\nHello there\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      after: 'Hello there\nWhat time is it?\n',
+      note: 'Each subtitle becomes one line with the tags stripped. Numbering and times are dropped; "Text with times" keeps them in brackets.',
+    },
     faq: [
       { q: 'What does the text look like?', a: 'Each subtitle becomes one line, with its own line breaks joined by a space. With times, each line starts with [00:01:02,500 - 00:01:04,000].' },
       PRIVACY_FAQ,
@@ -1135,6 +1140,11 @@ export const PAGES: ToolPage[] = [
       'If the file holds several languages, pick one at the top.',
       'Download the .srt file.',
     ],
+    example: {
+      before: '<SAMI>\n<HEAD>\n<STYLE TYPE="text/css">\n.ENCC { Name:English; lang:en-US; }\n</STYLE>\n</HEAD>\n<BODY>\n<SYNC Start=1000><P Class=ENCC>Hello there</P>\n<SYNC Start=4000><P Class=ENCC>What time is it?</P>\n</BODY>\n</SAMI>\n',
+      after: '1\n00:00:01,000 --> 00:00:04,000\nHello there\n\n2\n00:00:04,000 --> 00:00:07,000\nWhat time is it?\n',
+      note: 'The first language track in the file becomes the cues. Each line runs until the next one starts; the last line gets 3 seconds.',
+    },
     faq: [
       { q: 'The file is in Korean and the letters look broken.', a: 'Many older SAMI files are saved in EUC-KR. Open "Fix characters" and pick the version that reads correctly before you download.' },
       { q: 'Can I make a SAMI file?', a: 'Yes. Choose SAMI (.smi) under "Save as". It is written as one English track, which Windows Media Player and most TVs read.' },
@@ -1216,6 +1226,11 @@ export const PAGES: ToolPage[] = [
     lede: 'TTML is the XML caption format used by streaming services and broadcasters. Turn it into SRT for VLC, Plex, TVs and video editors.',
     description: 'Convert TTML (.ttml, .xml) captions to SRT or VTT. Reads clock times, frames, ticks and italics. Free, and it runs in your browser.',
     steps: ['Drop in your .ttml or .xml file.', 'Output is preset to SRT.', 'Download the .srt file.'],
+    example: {
+      before: '<tt xmlns="http://www.w3.org/ns/ttml">\n  <body>\n    <div>\n      <p begin="00:00:01.000" end="00:00:02.500">Hello there</p>\n      <p begin="00:00:04.000" end="00:00:06.000">What time is it?</p>\n    </div>\n  </body>\n</tt>\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\nHello there\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      note: 'Each p begin/end pair becomes an SRT cue. The namespace, styles and layout are dropped; italics carry over.',
+    },
     faq: [
       { q: 'What happens to colors and positions?', a: 'SRT has neither, so they are dropped. Italics are kept, and line breaks stay where they were.' },
       { q: 'Some times in my file end in "t" or "f".', a: 'Those are ticks and frames. The converter reads the tick and frame rate from the file header and turns them into normal timestamps.' },

@@ -574,7 +574,8 @@ test('convert pages with an example show what the tool actually outputs', () => 
     const ext = p.slug.split('-')[0]; // srt-to-vtt -> srt
     const doc = parse(p.example.before, 23.976, { name: `example.${ext}` });
     const norm = (s) => s.replace(/\r\n/g, '\n');
-    assert.equal(norm(build(doc.captions, p.preset.out)).trim(), norm(p.example.after).trim(), `${p.slug} example does not match tool output`);
+    const out = p.preset.out === 'txt' ? toTxt(doc.captions, false) : p.preset.out === 'txt-times' ? toTxt(doc.captions, true) : build(doc.captions, p.preset.out);
+    assert.equal(norm(out).trim(), norm(p.example.after).trim(), `${p.slug} example does not match tool output`);
   }
 });
 

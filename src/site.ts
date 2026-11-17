@@ -231,6 +231,11 @@ export const PAGES: ToolPage[] = [
     lede: 'Convert Advanced SubStation (.ass) and SubStation Alpha (.ssa) subtitles, common with anime releases, into plain SRT, the format players and editors expect.',
     description: 'Convert ASS and SSA subtitles to SRT. Italics, bold and line breaks are kept, and layered lines are merged. Free, in your browser.',
     steps: ['Drop in your .ass or .ssa file.', 'Output is preset to SRT. Italics and bold carry over as SRT tags, other styling is dropped, and \\N becomes a real line break.', 'Download the .srt file.'],
+    example: {
+      before: '[Script Info]\nScriptType: v4.00+\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:01.00,0:00:02.50,Default,,0,0,0,,{\\i1}Hello{\\i0}\\Nthere\nDialogue: 0,0:00:04.00,0:00:06.00,Default,,0,0,0,,What time is it?\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\n<i>Hello</i>\nthere\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      note: 'The ASS header, styles and effect lines are dropped. Italics come through as SRT tags, and the \\N line break becomes a real line break.',
+    },
     faq: [
       { q: 'Why are signs and karaoke lines doubled or out of place?', a: 'ASS files often stack the same line on several layers for signs and effects. Copies with the same time and text are merged into one, but signs still show at the bottom because SRT cannot position text. Remove any you do not want in "Check and edit".' },
       PRIVACY_FAQ,
@@ -280,6 +285,11 @@ export const PAGES: ToolPage[] = [
     lede: 'YouTube Studio can download captions as .sbv files. Convert them to SRT to use in VLC, Plex or a video editor.',
     description: 'Convert YouTube SBV captions to SRT, which works in most players and editors. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to SRT.', 'Download the .srt file.'],
+    example: {
+      before: '0:00:01.000,0:00:02.500\n<i>Hello</i>\n\n0:00:04.000,0:00:06.000\nWhat time is it?\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\n<i>Hello</i>\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      note: 'The start and end on one line become an SRT arrow line with the same times, and each cue gets a number. The text does not change.',
+    },
     faq: [
       { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open Subtitles and pick the video. On the language row, open the options menu (three dots) and choose Download. YouTube offers .sbv, .srt and .vtt. This works for videos on a channel you can sign into.' },
       { q: 'How is SBV different from SRT?', a: 'SBV puts the start and end time on one line separated by a comma and has no line numbers. SRT numbers each line and uses an arrow between the times. The text is the same.' },
@@ -1439,6 +1449,11 @@ export const PAGES: ToolPage[] = [
       'With no times in the text, pick a reading speed and when the first line starts.',
       'Download the .srt file, then shift or sync it to the video if needed.',
     ],
+    example: {
+      before: '[0:01 - 0:03] First line of the transcript\n[0:04 - 0:06] Second line of the transcript\n',
+      after: '1\n00:00:01,000 --> 00:00:03,000\nFirst line of the transcript\n\n2\n00:00:04,000 --> 00:00:06,000\nSecond line of the transcript\n',
+      note: 'The times in brackets are used as they are. A line with no time would be timed by reading speed instead.',
+    },
     faq: [
       { q: 'Which timestamps does it understand?', a: 'A time at the start of a line, like 0:05, 01:02:03 or [00:01:05.300], and ranges like [0:05 - 0:09]. Lines without a time join the line above.' },
       { q: 'How is a line timed without timestamps?', a: 'About 15 characters per second, at least one second and at most seven per line. Lines wrap at 42 characters, two rows per subtitle, and a new subtitle starts at the end of a sentence where it can.' },

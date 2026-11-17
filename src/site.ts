@@ -299,6 +299,11 @@ export const PAGES: ToolPage[] = [
     lede: 'Strip [MUSIC], (laughs), ♪ lyrics and speaker names like "JOHN:" from SDH subtitles, and delete lines left empty.',
     description: 'Remove hearing impaired (SDH) tags, sound descriptions and speaker names from SRT, VTT and ASS subtitles. Free online, runs in your browser.',
     steps: ['Drop in your subtitle file.', 'Sound descriptions, speaker names and music lines are ticked already. Untick any you want to keep.', 'Download the cleaned file.'],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\n[DOOR SLAMS]\n\n2\n00:00:03,000 --> 00:00:05,000\nJOHN: We have to go\n\n3\n00:00:06,000 --> 00:00:07,000\n♪ singing loudly ♪\n',
+      after: '1\n00:00:03,000 --> 00:00:05,000\nWe have to go\n',
+      note: 'Lines that are only a sound description or a music line are deleted, and "JOHN:" is stripped from the front of the line. The timing of the surviving line does not move.',
+    },
     faq: [
       { q: 'Will it remove real dialogue in brackets?', a: 'Anything in [square] or (round) brackets is removed, which is nearly always a sound description. Check the preview before downloading.' },
       { q: 'Which speaker names and music lines are removed?', a: 'Speaker names are matched in caps at the start of a line, like JOHN: or - JOHN (V.O.):. Mixed-case names are kept. A music line is removed when it starts with a ♪, ♫ or # marker or ends with ♪ or ♫; other lines are kept.' },
@@ -451,6 +456,11 @@ export const PAGES: ToolPage[] = [
       'Tick what to remove. The preview updates as you go.',
       'Download the cleaned file.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,000\n(laughs)\n\n2\n00:00:03,000 --> 00:00:04,000\nWe made it\n\n3\n00:00:04,300 --> 00:00:05,300\nWe made it\n',
+      after: '1\n00:00:03,000 --> 00:00:05,300\nWe made it\n',
+      note: 'The bracket line is deleted and the two identical lines are merged into one that runs from 00:00:03,000 to 00:00:05,300. Every option can be unticked.',
+    },
     faq: [
       {
         q: 'Will it change the timing?',
@@ -1239,6 +1249,11 @@ export const PAGES: ToolPage[] = [
     lede: 'DFXP is the older name for TTML. Many caption downloads still use it. Convert it to SRT, or the other way round.',
     description: 'Convert DFXP (.dfxp) captions to SRT, VTT or ASS, or SRT to DFXP. Italics carry over. Free, in your browser, with no upload.',
     steps: ['Drop in your .dfxp file.', 'Output is preset to SRT. Pick DFXP instead to convert the other way.', 'Download the file.'],
+    example: {
+      before: '<tt xmlns="http://www.w3.org/2006/10/ttaf1">\n  <body>\n    <div>\n      <p begin="00:00:01.000" end="00:00:02.500">Hello there</p>\n      <p begin="00:00:04.000" end="00:00:06.000">What time is it?</p>\n    </div>\n  </body>\n</tt>\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\nHello there\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      note: 'Each p begin/end pair becomes an SRT cue. Italics carry over; the namespace, styles and layout are dropped.',
+    },
     faq: [
       { q: 'Is DFXP the same as TTML?', a: 'Nearly. DFXP is the draft version of TTML and uses a slightly different XML namespace. This tool reads both and can write either one.' },
       PRIVACY_FAQ,
@@ -1254,6 +1269,11 @@ export const PAGES: ToolPage[] = [
     lede: 'Saved captions from YouTube as XML? Drop the file in and get an SRT back. TTML files with an .xml name work too.',
     description: 'Convert YouTube XML captions (transcript and timedtext) and TTML .xml files to SRT or VTT. Free, and the file stays on your computer.',
     steps: ['Drop in your .xml file.', 'Output is preset to SRT.', 'Download the .srt file.'],
+    example: {
+      before: '<transcript>\n<text start="1.0" dur="1.5">Hello &amp; welcome</text>\n<text start="4.0" dur="2.0">What time is it?</text>\n</transcript>\n',
+      after: '1\n00:00:01,000 --> 00:00:02,500\nHello & welcome\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      note: 'The start and dur attributes become an SRT arrow line, and the &amp; escape becomes &. Rolling auto-captions are cut off when the next one begins.',
+    },
     faq: [
       { q: 'Why do the lines overlap in the original?', a: 'YouTube auto captions roll, so each line stays up while the next one starts. The converter cuts each line off when the next one begins, so players show one at a time.' },
       { q: 'Characters like &#39; show up in my file.', a: 'Those are escaped quotes and accents. They are turned back into the real characters during the conversion.' },

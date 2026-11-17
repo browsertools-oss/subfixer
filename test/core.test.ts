@@ -615,6 +615,22 @@ test('fix-subtitle-encoding example: double-encoded UTF-8 is repaired run by run
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
+test('remove-hearing-impaired-subtitles example: SDH lines out, JOHN: stripped, times stay', () => {
+  const page = PAGES.find((p) => p.slug === 'remove-hearing-impaired-subtitles');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const { captions } = fixCommon(d.captions, { removeBrackets: true, removeSpeakers: true, removeMusic: true, removeDuplicates: true, fixOverlaps: true, minDurationMs: 700 });
+  const out = build(captions, 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
+test('subtitle-cleaner example: bracket line deleted, identical lines merged', () => {
+  const page = PAGES.find((p) => p.slug === 'subtitle-cleaner');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const { captions } = fixCommon(d.captions, { removeBrackets: true, removeSpeakers: true, removeMusic: true, removeDuplicates: true, fixOverlaps: true, minDurationMs: 700 });
+  const out = build(captions, 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
 test('renumber-srt example: lines are sorted by time and renumbered from 1', () => {
   const page = PAGES.find((p) => p.slug === 'renumber-srt');
   const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });

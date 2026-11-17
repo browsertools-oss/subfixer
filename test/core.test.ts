@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssRaw, rebuildAss, parseTime, decode, validate, checkSrtRaw, repairDoubleUtf8, encodingCandidates, ENCODINGS, REPAIR_UTF8 } from '../src/lib/subs.ts';
+import { fixTiming } from '../src/lib/tidy.ts';
 import { toTxt, toCsv, toDocx, toXlsx, zipFiles } from '../src/lib/export.ts';
 import { unzipSync, strFromU8 } from 'fflate';
 import { PAGES } from '../src/site.ts';
@@ -575,6 +576,35 @@ test('convert pages with an example show what the tool actually outputs', () => 
     const norm = (s) => s.replace(/\r\n/g, '\n');
     assert.equal(norm(build(doc.captions, p.preset.out)).trim(), norm(p.example.after).trim(), `${p.slug} example does not match tool output`);
   }
+});
+
+test('shift-subtitle-timing example: every line moves 2.5 s later', () => {
+  const page = PAGES.find((p) => p.slug === 'shift-subtitle-timing');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const out = build(retime(d.captions, shiftFn(2500)), 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
+test('convert-25-fps-to-23976 example: times at 10:00 and 01:30:00 stretch by 25/23.976', () => {
+  const page = PAGES.find((p) => p.slug === 'convert-25-fps-to-23976');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const out = build(retime(d.captions, fpsFn(25, 24000 / 1001)), 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
+test('sync-subtitles example: two pinned points, everything else stretches to fit', () => {
+  const page = PAGES.find((p) => p.slug === 'sync-subtitles');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const out = build(retime(d.captions, twoPointFn(d.captions[0].start, 5000, d.captions[2].start, 600000)), 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
+test('fix-subtitle-timing example: overlap closed with a gap, short line given a second', () => {
+  const page = PAGES.find((p) => p.slug === 'fix-subtitle-timing');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const { captions } = fixTiming(d.captions, { fixOverlaps: true, minGapMs: 83, minDurMs: 1000, maxDurMs: 7000, cps: 0 });
+  const out = build(captions, 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
 test('renumber-srt example: lines are sorted by time and renumbered from 1', () => {

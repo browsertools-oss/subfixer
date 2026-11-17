@@ -80,6 +80,11 @@ export const PAGES: ToolPage[] = [
       'Pick "Too late" or "Too early", then enter the amount: 2.5 shifts by two and a half seconds. You can also type 00:01:05,300 or 1500ms.',
       'Download the shifted file.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\nHello there\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      after: '1\n00:00:03,500 --> 00:00:05,000\nHello there\n\n2\n00:00:06,500 --> 00:00:08,500\nWhat time is it?\n',
+      note: 'Every line moves 2.5 seconds later. The words and the order stay the same.',
+    },
     faq: [
       {
         q: 'How do I find the right offset?',
@@ -116,6 +121,11 @@ export const PAGES: ToolPage[] = [
       'Leave the preset at 25 → 23.976, or swap it if your subtitles drift the other way (they lag further behind).',
       'Download, then nudge with "Shift timing" if the first line is still slightly off.',
     ],
+    example: {
+      before: '1\n00:10:00,000 --> 00:10:02,500\nAre we there yet?\n\n2\n01:30:00,000 --> 01:30:02,500\nAlmost home.\n',
+      after: '1\n00:10:25,625 --> 00:10:28,232\nAre we there yet?\n\n2\n01:33:50,625 --> 01:33:53,232\nAlmost home.\n',
+      note: 'Every time is multiplied by 25 ÷ 23.976 (about 1.0427). The line at 00:10:00 moves to 00:10:25,625 and the one at 01:30:00 moves to 01:33:50,625.',
+    },
     faq: [
       {
         q: 'How do I know it is a frame-rate problem?',
@@ -168,6 +178,11 @@ export const PAGES: ToolPage[] = [
       'Pick a line near the start and type when it is actually spoken in the video. Do the same for a line near the end.',
       'Download the file with every line retimed.',
     ],
+    example: {
+      before: '1\n00:00:02,000 --> 00:00:04,000\nFirst line\n\n2\n00:05:00,000 --> 00:05:02,000\nMiddle line\n\n3\n00:09:48,000 --> 00:09:50,000\nLast line\n',
+      after: '1\n00:00:05,000 --> 00:00:07,031\nFirst line\n\n2\n00:05:07,577 --> 00:05:09,608\nMiddle line\n\n3\n00:10:00,000 --> 00:10:02,031\nLast line\n',
+      note: 'Lines 1 and 3 are pinned to the times you type, here 00:00:05 and 00:10:00. The line in between is stretched to fit.',
+    },
     faq: [
       {
         q: 'Which lines should I pick?',
@@ -643,6 +658,11 @@ export const PAGES: ToolPage[] = [
       'Pick the gap between lines and the shortest and longest time a line stays up.',
       'Check the changed lines in the table, then download.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:03,500\nThis line runs into the next one\n\n2\n00:00:03,000 --> 00:00:04,200\nNext line\n\n3\n00:00:06,000 --> 00:00:06,400\nToo short\n',
+      after: '1\n00:00:01,000 --> 00:00:02,917\nThis line runs into the next one\n\n2\n00:00:03,000 --> 00:00:04,200\nNext line\n\n3\n00:00:06,000 --> 00:00:07,000\nToo short\n',
+      note: 'Line 1 now ends 83 ms before line 2 starts, and the short last line is kept up for a full second. No start time moves.',
+    },
     faq: [
       { q: 'Does it move when lines appear?', a: 'No. Start times stay where they are. Only the end of each line moves, so a line never starts sooner or later than it did.' },
       { q: 'What is a frame gap for?', a: 'When one line ends on the exact frame the next begins, some players blink or merge them. A gap of two frames, about 83 milliseconds, keeps each line clear.' },

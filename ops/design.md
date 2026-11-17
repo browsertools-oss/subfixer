@@ -54,3 +54,8 @@ Read it before any UI change. Record new decisions here so later runs follow the
   "Read the guide: <title>" link under the FAQ. Examples are 2-3 cues and the `after` text is
   the tool's real output (locked by a test that rebuilds it). Chosen over a screenshot: text
   stays crawlable and matches the file the visitor gets.
+- 2026-11-16: New /guides/ index page (h1 "Subtitle guides", one line per guide with a
+  one-sentence summary, no new layout; reuses the 404/guide plainlist styles). The footer
+  "Guides" heading is now an anchor to /guides/ instead of a plain <p>; the home Guides
+  section gained a "See all guides" link under the list. Chosen so the guides hub is
+  reachable from every page and from the home page.

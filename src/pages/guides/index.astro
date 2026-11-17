@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import { GUIDES } from '../../site';
+const SUMMARIES: Record<string, string> = {
+  'subtitles-out-of-sync': 'Subtitles early, late or drifting further off as the video plays: how to tell which of the three problems you have and which fix to use for each.',
+  'srt-vtt-ass': 'What SRT, VTT and ASS each say about a line of dialogue, and which players and websites accept them.',
+  'sup-to-srt-guide': 'How to pull a .sup picture subtitle track off a Blu-ray and turn it into a text SRT file, free in your browser.',
+};
+---
+<Base title="Subtitle guides | SubFixer" description="Guides to common subtitle problems: out-of-sync lines, SRT vs VTT vs ASS, and Blu-ray SUP files. Free tools in your browser." path="/guides/">
+  <h1>Subtitle guides</h1>
+  <p class="lede">Plain answers to the subtitle problems people search for, each with the free tools that fix the problem.</p>
+  <ul class="plainlist spaced">
+    {GUIDES.map((g) => (
+      <li>
+        <a href={`/guides/${g.slug}/`}>{g.title}</a>.{SUMMARIES[g.slug] && <> {SUMMARIES[g.slug]}</>}
+      </li>
+    ))}
+  </ul>
+</Base>

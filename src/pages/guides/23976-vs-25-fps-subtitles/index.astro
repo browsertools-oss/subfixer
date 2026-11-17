@@ -1,0 +1,36 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = '23.976 vs 25 fps: why subtitles drift, and the fix';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Subtitles that start in sync and drift further out are almost always a frame-rate problem. The numbers behind 25 vs 23.976 fps, and how to fix the file free in your browser." path="/guides/23976-vs-25-fps-subtitles/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Subtitles that are in sync at the start of a film and several seconds ahead by the end were timed for a video that runs at a different frame rate. It is the most common subtitle problem there is, and the fix is exact, not guesswork.</p>
+
+    <h2>Drift is not a plain offset</h2>
+    <p>A plain offset is the same gap everywhere: two seconds early at the start, two seconds early in the middle, two seconds early at the end. That comes from different intros or logo reels, and a <a href="/shift-subtitle-timing/">timing shift</a> is the fix.</p>
+    <p>Drift behaves differently. The first lines are fine, and the error grows steadily as the video plays. The subtitles were timed against a copy of the video running at a different speed, so every minute adds a little more error. No single shift can fix that; the times themselves have to be stretched or squeezed.</p>
+
+    <h2>The numbers</h2>
+    <p>25 divided by 23.976 is about 1.0427, a 4.3% difference. A subtitle timed for a 25 fps copy runs early on a 23.976 fps copy by about 2.46 seconds more every minute. Over a 100-minute film that adds up to roughly 4 minutes of error, which is why drifted subtitles are unwatchable long before the credits roll.</p>
+    <p>The 24 vs 23.976 pair is a much smaller trap. It is a 0.1% difference, about 3.6 seconds per hour, and often goes unnoticed on short videos. Over a long film it can still be worth fixing.</p>
+
+    <h2>Which one is your video, and which one are your subtitles?</h2>
+    <p>Releases labeled PAL or European DVD are usually 25 fps. BluRay and WEB-DL releases are usually 23.976 fps. Mismatches happen when subtitles from one release are played over the other, often a European .srt over an American stream, or an old DVD subtitle over a modern rip.</p>
+    <p>To check the video's actual frame rate, open it in MediaInfo, a free tool that reports exactly this, or in VLC under Tools &gt; Codec Information. If the video is 25 and your subtitles were made for 23.976, or the reverse, you have your answer.</p>
+
+    <h2>The fix</h2>
+    <p>If your subtitles were made for 25 fps and your video is 23.976, open <a href="/convert-25-fps-to-23976/">Convert 25 to 23.976 fps</a> and drop the file in. It is preset to multiply every time by 25 ÷ 23.976, so a line at 40:00 moves to about 41:42. Download, play the video, and if the first line is still slightly off, nudge it with <a href="/shift-subtitle-timing/">Shift timing</a>.</p>
+    <p>If the pair is different, for example 24 to 23.976 or 29.97 to 25, use <a href="/change-subtitle-frame-rate/">Change subtitle frame rate</a> instead. It converts between any two frame rates: 23.976, 24, 25, 29.97 or 30, or your own numbers. The same multiplication happens either way; only the ratio changes.</p>
+    <p>If you cannot work out either frame rate, <a href="/sync-subtitles/">sync two points</a> is the fallback. Give the real spoken time of one line near the start and one near the end, and every line in between is stretched to match. It fixes an offset and a drift in one step, at the cost of needing two lines you can hear clearly.</p>
+
+    <h2>MicroDVD .sub files store frames, not times</h2>
+    <p>MicroDVD .sub files are unusual in one way that matters here: they store subtitle timing as frame numbers, not as hours, minutes and seconds. That makes them dependent on the frame rate they were made for in a way SRT never is. If you have a MicroDVD .sub and the video is at a different rate, convert it with <a href="/microdvd-sub-to-srt/">MicroDVD SUB to SRT</a> first, which reads the frames and writes proper timed SRT.</p>
+
+    <h2>Why it drifts and never jumps</h2>
+    <p>Multiplication scales every time by the same ratio, so the error is proportional to position. That is exactly what you see by eye: fine at the start, worse by the end, worst at the credits. If the error instead jumps at one point and stays constant after it, the video was cut differently at that point; that is the case for <a href="/shift-subtitles-from-a-line/">Shift from a line onward</a>, not a frame-rate fix.</p>
+
+    <p>See also: <a href="/guides/plex-subtitles-out-of-sync/">Plex subtitles out of sync: fix the file for good</a></p>
+  </article>
+</Base>

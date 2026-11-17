@@ -29,6 +29,7 @@ export const GUIDES = [
   { slug: 'sup-to-srt-guide', title: 'How to convert Blu-ray SUP subtitles to SRT for free' },
   { slug: 'plex-subtitles-out-of-sync', title: 'Plex subtitles out of sync: fix the file for good' },
   { slug: 'subtitles-weird-characters', title: 'Subtitles show Ã© or boxes instead of letters: the fix' },
+  { slug: '23976-vs-25-fps-subtitles', title: '23.976 vs 25 fps: why subtitles drift, and the fix' },
 ];
 
 const PRIVACY_FAQ = {
@@ -138,6 +139,7 @@ export const PAGES: ToolPage[] = [
       },
       PRIVACY_FAQ,
     ],
+    guide: '23976-vs-25-fps-subtitles',
   },
   {
     slug: 'change-subtitle-frame-rate',
@@ -164,6 +166,7 @@ export const PAGES: ToolPage[] = [
       },
       PRIVACY_FAQ,
     ],
+    guide: '23976-vs-25-fps-subtitles',
   },
   {
     slug: 'sync-subtitles',

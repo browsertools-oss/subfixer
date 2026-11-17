@@ -31,6 +31,7 @@ export const GUIDES = [
   { slug: 'subtitles-weird-characters', title: 'Subtitles show Ã© or boxes instead of letters: the fix' },
   { slug: '23976-vs-25-fps-subtitles', title: '23.976 vs 25 fps: why subtitles drift, and the fix' },
   { slug: 'vlc-subtitle-delay', title: 'VLC subtitle delay: save the fix into the file' },
+  { slug: 'dual-language-subtitles', title: 'How to show two subtitle languages at once' },
 ];
 
 const PRIVACY_FAQ = {
@@ -1568,5 +1569,6 @@ export const PAGES: ToolPage[] = [
       { q: 'Where does part 2 start?', a: 'If part 2 restarts at zero, it is placed one second after the last line of part 1. Change the start time to match where CD2 begins in your joined video.' },
       PRIVACY_FAQ,
     ],
+    guide: 'dual-language-subtitles',
   },
 ];

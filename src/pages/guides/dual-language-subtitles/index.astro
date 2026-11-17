@@ -1,0 +1,37 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'How to show two subtitle languages at once';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Two subtitle languages at once for language learning: merge the files in your browser, put one language at the top, and join CD1 and CD2 into a single file." path="/guides/dual-language-subtitles/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Watching a film with subtitles in the language you are learning and your own language underneath is one of the fastest ways to pick up vocabulary, as long as the two files are in sync and the player shows them correctly. Both are solvable in a browser, free.</p>
+
+    <h2>Why watch with two languages</h2>
+    <p>One language at a time trains one half of the skill. Subtitles in the target language alone leave you stuck on every unfamiliar word. Subtitles in your own language alone let you read instead of listening. Two languages on screen lets you hear the target language, catch the meaning from your own, and notice where the two line up and where they do not. It works for any pair and any direction.</p>
+
+    <h2>Merge the two files</h2>
+    <p>On <a href="/merge-subtitles/">Merge subtitles</a>, drop in both .srt files, or add the second one with "Add files". Pick "two languages on screen together" under the merge mode. Where the two files cover the same moment, the tool slices the overlapping times and stacks both texts into one subtitle. Where only one file has a line, it shows on its own. Check the preview, then download the merged file.</p>
+    <p>If one language should sit at the top and the other at the bottom instead of sharing a stack, tick "Put the second language at the top". The second file's lines get the ASS tag <code>{'{\an8}'}</code>, which means top-center.</p>
+
+    <h2>What goes on top</h2>
+    <p>The file you pick first is the first subtitle in each stacked line, so it appears above the second file's text when both are on screen at once. With the "at the top" option, the second file's lines carry the tag and sit above the first file's, which default to the bottom of the screen. Which arrangement you want depends on which language you want to read first; most learners keep their own language at the bottom, because the top line is where your eyes start.</p>
+
+    <h2>Which players honor the top-of-screen tag</h2>
+    <p>The <code>{'{\an8}'}</code> tag is an ASS tag. Players that render ASS, like VLC and mpv, put the tagged language at the top and the untagged one at the bottom, which is exactly what you want. Other players ignore the tag or show both lines at the bottom. If you need the top-and-bottom layout in a player without ASS rendering, use the stacked option instead and live with both languages sharing the bottom of the screen.</p>
+    <p>One catch: if you export the merged file as VTT, the tag is dropped, because VTT has no equivalent for it. The <code>{'{\an8}'}</code> layout only survives into ASS (or SRT played in an ASS-capable player). With VTT, both languages come out as separate captions in one file with no top or bottom placement.</p>
+
+    <h2>Joining CD1 and CD2</h2>
+    <p>The same tool joins split releases. Choose "parts one after another", load both parts in order, and each part starts at the time shown on its right. If part 2 restarts at zero, it is placed one second after the last line of part 1 automatically. Change that start time to wherever CD2 actually begins in your joined video; if you do not know it, play the joined video to the first spoken line of CD2 and type that time.</p>
+    <p>Part mode does not stretch or fix timing, it just shifts each part by its offset. If CD1's subtitles drift within the file, fix that part on its own first with <a href="/shift-subtitle-timing/">Shift timing</a>, then merge.</p>
+
+    <h2>Fix the timing before you merge</h2>
+    <p>Merging does not fix sync, and a merged file with a drifting half is worse than two drifting files. Check the first line of each file against the video before merging. If the subtitles are a fixed amount early or late all the way through, <a href="/shift-subtitle-timing/">Shift timing</a> fixes it in one pass; if you are in VLC and know the delay you needed there, read <a href="/guides/vlc-subtitle-delay/">VLC subtitle delay: save the fix into the file</a> for how to translate that into the right direction and amount. If you do not know the numbers, <a href="/sync-subtitles/">sync two points</a> on each file separately.</p>
+
+    <h2>Language pairs that are not from the same source</h2>
+    <p>Fan-subtitle communities often release one language early and another later, timed against a slightly different cut. If the two files are hundreds of milliseconds apart but both drift, syncing each to the video first and merging second gives you the cleanest result. Merging unsynced files produces stacked lines that flicker between languages, which teaches nothing.</p>
+
+    <p>See also: <a href="/guides/plex-subtitles-out-of-sync/">Plex subtitles out of sync: fix the file for good</a></p>
+  </article>
+</Base>

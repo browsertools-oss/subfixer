@@ -941,6 +941,11 @@ export const PAGES: ToolPage[] = [
       'Output is preset to SBV (.sbv).',
       'Download the .sbv file, then upload it in YouTube Studio under Subtitles.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\n<i>Hello</i>\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      after: '00:00:01.000,00:00:02.500\nHello\n\n00:00:04.000,00:00:06.000\nWhat time is it?\n',
+      note: 'Cue numbers and arrows are dropped. The times move onto one line separated by a comma, and tags are removed because SBV has no styling.',
+    },
     faq: [
       { q: 'Are italics kept?', a: 'No. SBV has no styling, so italic and other tags are removed. Line breaks and timing stay.' },
       { q: 'How is SBV different from SRT?', a: 'SBV puts the start and end time on one line separated by a comma and has no line numbers. SRT numbers each line and uses an arrow between the times. The text is the same.' },

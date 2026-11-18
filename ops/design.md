@@ -63,3 +63,8 @@ Read it before any UI change. Record new decisions here so later runs follow the
   wrapped in `.table-wrap` (overflow-x: auto, margin 16px 0) so a wide table scrolls inside
   its wrapper at 360px instead of pushing the page sideways. `<pre class="sample">` blocks
   already scroll the same way. Chosen over shrinking table type below phone size.
+- 2026-11-17: Saved presets (backlog item 4, the first Pro feature) ship behind `?pro=1`.
+  The tool stores the last mode and its settings in localStorage under `subfixer.presets`
+  and reads them back only when the URL carries the flag. No pricing, no new visible UI, no
+  page for anyone without the flag; serialize/parse are unit-tested. Chosen as the smallest
+  useful Pro slice that does not leak into the free experience.

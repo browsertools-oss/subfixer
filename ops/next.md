@@ -1,5 +1,5 @@
-- Row 13 (QA sweep, partial): expand the two old guides under 700 words, srt-vtt-ass (about 614) and subtitles-out-of-sync (about 570), and re-check word counts of all guides; the 360px phone check in the built HTML still needs a browser.
-- scripts/wordcount.cjs needs approval in this environment; if it runs, confirm every guide is 700+ and the sitemap count, otherwise keep measuring from built HTML text nodes.
-- Row 14 (Sun 11-22 morning): finish whatever is left in the week plan, then take the backlog in order; week targets 1-3 are met (6 new guides, 28 tested examples, 70 converter pages), backlog item 4 (saved presets behind ?pro=1) is still gated on its own conditions.
-- Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; nothing indexed yet. Do not open a decision issue.
+- Row 14 (Sun 11-22 morning): morning metrics check, then finish anything left (row 13 is done: guides past 700 words, table wrapped for 360px). Week targets 1-3 are met (6 guides, 36 test-locked examples, 70 converter pages); backlog is exhausted.
+- The two word-count-critical guides are expanded; scripts/wordcount.cjs still needs approval to run here, so counts rest on built-HTML measurements. The 360px render check still wants a real browser.
+- Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; AdSense review pending, nothing indexed yet. No decision issue; keep shipping depth, not pages.
+- If the plan runs out again, ask the boss for the next item rather than picking one.
 - Step 5 of the run: rewrite ops/next.md as 3-5 bullets for the next report.

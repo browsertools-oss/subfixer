@@ -212,6 +212,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'srt-to-vtt',
+    guide: 'srt-vtt-ass',
     mode: 'convert',
     group: 'Convert',
     preset: { out: 'vtt' },
@@ -237,6 +238,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'vtt-to-srt',
+    guide: 'srt-vtt-ass',
     mode: 'convert',
     group: 'Convert',
     preset: { out: 'srt' },
@@ -257,6 +259,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'ass-to-srt',
+    guide: 'srt-vtt-ass',
     mode: 'convert',
     group: 'Convert',
     preset: { out: 'srt' },
@@ -380,6 +383,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'shift-subtitles-from-a-line',
+    guide: 'subtitles-out-of-sync',
     mode: 'shift',
     group: 'Timing',
     preset: { fromLine: true },
@@ -699,6 +703,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'fix-subtitle-timing',
+    guide: 'subtitles-out-of-sync',
     mode: 'timing',
     group: 'Timing',
     preset: { symptom: 'flicker' },
@@ -940,6 +945,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'srt-to-ass',
+    guide: 'srt-vtt-ass',
     mode: 'convert',
     group: 'Convert',
     preset: { out: 'ass' },
@@ -1526,6 +1532,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'sup-to-vtt',
+    guide: 'sup-to-srt-guide',
     mode: 'convert',
     group: 'Convert',
     preset: { out: 'vtt' },
@@ -1547,6 +1554,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'sup-to-ass',
+    guide: 'sup-to-srt-guide',
     mode: 'convert',
     group: 'Convert',
     preset: { out: 'ass' },

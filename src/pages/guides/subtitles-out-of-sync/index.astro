@@ -21,6 +21,16 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>Everything matches until a certain scene, then every line after it is off by the same few seconds. Your copy of the video was cut differently at that point: an ad break was removed, a scene was added in an extended edition, or two parts were joined.</p>
     <p>Fix: <a href="/shift-subtitles-from-a-line/">shift from that line onward</a>. Pick the first wrong line as the starting point and enter the offset. Lines before it stay as they are. If it happens at two points, fix the first, download, then load the result and fix the second.</p>
 
+    <h2>Before you change anything</h2>
+    <p>Check that the subtitle file was made for your copy of the video. A file made for a different cut, a TV edit, or a release with an extra studio logo can never match exactly, no matter what you do to the timing. The file name usually names the release, and the release named in it should be the one you are watching. If the names do not match, look for a subtitle file for your exact release before reaching for a fix.</p>
+    <p>Once the file is the right one, spend two minutes working out which of the three patterns above you have. Note the error in the first five minutes, the middle, and the last five. That tells you whether you need a shift, a frame-rate change, or a shift from a line.</p>
+
+    <h2>Small constant offsets</h2>
+    <p>If the whole file is off by half a second or so, the pattern is type 1 with a small number. These small, steady offsets are common in files that were muxed or streamed separately from the audio. The fix is the same: compare a spoken line against the preview, pick "Too early" or "Too late", and shift by that amount. If the small offset is really consistent, trust it and shift; do not chase individual lines.</p>
+
+    <h2>Fixing a whole season at once</h2>
+    <p>If every episode of a show was made against the same different cut, the same offset should describe every episode. Select all the files at once in <a href="/batch-convert-subtitles/">batch mode</a>, enter the offset, and you get one zip back. If the offset differs per episode, fix them one at a time instead; a batch applies the same settings to every file.</p>
+
     <h2>A quick way to tell them apart</h2>
     <ol>
       <li>Check a line in the first five minutes. Note how far off it is.</li>

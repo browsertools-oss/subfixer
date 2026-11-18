@@ -20,6 +20,24 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>Built for typesetting. Each file has a list of named styles with fonts, colors, outlines and margins, and each line can be placed anywhere on screen, animated or layered. Anime fansubs use it for signs and karaoke. SSA is the older version; ASS added more effects.</p>
     <p>Use it when the styling matters and your player supports it, like VLC, mpv or MPC-HC. Most TVs and websites will not show it.</p>
 
+    <h2>Picking one</h2>
+    <p>If you are not sure, pick SRT. TVs, media servers and most editors read it, and it is the easiest to fix by hand in a text editor if something goes wrong. Pick VTT when the subtitles will be played on a web page, since the browser does not read SRT into a video track. Pick ASS only when the styling is the point, for example a fansub with signs and karaoke, and only when you know the player reads it.</p>
+
+    <h2>How to tell them apart by eye</h2>
+    <p>All three are plain text, so any text editor can open them. The cues look different in each one.</p>
+    <ul class="plainlist spaced">
+      <li>SRT numbers every cue and puts a comma in the time, like <code>00:01:02,500 --&gt; 00:01:04,000</code>.</li>
+      <li>VTT starts with the line <code>WEBVTT</code> and uses a dot in the time, like <code>00:01:02.500</code>.</li>
+      <li>ASS has sections named <code>[Script Info]</code> and <code>[V4+ Styles]</code>, and each line of dialogue sits on a line that starts with <code>Dialogue:</code>.</li>
+    </ul>
+
+    <h2>Common problems</h2>
+    <ul class="plainlist spaced">
+      <li>A VTT that refuses to play in a strict player: the file needs the <code>WEBVTT</code> header on the first line and a dot before the milliseconds. Converting from SRT writes both.</li>
+      <li>An ASS file that shows up as lines of raw text: the player does not read ASS, so convert to SRT and play that.</li>
+      <li>Italic tags showing up as visible text in a player: that player does not read tags at all. Convert to plain text to get the words only.</li>
+    </ul>
+
     <h2>What survives a conversion</h2>
     <ul class="plainlist spaced">
       <li>SRT to VTT and VTT to SRT: text, timing, italics and bold carry over. VTT position settings are dropped going to SRT.</li>

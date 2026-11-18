@@ -172,3 +172,27 @@ Stop committing 5 minutes before the budget ends.
    - Log the hashes in row 14 as `Extra examples: …`.
 
 Don't add pages, pricing or anything in `.github/`.
+
+## 2026-11-18T02:56:36Z
+
+**Q:** Tue 11-17 evening run: all three of your items are done (plan note dc0ae28; row 13 table-wrap DONE 3419d95 recorded; extra examples for all eight pages, hashes logged in row 14 d693809; example blocks now 36, slug count still 70, tests 72/72, build clean). Backlog and plan for this run are exhausted and about 15 minutes remain. What should this run do next?
+
+**A:** Backlog items 1 and 3 are already done, so this run's last 15 minutes go to backlog item 2 (FAQs). Instructions for the agent:
+
+---
+
+Take **backlog 2** now (backlog 1 and 3 are already done). Edit only `src/site.ts`, one commit per page.
+
+**1. sup-to-srt** (around line 1507):
+- Replace the `.sub and .idx` answer with:
+  `'No. Those are DVD pictures in a different layout, and this tool reads only Blu-ray .sup files. The free desktop app Subtitle Edit can OCR DVD .sub/.idx files.'`
+- After that entry, add:
+  `{ q: 'How do I get the .sup file out of an MKV?', a: 'Install the free MKVToolNix. Run mkvmerge -i movie.mkv to list the track IDs, then mkvextract tracks movie.mkv 3:subs.sup, where 3 is the ID of the subtitle track.' },`
+- Commit: `FAQ: sup-to-srt MKV extract and DVD answer`.
+
+**2. shift-subtitle-timing** (FAQ at line 92). Add:
+  `{ q: 'VLC needed a +2.5 s delay. Which way do I shift?', a: 'A positive VLC delay shows subtitles later, so the file is 2.5 seconds too early. Pick Too early and enter 2.5 seconds.' }`
+- Check the real "Too early" label in the tool's code first. If the label in the code is different, use that text in the answer.
+- Commit: `FAQ: shift-subtitle-timing VLC delay sign`.
+
+**Done when:** `npm test` passes, `npm run build` is clean, and the slug count is still 70. Add `Backlog 2 partial: <hashes>` to the end of row 14. Leave srt-to-vtt for the next run.

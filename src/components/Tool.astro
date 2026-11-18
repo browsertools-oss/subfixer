@@ -446,6 +446,7 @@ const ART: Record<string, string> = {
   import { isSup, isVobSub, parseSup, type SupImage } from '../lib/sup';
   import { fixTiming, reflow, compileRules, findReplace, cps, longestLine } from '../lib/tidy';
   import { parseAmount, signedOffset, splitOffset, amountText, describeShift, downloadState, quietChange, savedMessage, ticketAction, type Dir } from '../lib/flow';
+  import { PRESETS_KEY, serializePreset, parsePreset } from '../lib/presets';
 
   type Entry = { name: string; buf: ArrayBuffer; doc: Doc | null; encoding: string; forced: string; edited: boolean; error: string; cands?: Candidate[]; track?: string; sup?: SupImage[]; ocrLang?: string };
 
@@ -493,6 +494,7 @@ const ART: Record<string, string> = {
     if (id === 'edit') renderEditor();
     if (id === 'encoding') renderCands();
     if (id === 'merge' && files.length) renderMerge();
+    savePreset();
     render();
   }
   root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab!)));
@@ -542,7 +544,57 @@ const ART: Record<string, string> = {
     if (okFiles().length) landInFix();
     else root.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+  // ---------- saved presets (only read or written with ?pro=1 in the URL) ----------
+
+  const pro = new URLSearchParams(location.search).get('pro') === '1';
+  function snapshotSettings() {
+    const settings: Record<string, string | boolean> = {};
+    root.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('select[id], textarea[id], input[id]').forEach((el) => {
+      if (el.id === 'editor') return; // the editor holds session content, not a setting
+      if (el instanceof HTMLInputElement) {
+        if (el.type === 'file') return;
+        if (el.type === 'radio') { if (el.checked) settings[`radio:${el.name}`] = el.value; return; }
+        if (el.type === 'checkbox') { settings[el.id] = el.checked; return; }
+        settings[el.id] = el.value;
+        return;
+      }
+      settings[el.id] = el.value;
+    });
+    return settings;
+  }
+  function savePreset() {
+    if (!pro) return;
+    try {
+      localStorage.setItem(PRESETS_KEY, serializePreset({ mode, settings: snapshotSettings() }));
+    } catch {
+      // storage blocked; presets just do not persist
+    }
+  }
+  function applyPreset() {
+    if (!pro) return;
+    let p: ReturnType<typeof parsePreset> = null;
+    try {
+      p = parsePreset(localStorage.getItem(PRESETS_KEY));
+    } catch {
+      return;
+    }
+    if (!p) return;
+    if (root.querySelector(`[data-tab="${CSS.escape(p.mode)}"]`)) setTab(p.mode);
+    for (const [key, v] of Object.entries(p.settings)) {
+      if (key.startsWith('radio:')) {
+        const name = key.slice(6);
+        root.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${CSS.escape(name)}"]`).forEach((r) => { r.checked = r.value === v; });
+        continue;
+      }
+      const el = document.getElementById(key);
+      if (!el || !root.contains(el)) continue;
+      if (el instanceof HTMLInputElement && (el.type === 'checkbox' || el.type === 'radio')) el.checked = v === true;
+      else (el as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement).value = String(v);
+    }
+    render();
+  }
   setTab(mode);
+  applyPreset();
 
   // ---------- loading ----------
 
@@ -1576,9 +1628,11 @@ const ART: Record<string, string> = {
   root.addEventListener('input', (e) => {
     const t = e.target as HTMLElement;
     if (!quiet.has(t.id) && !inPanel(t)) render();
+    savePreset();
   });
   root.addEventListener('change', (e) => {
     const t = e.target as HTMLElement;
     if (!quiet.has(t.id) && !inPanel(t)) render();
+    savePreset();
   });
 </script>

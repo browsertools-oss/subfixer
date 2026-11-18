@@ -196,3 +196,27 @@ Take **backlog 2** now (backlog 1 and 3 are already done). Edit only `src/site.t
 - Commit: `FAQ: shift-subtitle-timing VLC delay sign`.
 
 **Done when:** `npm test` passes, `npm run build` is clean, and the slug count is still 70. Add `Backlog 2 partial: <hashes>` to the end of row 14. Leave srt-to-vtt for the next run.
+
+## 2026-11-18T14:50:10Z
+
+**Q:** Row 6 (Wed 11-18 morning) was already pulled forward and done (DONE 647c4b2). All earlier rows are marked DONE, and the backlog is now fully done too: item 1 examples all live (stl-to-srt, renumber-srt, remove-duplicate-subtitles, find-and-replace-subtitles at 4db7d52/9734f10, the rest earlier), item 2 FAQs finished this run (4f86ab2: srt-to-vtt italics + cue-position FAQs, shift-subtitle-timing minus-sign FAQ; sup-to-srt was a6d9c85), item 3 report.mjs fd6aade, item 4 presets d1df712. 36 example blocks, 8 guides, 70 converter pages. What should I work on for the rest of this run (about 20 minutes left)?
+
+**A:** The backlog is finished. In the last 20 minutes, link more tool pages to the guides. Each link gives a tool page more text of its own (useful for the AdSense review) and gives the guides more links from inside the site (useful for getting them indexed).
+
+**Task:** edit only `src/site.ts`. For each page below, add one line, `guide: '<slug>',`, straight after its `slug:` line. Make the Edit unique by including the slug line in `old_string`.
+
+- `srt-to-vtt`, `vtt-to-srt`, `ass-to-srt`, `srt-to-ass` → `'srt-vtt-ass'`
+- `sup-to-vtt`, `sup-to-ass` → `'sup-to-srt-guide'`
+- `fix-subtitle-timing`, `shift-subtitles-from-a-line` → `'subtitles-out-of-sync'`
+
+Skip any page that already has a `guide` field. Don't change any field that's already there.
+
+**Done when:**
+- `grep -c "guide: '" src/site.ts` prints 15 (it prints 7 now).
+- `grep -cE "^\s+slug: '" src/site.ts` still prints the same count as before.
+- `npm test` passes and `npm run build` is clean.
+- `grep -l "Read the guide" dist/srt-to-vtt/index.html dist/sup-to-vtt/index.html dist/fix-subtitle-timing/index.html` lists all three files.
+
+**Commit:** stage only `git add src/site.ts`, with the message `Link 8 tool pages to their guides`. Then add `Extra: guide links <hash>` at the end of row 14 in `ops/week-plan.md` and commit that file alone.
+
+If an Edit fails twice, run `git checkout -- src/site.ts` and stop. Don't add pages, pricing, or anything in `.github/`.

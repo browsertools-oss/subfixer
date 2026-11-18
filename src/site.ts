@@ -103,6 +103,10 @@ export const PAGES: ToolPage[] = [
         a: 'No, this tool moves every line by the same amount. To move only the lines after a certain point, use "Shift from a line". Pick the first line to move and enter the offset there.',
       },
       {
+        q: 'VLC needed a +2.5 s delay. Which way do I shift?',
+        a: 'A positive VLC delay shows subtitles later, so the file is 2.5 seconds too early. Pick Too early and enter 2.5 seconds.',
+      },
+      {
         q: 'What if the file is in VTT or ASS?',
         a: 'It works the same way. VTT, ASS and SSA files shift the same way, and ASS files keep their styling.',
       },

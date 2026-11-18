@@ -59,3 +59,7 @@ Read it before any UI change. Record new decisions here so later runs follow the
   "Guides" heading is now an anchor to /guides/ instead of a plain <p>; the home Guides
   section gained a "See all guides" link under the list. Chosen so the guides hub is
   reachable from every page and from the home page.
+- 2026-11-17: Guide tables (the symptom table in /guides/subtitles-weird-characters/) are
+  wrapped in `.table-wrap` (overflow-x: auto, margin 16px 0) so a wide table scrolls inside
+  its wrapper at 360px instead of pushing the page sideways. `<pre class="sample">` blocks
+  already scroll the same way. Chosen over shrinking table type below phone size.

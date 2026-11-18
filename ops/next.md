@@ -1,5 +1,5 @@
-- Row 14 (Sun 11-22 morning): morning metrics check, then finish anything left (row 13 is done: guides past 700 words, table wrapped for 360px). Week targets 1-3 are met (6 guides, 36 test-locked examples, 70 converter pages); backlog is exhausted.
-- The two word-count-critical guides are expanded; scripts/wordcount.cjs still needs approval to run here, so counts rest on built-HTML measurements. The 360px render check still wants a real browser.
+- Row 14 (Sun 11-22 morning): morning metrics check, then finish anything left. Backlog 2 is partially done (sup-to-srt and shift-subtitle-timing got their boss-assigned FAQs a6d9c85, 02a3baf); srt-to-vtt FAQ is left for the next run.
+- Week targets 1-3 are met: six guides past 700 words, 36 test-locked example blocks, 70 converter pages. Backlog item 4 (saved presets behind ?pro=1) shipped as d1df712; no pricing anywhere.
+- scripts/wordcount.cjs still needs approval to run here, so guide counts rest on built-HTML measurements. The 360px check still wants a real browser (table overflow fixed by construction in 3419d95).
 - Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; AdSense review pending, nothing indexed yet. No decision issue; keep shipping depth, not pages.
 - If the plan runs out again, ask the boss for the next item rather than picking one.
-- Step 5 of the run: rewrite ops/next.md as 3-5 bullets for the next report.

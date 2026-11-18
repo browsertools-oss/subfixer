@@ -870,6 +870,11 @@ export const PAGES: ToolPage[] = [
       'If the file does not name its frame rate, pick the rate of your video. 23.976 is the usual one.',
       'Download the .vtt file.',
     ],
+    example: {
+      before: '{0}{100}First line\n{101}{200}Second line\n',
+      after: 'WEBVTT\n\n1\n00:00:00.000 --> 00:00:04.171\nFirst line\n\n2\n00:00:04.213 --> 00:00:08.342\nSecond line',
+      note: 'Frame numbers become real timestamps at 23.976 fps, and a WEBVTT header is added. Italic lines marked {y:i} become <i> tags.',
+    },
     faq: [
       { q: 'My .sub file came with an .idx file.', a: 'That is a VobSub file: pictures of text taken from a DVD, not text. It needs OCR, which is a different job from this converter.' },
       { q: 'The VTT is in sync at the start and drifts later.', a: 'The frame rate was wrong. Pick a different one at the top of the tool and download again.' },
@@ -1042,6 +1047,11 @@ export const PAGES: ToolPage[] = [
       'Output is preset to TTML (.ttml).',
       'Download the .ttml file.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:02,500\n<i>Hello there</i>\n\n2\n00:00:04,000 --> 00:00:06,000\nWhat time is it?\n',
+      after: '<?xml version="1.0" encoding="UTF-8"?>\n<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en">\n  <head>\n    <styling>\n      <style xml:id="s1" tts:textAlign="center" tts:color="white"/>\n    </styling>\n  </head>\n  <body>\n    <div style="s1">\n      <p begin="00:00:01.000" end="00:00:02.500"><span tts:fontStyle="italic">Hello there</span></p>\n      <p begin="00:00:04.000" end="00:00:06.000">What time is it?</p>\n    </div>\n  </body>\n</tt>',
+      note: 'Italics become italic spans in the TTML file. Times, text and line breaks carry over; SRT has no other styling to keep.',
+    },
     faq: [
       { q: 'Are italics kept?', a: 'Yes. Italic words in the SRT are written as italic spans in the TTML file. Line breaks are kept too.' },
       { q: 'Is TTML the same as DFXP?', a: 'Close. DFXP is the earlier name for TTML. If a platform asks for DFXP specifically, use the SRT to DFXP converter instead.' },

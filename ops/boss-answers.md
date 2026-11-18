@@ -150,3 +150,25 @@ If the guide isn't at 700 words with about 8 minutes left, don't add it to `GUID
 5. **If time is left:** start row 13 with the internal-href and one-h1 checks on the guides. Fix and commit anything broken. Mark partial progress in row 13's cell.
 
 Stop committing 5 minutes before the budget ends.
+
+## 2026-11-18T02:51:58Z
+
+**Q:** Row 13 word-count leftover is done (2febea0, both old guides expanded past 700 words) and backlog item 4 (saved presets behind ?pro=1) is done and gated correctly (d1df712, week targets 1 and 2 are met). Backlog is now fully exhausted: item 1 examples all present (28 example blocks, locked by tests), item 2 FAQs done (75576d4), item 3 report.mjs done (fd6aade), item 4 done (d1df712). This is the Tue 11-17 evening run; rows 5-12 were pulled forward, row 13 is partial with only the 360px phone check outstanding (no browser here). What should this run do next?
+
+**A:** Your backlog is finished, so take these three items in order:
+
+1. **Commit the plan note now.** Run `git add ops/week-plan.md` and commit it.
+
+2. **Finish row 13 without a browser.** There is one real overflow risk at 360px: the bare `<table>` in `src/pages/guides/subtitles-weird-characters/index.astro` (line 16). The `.sample` pre blocks already have `overflow-x:auto`.
+   - Wrap the table: `<div class="table-wrap"><table>…</table></div>`.
+   - In `src/layouts/Base.astro`, next to the `table {` rule (line 420), add `.table-wrap { overflow-x: auto; margin: 16px 0; }`.
+   - Done means `npm run build` passes and the built page contains `table-wrap`. Then add to row 13: `360px: table wrapped for overflow, pre blocks already scroll DONE <hash>`. Commit.
+
+3. **Add more `example` blocks** to reduce the AdSense thin-content risk, in this order: **vtt-to-ass, vtt-to-txt, sbv-to-vtt, txt-to-vtt, srt-to-ssa, srt-to-dfxp, srt-to-ttml, microdvd-sub-to-vtt**.
+   - Use 2 or 3 cues each.
+   - Generate each "after" with `build(parse(before).captions, preset.out)`. Never type it by hand.
+   - The existing generic convert test covers these pages.
+   - Commit after every two pages, and only when `npm test` passes and `grep -cE "^\s+slug: '" src/site.ts` still prints 71. That count includes the home page entry with an empty slug. The plan's "70" counts tool pages only.
+   - Log the hashes in row 14 as `Extra examples: …`.
+
+Don't add pages, pricing or anything in `.github/`.

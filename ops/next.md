@@ -1,5 +1,4 @@
-- Row 14 (Sun 11-22 morning): morning metrics check, then finish anything left. Backlog 2 is partially done (sup-to-srt and shift-subtitle-timing got their boss-assigned FAQs a6d9c85, 02a3baf); srt-to-vtt FAQ is left for the next run.
-- Week targets 1-3 are met: six guides past 700 words, 36 test-locked example blocks, 70 converter pages. Backlog item 4 (saved presets behind ?pro=1) shipped as d1df712; no pricing anywhere.
-- scripts/wordcount.cjs still needs approval to run here, so guide counts rest on built-HTML measurements. The 360px check still wants a real browser (table overflow fixed by construction in 3419d95).
-- Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; AdSense review pending, nothing indexed yet. No decision issue; keep shipping depth, not pages.
-- If the plan runs out again, ask the boss for the next item rather than picking one.
+- Row 14 (Sun 11-22 morning): morning metrics check, then finish anything left. The week plan is otherwise done: all 14 rows DONE, backlog items 1-4 complete (examples, FAQs on sup-to-srt / shift-subtitle-timing / srt-to-vtt, report.mjs, saved presets behind ?pro=1).
+- Week targets 1-3 are met: six guides past 700 words, 36 test-locked example blocks, 70 converter pages. 15 tool pages now link their guides. Metrics: 80 visitors in 30 days, far below the ~300 ads and 1,000 Pro triggers; AdSense review pending, nothing indexed yet. No decision issue; keep shipping depth, not pages.
+- scripts/wordcount.cjs still needs approval to run here, so the 700-word counts rest on built-HTML measurements. The 360px check still wants a real browser (table overflow fixed by construction in 3419d95).
+- If the plan runs out again, ask the boss for the next item rather than picking one. Rows to watch next week: whether anything gets indexed for site:subfixer.app and the 30-day count toward 120 visitors.

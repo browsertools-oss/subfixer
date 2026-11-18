@@ -107,6 +107,10 @@ export const PAGES: ToolPage[] = [
         a: 'A positive VLC delay shows subtitles later, so the file is 2.5 seconds too early. Pick Too early and enter 2.5 seconds.',
       },
       {
+        q: 'I typed -2.5 and the lines did not move backward.',
+        a: 'The minus sign is ignored. The Too late or Too early toggle sets the direction, so pick the toggle for the way you want the lines to move and enter the amount as a plain positive number.',
+      },
+      {
         q: 'What if the file is in VTT or ASS?',
         a: 'It works the same way. VTT, ASS and SSA files shift the same way, and ASS files keep their styling.',
       },
@@ -226,6 +230,8 @@ export const PAGES: ToolPage[] = [
       { q: 'How do I add the VTT file to an HTML5 video?', a: 'Put it in a track element: <track kind="subtitles" src="subs.vtt" srclang="en" label="English" default>, placed inside your <video> tag next to the file.' },
       { q: 'Does VTT support speaker tags?', a: 'VTT can carry a voice tag with the speaker name, but this tool does not add one. If you need speaker labels, use ASS instead.' },
       { q: 'Can I use the VTT file in VLC?', a: 'Yes, VLC plays .vtt files. The file is saved as UTF-8, which VLC reads.' },
+      { q: 'Does VTT keep the italics from my SRT file?', a: 'Yes. Italic, bold and underline tags are kept. Other tags, and ASS override tags like {\\i1}, are dropped because VTT does not use them.' },
+      { q: 'Does the tool add cue position settings?', a: 'No. The file gets plain cues, so the player decides where lines sit. Most players show them at the bottom of the video.' },
       PRIVACY_FAQ,
     ],
   },

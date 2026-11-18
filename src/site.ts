@@ -341,6 +341,11 @@ export const PAGES: ToolPage[] = [
     lede: 'YouTube Studio can download captions as .sbv files. Convert them to WebVTT to use them on a website or in an HTML5 video player.',
     description: 'Convert YouTube SBV captions to WebVTT. The timing and text carry over unchanged. Free, and it runs in your browser.',
     steps: ['Drop in your .sbv file.', 'Output is preset to VTT.', 'Download the .vtt file.'],
+    example: {
+      before: '0:00:01.000,0:00:02.500\nHello there\n\n0:00:04.000,0:00:06.000\nWhat time is it?\n',
+      after: 'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.500\nHello there\n\n2\n00:00:04.000 --> 00:00:06.000\nWhat time is it?',
+      note: 'The SBV timing line becomes the VTT arrow line, and a WEBVTT header is added. The times stay the same to the millisecond.',
+    },
     faq: [
       { q: 'Where do I get an SBV file from YouTube?', a: 'In YouTube Studio, open Subtitles and pick the video. On the language row, open the options menu (three dots) and choose Download. YouTube offers .sbv, .srt and .vtt. This works for videos on a channel you can sign into.' },
       { q: 'How is SBV different from VTT?', a: 'SBV writes the start and end on one line with a comma between them and has no header line. VTT starts with a WEBVTT line and an arrow between the times. Both carry millisecond times, so nothing shifts.' },
@@ -1569,6 +1574,11 @@ export const PAGES: ToolPage[] = [
       'With no times in the text, pick a reading speed and when the first line starts.',
       'Download the .vtt file.',
     ],
+    example: {
+      before: '[00:01.000] Hello there\n[00:04.000] What time is it?\n',
+      after: 'WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000\nHello there\n\n2\n00:00:04.000 --> 00:00:05.000\nWhat time is it?',
+      note: 'Timestamped lines become cues at those times. Each end is the start plus the time the line needs to be read, and text without timestamps would be timed the same way.',
+    },
     faq: [
       { q: 'Will the timing match my video?', a: 'Only roughly when the text has no timestamps. Load the .vtt again and use "Sync two points" with a line near the start and one near the end to line it up.' },
       PRIVACY_FAQ,

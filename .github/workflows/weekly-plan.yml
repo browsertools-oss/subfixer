@@ -36,7 +36,7 @@ jobs:
           { echo 'text<<PROMPT_EOF'; sed -e "s/{{TODAY}}/${TODAY}/g" -e "s/{{MINUTES}}/${MINUTES}/g" .github/agent/weekly.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
       - uses: anthropics/claude-code-action@v1
         with:
-          # Owner's Claude subscription (stevenlutsky@gmail.com), from `claude setup-token`.
+          # Owner's Claude subscription, from `claude setup-token`.
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: ${{ steps.prompt.outputs.text }}
           github_token: ${{ github.token }}

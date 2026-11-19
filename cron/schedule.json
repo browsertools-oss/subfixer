@@ -12,5 +12,13 @@
     "day": "Sun",
     "hour": 4,
     "workflow": "weekly-plan.yml"
-  }
+  },
+  "nightly": {
+    "hour": 22,
+    "minute": 17,
+    "repo": "browsertools-oss/hq",
+    "workflow": "nightly.yml"
+  },
+  "roles": {},
+  "paused": {}
 }

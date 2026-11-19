@@ -5,10 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       run:
-        description: morning posts the daily report, evening only works
+        description: morning (posts the daily report), evening, or a hired worker's role from ops/roles/<role>.md
         default: morning
-        type: choice
-        options: [morning, evening]
+        type: string
 permissions:
   contents: write
   issues: write
@@ -57,8 +56,11 @@ jobs:
           for i in $(seq 1 20); do curl -fs http://127.0.0.1:8788 >/dev/null && exit 0; sleep 0.5; done
           echo "boss did not start"; cat "$RUNNER_TEMP/boss.log"
       - id: prompt
+        env:
+          RUN: ${{ inputs.run }}
         run: |
-          { echo 'text<<PROMPT_EOF'; sed "s/{{MINUTES}}/${AGENT_MINUTES}/g" .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
+          case "$RUN" in morning|evening) ;; *) [[ "$RUN" =~ ^[a-z][a-z0-9-]{1,30}$ ]] && [ -f "ops/roles/$RUN.md" ] || { echo "unknown run $RUN"; exit 1; } ;; esac
+          { echo 'text<<PROMPT_EOF'; sed -e "s/{{MINUTES}}/${AGENT_MINUTES}/g" -e "s/{{RUN}}/${RUN}/g" .github/agent/daily.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
       - uses: anthropics/claude-code-action@v1
         env:
           # The local free-model proxy (above), which forwards to OpenRouter with the real key.
@@ -100,7 +102,7 @@ jobs:
           git push -q || true
       - name: Daily report
         # Once a day only; the evening run's commits show in the next morning's report.
-        if: always() && inputs.run != 'evening'
+        if: always() && inputs.run == 'morning'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

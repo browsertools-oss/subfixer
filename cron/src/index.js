@@ -29,9 +29,15 @@ export function due(when) {
   const minute = when.getUTCMinutes();
   const hour = localHour(when);
   const out = [];
-  // The CEO's nightly session in hq.
-  const n = schedule.nightly;
-  if (n && hour === n.hour && minute === n.minute) out.push([n.repo, null, n.workflow]);
+  // Company jobs: the hq CEO and head of growth, and per-venture ones like the foreman.
+  // repo "ventures" means every running venture, each at its own minute.
+  const day = localDay(when);
+  for (const j of schedule.jobs ?? []) {
+    if (hour !== j.hour || (j.days && !j.days.includes(day))) continue;
+    if (j.repo === "ventures") {
+      for (const [repo, m] of Object.entries(schedule.repos)) if (m === minute) out.push([repo, null, j.workflow]);
+    } else if (minute === (j.minute ?? 17)) out.push([j.repo, null, j.workflow]);
+  }
   // Sunday planner (Opus, owner's Claude account) runs before the 6am daily run.
   const weekly = schedule.weekly;
   if (weekly && localDay(when) === weekly.day && hour === weekly.hour) {

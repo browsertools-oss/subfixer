@@ -13,12 +13,41 @@
     "hour": 4,
     "workflow": "weekly-plan.yml"
   },
-  "nightly": {
-    "hour": 22,
-    "minute": 17,
-    "repo": "browsertools-oss/hq",
-    "workflow": "nightly.yml"
-  },
   "roles": {},
-  "paused": {}
+  "paused": {},
+  "jobs": [
+    {
+      "name": "ceo",
+      "repo": "browsertools-oss/hq",
+      "workflow": "nightly.yml",
+      "hour": 22,
+      "minute": 17
+    },
+    {
+      "name": "head of growth",
+      "repo": "browsertools-oss/hq",
+      "workflow": "growth.yml",
+      "hour": 20,
+      "minute": 17,
+      "days": [
+        "Mon",
+        "Wed",
+        "Fri"
+      ]
+    },
+    {
+      "name": "foreman",
+      "repo": "ventures",
+      "workflow": "foreman.yml",
+      "hour": 5,
+      "days": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ]
+    }
+  ]
 }

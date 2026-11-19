@@ -4,6 +4,10 @@ on:
     branches: [main]
   workflow_dispatch:
 concurrency: deploy
+permissions:
+  contents: read
+  issues: write
+  actions: read
 env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -14,10 +18,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm ci && npm test && npm run build
+      - name: Quality check, broken links
+        run: node scripts/check-links.mjs dist
+      - name: Quality check, review of what changed
+        # scripts/qa.mjs: Claude reads the site changes since the last deploy; serious problems
+        # (broken pages, AdSense or search rule risks, false claims) stop the deploy.
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          QA_MODEL: ${{ vars.QA_MODEL || 'claude-sonnet-5-5' }}
+        run: |
+          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
+          node scripts/qa.mjs
       - name: Ensure the Pages project exists
         run: |
           api=https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects

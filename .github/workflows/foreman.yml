@@ -1,0 +1,46 @@
+name: foreman
+# Checks the workers' last 24 hours and fixes today's plan. Started at 5am Pacific,
+# Monday to Saturday, by the venture-cron Worker (subfixer repo, cron/schedule.json "jobs").
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  actions: read
+concurrency: foreman
+jobs:
+  foreman:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Load the instructions
+        id: prompt
+        run: |
+          TODAY=$(TZ=America/Los_Angeles date +%m-%d-%Y)
+          { echo 'text<<PROMPT_EOF'; sed -e "s/{{TODAY}}/${TODAY}/g" .github/agent/foreman.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
+          git config user.name "foreman"
+          git config user.email "foreman@users.noreply.github.com"
+          gh label create qa --color FBCA04 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: ${{ steps.prompt.outputs.text }}
+          github_token: ${{ github.token }}
+          show_full_output: true
+          claude_args: >-
+            --model ${{ vars.FOREMAN_MODEL || 'claude-sonnet-5-5' }}
+            --max-turns 120
+            --allowedTools "Bash(date*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git add *),Bash(git commit *),Bash(gh run list*),Bash(gh run view*),Bash(gh issue list*),Bash(gh issue view*),Bash(gh issue close*),Bash(gh issue comment*),Bash(npm ci*),Bash(npm test*),Bash(npm run build*),Read,Edit,Write,Glob,Grep"
+      - name: Push
+        if: always()
+        run: |
+          git pull --rebase -q || true
+          git push -q || true

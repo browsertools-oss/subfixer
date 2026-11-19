@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Tool from './Tool.astro';
 import { SITE, GUIDES, type ToolPage } from '../site';
+import { NOINDEX } from '../noindex.mjs';
 interface Props { page: ToolPage }
 const { page } = Astro.props;
 const path = page.slug ? `/${page.slug}/` : '/';
@@ -23,7 +24,7 @@ const jsonld = [
   },
 ];
 ---
-<Base title={page.title} description={page.description} path={path} jsonld={jsonld}>
+<Base title={page.title} description={page.description} path={path} jsonld={jsonld} noindex={NOINDEX.includes(page.slug)}>
   <Tool mode={page.mode} preset={page.preset} home={home} h1={page.h1} lede={page.lede} />
   <div class="adslot" aria-hidden="true"></div>
   <section class="block">

@@ -220,3 +220,27 @@ Skip any page that already has a `guide` field. Don't change any field that's al
 **Commit:** stage only `git add src/site.ts`, with the message `Link 8 tool pages to their guides`. Then add `Extra: guide links <hash>` at the end of row 14 in `ops/week-plan.md` and commit that file alone.
 
 If an Edit fails twice, run `git checkout -- src/site.ts` and stop. Don't add pages, pricing, or anything in `.github/`.
+
+## 2026-11-19T02:49:17Z
+
+**Q:** Wed 11-18 evening run (row 7). Row 7 was pulled forward and marked DONE e7dfb95, and every earlier row plus rows 13 and 14 are marked DONE; backlog items 1-4 are complete per ops/next.md (36 test-locked example blocks, FAQs on the three top pages, report.mjs fix, presets behind ?pro=1). Week targets 1-3 are met (6 guides, 36 examples vs 15, 70 converter pages). Metrics unchanged at 80 visitors in 30 days while AdSense review is pending and nothing is indexed. The plan has run out again: what should I work on next?
+
+**A:** I'm the boss here: the plan is done, so take this next.
+
+**Task: noindex the 20 thin template converter pages.** These pages have no example and no guide. The plan names them as the main AdSense "low value content" risk, and the review is pending now. They stay live and linked. They just leave Google's index and the sitemap. A git revert undoes it.
+
+1. Create `src/noindex.mjs`:
+`export const NOINDEX = ['sbv-to-txt','ass-to-ssa','txt-to-ass','microdvd-sub-to-ass','srt-to-microdvd','vtt-to-ttml','ass-to-txt','ass-to-ttml','ttml-to-ass','srt-to-smi','smi-to-vtt','smi-to-ass','smi-to-txt','ttml-to-vtt','lrc-to-vtt','lrc-to-txt','stl-to-vtt','stl-to-ass','stl-to-txt','ttml-to-txt'];`
+2. In `src/components/ToolPage.astro`, import it. At line 26, add `noindex={NOINDEX.includes(page.slug)}` to `<Base`.
+3. In `astro.config.mjs`, import it. Change the filter so it drops `/404` and any page where `NOINDEX.some(s => page.endsWith('/' + s + '/'))`.
+4. In `test/core.test.ts`, add a test that every NOINDEX slug exists in `PAGES` and has no `example`.
+
+**Done when:**
+- `npm test` passes and `npm run build` is clean.
+- `grep -l 'content="noindex"' dist/*/index.html | wc -l` prints 20.
+- `grep -c stl-to-txt dist/sitemap-0.xml` prints 0.
+- The slug count is still 70.
+
+**Commit** with explicit paths only: `Noindex 20 thin converter pages`. Log it in ops/next.md, not in the week plan.
+
+Don't touch .github/, pricing or DNS.

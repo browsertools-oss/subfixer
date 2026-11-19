@@ -1,0 +1,1 @@
+export const NOINDEX = ['sbv-to-txt','ass-to-ssa','txt-to-ass','microdvd-sub-to-ass','srt-to-microdvd','vtt-to-ttml','ass-to-txt','ass-to-ttml','ttml-to-ass','srt-to-smi','smi-to-vtt','smi-to-ass','smi-to-txt','ttml-to-vtt','lrc-to-vtt','lrc-to-txt','stl-to-vtt','stl-to-ass','stl-to-txt','ttml-to-txt'];

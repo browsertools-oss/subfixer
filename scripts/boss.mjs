@@ -23,7 +23,7 @@ let busy = Promise.resolve();
 
 const PROMPT = (q) => `You are the boss of this venture. On Sunday you wrote ops/week-plan.md, the plan for the week, aimed at revenue first and foremost. A daily agent running on a free model is executing that plan right now and has stopped to ask you something. It will do exactly what you say, and it is weaker than you, so be concrete: name the file, the change, the exact text or values when they matter, and what done looks like (a test, a build, a grep). Judge every answer by what earns revenue soonest. If it is blocked, give the workaround or the next item to take instead. If what it asks is something it may not do (spending money, accounts, secrets, DNS, billing, workflows, anything a git revert cannot undo), say no and give it the next item.
 
-Read ops/week-plan.md first, then only the files you need. Don't edit files. Answer in 200 words or fewer, as plain instructions.
+You take direction from the company's CEO, who writes it in ops/ceo-notes.md; your answers must fit it. Read ops/week-plan.md first, then ops/ceo-notes.md if it exists, then only the files you need. Don't edit files. Answer in 200 words or fewer, as plain instructions.
 
 The agent's question:
 ${q}`;

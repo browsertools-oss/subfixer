@@ -12,6 +12,11 @@
 // later (or when OpenRouter's daily free quota is gone) it refuses further
 // requests so the agent stops and the workflow commits what is done.
 //
+// Paid models: models.json "paid" are tried first while the shared OpenRouter
+// key has spent less than "dailyUsd" today (UTC) and this run less than
+// "runUsd". Spend is read from OpenRouter's /key endpoint, so the cap holds
+// across every venture's runs. If spend can't be read, only free models run.
+//
 // Env: OPENROUTER_API_KEY, AGENT_MINUTES (default 10), AGENT_REQUESTS (default 240).
 import fs from "node:fs";
 import http from "node:http";
@@ -22,7 +27,12 @@ const PORT = Number(process.env.PROXY_PORT || 8787);
 const MINUTES = Number(process.env.AGENT_MINUTES || 10);
 const MAX_REQ = Number(process.env.AGENT_REQUESTS || 240);
 const UPSTREAM = process.env.PROXY_UPSTREAM || "https://openrouter.ai/api/v1/messages";
-const { models } = JSON.parse(fs.readFileSync(new URL("../.github/agent/models.json", import.meta.url), "utf8"));
+const cfg = JSON.parse(fs.readFileSync(new URL("../.github/agent/models.json", import.meta.url), "utf8"));
+const models = cfg.models;
+const PAID = cfg.paid ?? [];
+const DAILY_USD = Number(cfg.dailyUsd ?? 0);
+const RUN_USD = Number(cfg.runUsd ?? DAILY_USD);
+const SPEND_CHECK_MS = Number(process.env.PROXY_SPEND_CHECK_MS || 15_000);
 const liveDir = path.join(process.env.RUNNER_TEMP || "/tmp", "agent-live");
 fs.mkdirSync(liveDir, { recursive: true });
 
@@ -32,19 +42,20 @@ let used = 0;
 let lastModel = null;
 let quotaGone = false;
 const stats = {}; // model -> { ok, failed }
+const spend = { baseline: null, today: null, checkedAt: 0, off: PAID.length === 0 || DAILY_USD <= 0, why: "" };
 
 function note(text) {
   console.log(new Date().toISOString(), text);
   try { fs.appendFileSync(path.join(liveDir, "notes.jsonl"), `${JSON.stringify({ t: new Date().toISOString(), text })}\n`); } catch {}
 }
 function saveStats() {
-  try { fs.writeFileSync(path.join(liveDir, "models.json"), JSON.stringify({ used, quotaGone, stats }, null, 1)); } catch {}
+  try { fs.writeFileSync(path.join(liveDir, "models.json"), JSON.stringify({ used, quotaGone, stats, spend }, null, 1)); } catch {}
 }
 const bump = (m, k) => { (stats[m] ??= { ok: 0, failed: 0 })[k]++; saveStats(); };
 const bench = (m, ms, why) => {
   benched.set(m, Date.now() + ms);
   bump(m, "failed");
-  note(`${m} unavailable (${why}); trying the next free model`);
+  note(`${m} unavailable (${why}); trying the next model`);
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const minutes = () => (Date.now() - started) / 60_000;
@@ -66,9 +77,48 @@ function withWrapUp(body) {
   return { ...body, messages: [...body.messages.slice(0, -1), { ...last, content }] };
 }
 
-function pickModel() {
+async function usageToday() {
+  try {
+    const r = await fetch(process.env.PROXY_KEY_URL || "https://openrouter.ai/api/v1/key", { headers: { authorization: `Bearer ${KEY}` }, signal: AbortSignal.timeout(10_000) });
+    if (!r.ok) return null;
+    const d = (await r.json())?.data;
+    return typeof d?.usage_daily === "number" ? d.usage_daily : null;
+  } catch {
+    return null;
+  }
+}
+
+function paidOff(why) {
+  if (spend.off) return;
+  spend.off = true;
+  spend.why = why;
+  note(`Paid models off (${why}); free models from here`);
+  saveStats();
+}
+
+/** True while paid models may be used. Re-reads the key's spend at most every SPEND_CHECK_MS. */
+async function paidAllowed() {
+  if (spend.off) return false;
+  if (Date.now() - spend.checkedAt < SPEND_CHECK_MS && spend.today !== null) return true;
+  const u = await usageToday();
+  spend.checkedAt = Date.now();
+  if (u === null) { paidOff("couldn't read today's spend"); return false; }
+  spend.baseline ??= u;
+  spend.today = u;
+  saveStats();
+  if (u >= DAILY_USD) { paidOff(`$${u.toFixed(2)} spent today, cap $${DAILY_USD}`); return false; }
+  if (u - spend.baseline >= RUN_USD) { paidOff(`$${(u - spend.baseline).toFixed(2)} spent this run, cap $${RUN_USD}`); return false; }
+  return true;
+}
+
+async function pickModel() {
   const now = Date.now();
-  return models.find((m) => (benched.get(m) ?? 0) <= now) ?? null;
+  const ready = (m) => (benched.get(m) ?? 0) <= now;
+  if (await paidAllowed()) {
+    const paid = PAID.find(ready);
+    if (paid) return paid;
+  }
+  return models.find(ready) ?? null;
 }
 
 /** Read a streamed response until the first real event, so an early error can be retried elsewhere. */
@@ -106,7 +156,7 @@ async function forward(req, res, raw) {
   headers["content-type"] = "application/json";
 
   for (let waits = 0; waits < 4; ) {
-    const model = pickModel();
+    const model = await pickModel();
     if (!model) {
       const soonest = Math.min(...models.map((m) => benched.get(m) ?? 0));
       waits++;
@@ -131,6 +181,10 @@ async function forward(req, res, raw) {
     }
     if (!up.ok) {
       const text = (await up.text()).slice(0, 400);
+      if (PAID.includes(model) && up.status === 402) {
+        paidOff("out of credit");
+        continue;
+      }
       if (up.status === 429 && /per-day|per day|daily/i.test(text)) {
         quotaGone = true;
         note("Today's free model quota is used up; wrapping up");
@@ -189,4 +243,6 @@ http
       else res.end();
     }));
   })
-  .listen(PORT, "127.0.0.1", () => note(`Free model rotation ready: ${models.length} models, ${MINUTES} minutes, ${MAX_REQ} requests`));
+  .listen(PORT, "127.0.0.1", () =>
+    note(`Model rotation ready: ${PAID.length} paid (cap $${DAILY_USD}/day, $${RUN_USD}/run), ${models.length} free, ${MINUTES} minutes, ${MAX_REQ} requests`),
+  );

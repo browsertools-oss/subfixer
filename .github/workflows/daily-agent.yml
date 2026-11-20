@@ -34,10 +34,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: nohup node scripts/live.mjs watch > "$RUNNER_TEMP/agent-live.log" 2>&1 &
-      - name: Free model rotation
-        # scripts/model-proxy.mjs sends each request to the best free model in
-        # .github/agent/models.json that isn't rate limited, and ends the session
-        # when the time, the request budget or the day's free quota runs out.
+      - name: Model rotation
+        # scripts/model-proxy.mjs sends each request to a paid model in
+        # .github/agent/models.json while the key has spent under $1 today (and
+        # $0.25 this run), then to the best free model that isn't rate limited. It
+        # ends the session when the time, the request budget or the free quota runs out.
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |

@@ -118,6 +118,12 @@ jobs:
           git config user.email "subfixer-agent@users.noreply.github.com"
           git add ops/metrics.csv ops/.llm_usage_total 2>/dev/null || true
           git commit -qm "Daily metrics $(date -u +%F)" -- ops/metrics.csv ops/.llm_usage_total && git push -q || true
+      - name: Model usage
+        # Read by the model test (Nov 20th-27th, 2026): which models ran and what the run cost.
+        if: always()
+        run: |
+          echo "MODEL-USAGE $(cat "$RUNNER_TEMP/agent-live/models.json" 2>/dev/null | tr -d '\n')"
+          tail -n 40 "$RUNNER_TEMP/model-proxy.log" || true
       - name: Close the live feed
         if: always()
         run: node scripts/live.mjs phase "Run finished" && node scripts/live.mjs finish

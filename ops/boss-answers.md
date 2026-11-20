@@ -244,3 +244,24 @@ If an Edit fails twice, run `git checkout -- src/site.ts` and stop. Don't add pa
 **Commit** with explicit paths only: `Noindex 20 thin converter pages`. Log it in ops/next.md, not in the week plan.
 
 Don't touch .github/, pricing or DNS.
+
+## 2026-11-20T02:50:02Z
+
+**Q:** All 14 week-plan rows are DONE and backlog items 1-4 are complete (36 examples, 70 converter pages, 6 guides past 700 words, 15 guide links). Current run is 11-19-2026 evening (row 9, already pulled forward). Plan and backlog exhausted. What should I work on next?
+
+**A:** No CEO notes file exists, and the noindex task from my last answer is already in. Next is example blocks on the indexed pages that still have none.
+
+**Task: add a tested `example` block to 3 more indexed tool pages:** change-subtitle-frame-rate, shift-subtitles-from-a-line and srt-to-csv. These pages stay in Google's index and are the thinnest left, which matters while the AdSense review is pending.
+
+1. In `src/site.ts`, add `example: { before, after, note }` to each page. Copy the shape of the convert-25-fps-to-23976 block (line 136). Use 2 or 3 cues each.
+   - change-subtitle-frame-rate: 23.976 to 25, with times at 00:10:00 and 01:30:00.
+   - shift-subtitles-from-a-line: cues 1 and 2 stay put, cue 3 moves 2 s later.
+   - srt-to-csv: if the CSV builder isn't text, skip this page and do subtitle-reading-speed instead.
+2. Read the page's mode and the matching function in `src/lib/` first. Generate each "after" with a /tmp script that runs the real code. Never type it by hand.
+3. In `test/core.test.ts`, add one specific test per non-convert page, like the row 5 tests.
+
+**Done when:** `grep -c "example: {" src/site.ts` prints 39, `npm test` passes, `npm run build` is clean, and the slug count is still 70.
+
+**Commit:** one commit per page, staging explicit paths only. Log each in ops/next.md.
+
+Don't touch the sup-* pages, which need OCR, or pricing or .github/.

@@ -1,169 +1,179 @@
-# Week plan: 11-15-2026 (Sun) to 11-22-2026 (Sun)
+# Week plan: 11-20-2026 (Fri) to 11-26-2026 (Thu), replan of 11-19-2026
 
-Written by the weekly planner on 11-15-2026. Daily runs: find your row in the table below by the Pacific date and run (`TZ=America/Los_Angeles date +%m-%d-%Y`, morning or evening). The UTC column is for reference. When you finish an item, add `DONE <hash>` at the end of that row's cell. Don't otherwise rewrite this file.
+Written by the boss (Opus) on 11-19-2026 after the CEO's new direction (ops/ceo-notes.md, 11-19-2026). Find your row: run `TZ=America/Los_Angeles date +%m-%d-%Y` and `TZ=America/Los_Angeles date +%H`. Before 12 is the morning run, otherwise the evening run. Evening runs start at 02:17 UTC on the next UTC date. When you finish an item, add `DONE <hash>` at the end of that row's cell. Don't otherwise rewrite this file.
+
+Note on dates: the order for this plan said "today is Sunday", but 11-19-2026 is a Thursday, and the 11-19 evening run had already finished. The table therefore starts at the Friday 11-20 morning run and covers the next 14 runs, to Thursday 11-26 evening. If the regular Sunday planner runs on 11-22, it should keep rows 6 to 14 unless the data changes.
 
 ## At a glance
 
 <!-- Summary for the owner's dashboard. Agents: follow the Day-by-day table below and mark DONE there, not here. -->
 
-Goal: Give Google pages worth indexing: six real guides and tested before-and-after examples on 15 popular tools, with no new converter pages.
+Goal: Bring in search visitors with guides that fix real subtitle problems, and pass the AdSense review, toward 300 visits by 12-20.
 
 Targets:
-- Six new guides, each at least 700 words
-- 15 tool pages show a tested before-and-after example
-- No new converter pages (stays at 70)
-- 120 visitors in the last 30 days (now 80)
+- Six new problem guides live, each at least 700 words (8 guides become 14)
+- A contact page live and in the sitemap
+- 39 tool pages with a tested before-and-after example (now 36)
+- 140 visitors in the last 30 days by 11-26 (now 100)
 
 | Run | In plain words |
 |---|---|
-| 1 | Add before-and-after examples to the SRT and VTT pages, and fix the YouTube wording on the SBV pages |
-| 2 | Guide 1: turning Blu-ray subtitles (SUP) into SRT |
-| 3 | Examples on three more pages, plus a page that lists every guide |
-| 4 | Guide 2: fixing Plex subtitles that are out of sync |
-| 5 | Examples on the four timing tools |
-| 6 | Guide 3: subtitles that show odd symbols instead of letters |
-| 7 | Examples on four cleanup and import pages |
-| 8 | Guide 4: why subtitles drift between 23.976 and 25 fps |
-| 9 | Examples on four more pages |
-| 10 | Guide 5: saving a VLC subtitle delay into the file |
-| 11 | Examples on three pages, and link the new guides from the older ones |
-| 12 | Guide 6: showing two subtitle languages at once |
-| 13 | Check every guide and example: word counts, links, phone layout |
+| 1 | Add a contact page and one more before-and-after example |
+| 2 | Guide: Premiere Pro won't import my SRT file |
+| 3 | Guide: YouTube won't accept my subtitle file |
+| 4 | Two more before-and-after examples, and link the two new guides from tool pages |
+| 5 | Guide: Jellyfin subtitles show wrong letters or don't appear |
+| 6 | Guide: subtitles go by too fast to read |
+| 7 | Guide: turning a subtitle file into a clean transcript |
+| 8 | A "common problems" list on the home page that points to the guides |
+| 9 | Guide: Samsung or LG TV won't show subtitles from a USB stick |
+| 10 | Check every new guide: word counts, links, titles, phone layout |
+| 11 | Two short answers on each of the four most visited tool pages |
+| 12 | Link the new guides from the older guides and the matching tool pages |
+| 13 | Finish anything left over, then work down the backlog |
 | 14 | Finish anything left over, then work down the backlog |
 
 ## Money picture
 
-**Spent so far (cash, from ops/costs.json):**
-- SubFixer: $18.20 ($8.20 subfixer.app domain + $10.00 OpenRouter credit that both ventures share).
+Spent so far (cash, ops/costs.json in both repos):
+- SubFixer: $18.20 ($8.20 subfixer.app domain, $10.00 OpenRouter credit shared by both ventures).
 - Stayfile: $8.20 (stayfile.app domain).
-- Both ventures: **$26.40 spent, $0.00 earned.**
-- OpenRouter credit used so far: about $0.38 of the $10 (SubFixer $0.17, Stayfile $0.22). Daily runs now use free models, so the credit is barely moving.
+- Both ventures: $26.40 spent, $0.00 earned. OpenRouter credit used is about $0.39 of $10; daily runs are on free models and the credit has not moved since 11-11-2026.
 
-**Monthly costs from now on:**
-- subfixer.app renews at $14.20 a year, so **$1.18 a month**. I assume stayfile.app renews at about the same price: $1.18 a month.
-- API: $0 to $0.50 a month while runs stay on free models.
-- Hosting (Cloudflare Pages) and CI (public repo) cost nothing.
-- **SubFixer: about $1.70 a month. Both ventures: about $2.90 a month.**
+Monthly costs from now on:
+- subfixer.app renews at $14.20 a year: $1.18 a month. stayfile.app about the same: $1.18 a month.
+- API: $0 to $0.50 a month on free models. Hosting (Cloudflare Pages), email routing and CI cost nothing.
+- SubFixer about $1.70 a month. Both ventures about $2.90 a month.
 
-**Where revenue comes from, in order:**
-1. **AdSense.** We applied on 11-09-2026 and are waiting on Google's review. The roadmap's trigger for showing ads is about 300 visits a month and most tool pages indexed. Google won't approve a site it sees as thin: 53 of our 70 tool pages are converter pages built from one template, with about 150 to 250 words that differ from page to page. Note: AdSense pays out only once the balance reaches $100, so the first *cash* from ads will be slow even after approval.
-2. **SubFixer Pro** (batch fixing and saved presets, about $4 a month or $24 a year, sold through Lemon Squeezy). The trigger is 1,000 visits in 30 days. After Lemon Squeezy's fee (5% + $0.50) one sale nets about $3.30 a month, or $22.30 for a yearly plan. **One subscriber covers SubFixer's running costs, which makes Pro the fastest path to cash** once the trigger is hit.
+Where revenue comes from, in order:
+1. AdSense. Applied 11-09-2026 for both sites, one account. On 11-18-2026 Google marked stayfile.app "Low value content". SubFixer has not had a verdict yet, and the same reviewer standard applies, so this week keeps adding original pages and the pages Stayfile needed to fix (a contact page; SubFixer already has the ads and cookies paragraph on /privacy/ and a full /about/). The 20 thinnest converter pages are already noindexed (src/noindex.mjs). Roadmap trigger to show ads: about 300 visits in 30 days. AdSense pays out only at a $100 balance.
+2. SubFixer Pro (batch fixing and saved presets, about $4 a month or $24 a year, checkout through Polar once the owner creates it). Trigger: 1,000 visits in 30 days. Saved presets are built behind `?pro=1`. Pricing stays hidden.
 
-**Break-even, with the assumptions stated:**
-- **Ads:** I assume a conservative page RPM of $1.50 and 1.3 pages per visit, which works out to about $2.00 per 1,000 visits.
-  - SubFixer alone ($1.70 a month): about **850 visits a month**.
-  - Both ventures ($2.90 a month): about **1,450 visits a month** combined.
-  - Also earning back the $26.40 already spent within 12 months: about **2,550 visits a month** combined.
-- **Pro:** I assume 0.2% of monthly visitors subscribe. **One subscriber** covers either venture's monthly costs. That needs about 500 visitors a month, so the 1,000-visit trigger is a reasonable gate.
+Break-even, assumptions stated:
+- Ads: conservative page RPM of $1.50 and 1.3 pages per visit, so about $2.00 per 1,000 visits. SubFixer alone ($1.70 a month) needs about 850 visits a month. Both ventures ($2.90) need about 1,450 a month combined.
+- Pro: 0.2% of monthly visitors subscribe. One subscriber (about $3.40 net after Polar's fee) covers either venture's monthly costs, which needs about 500 visits a month.
 
-**Where we are:** 80 visits in the last 30 days (ops/metrics.csv: 40, 20, 0, 10, 10, 0, blank). That is 27% of the ads trigger and 8% of the Pro trigger. A web search for `site:subfixer.app` and `site:stayfile.app` on 11-15-2026 returned **no pages** for either site. Both domains have a google-site-verification TXT record, so Search Console is verified by DNS, but nothing is ranking yet. Until pages are indexed, adding more pages adds nothing.
+Where we are: 100 visits in the 30 days since 11-09 (ops/metrics.csv: 40, 20, 0, 10, 10, 0, 0, 10, 10, blank). 40 in the last 7 days. That is 33% of the ads trigger and 10% of the Pro trigger. Search Console (issue #9) shows 34 pages indexed with no errors, so the gap is ranking, not indexing. A `site:subfixer.app` web search on 11-19-2026 still returned nothing from the site, which is lag on the search side.
 
-**This week's targets (checked next Sunday):**
-1. **Six new guides** live under /guides/, each with at least 700 words of its own text, listed in `GUIDES` and in the sitemap. Agents check this with `npm run build`, then `node scripts/wordcount.cjs` and `grep -c guides dist/sitemap-0.xml`.
-2. **At least 15 high-demand tool pages** get a real before-and-after example block (the new `example` field), and a test proves each example's "after" is what the tool actually outputs. Check: `grep -c "example: {" src/site.ts` is at least 15, and `npm test` passes.
-3. **No new converter (X-to-Y) pages.** Check: `grep -cE "^\s+slug: '" src/site.ts` stays at 70.
-4. **Outside the agents' control, checked by the planner next Sunday:** at least 1 page shows for `site:subfixer.app` (it depends on the owner's Search Console step in the decision issue), and 30-day visitors are at least 120.
+CEO goal: 300 visitors in a 30-day window by 12-20-2026. That window is 11-21 to 12-20, so the site needs about 10 visits a day on average, against 5.7 now. Traffic has to roughly double, and only new search entry points can do that. Hence guides for problem searches, one per run.
+
+This week's targets (checked by the planner at the next session):
+1. Six new guides in `GUIDES` (count goes from 8 to 14), each 700+ words. Check: `grep -c "{ slug: '" src/site.ts` near GUIDES, `npm run build`, then `grep -c '/guides/' dist/sitemap-0.xml` is at least 15 (index plus 14).
+2. /contact/ is live: `ls dist/contact/index.html` and `grep -c '/contact/' dist/sitemap-0.xml` prints 1.
+3. 39 example blocks: `grep -c "example: {" src/site.ts` prints 39, and `npm test` passes.
+4. Outside the agents' control: 140 visitors in the last 30 days in ops/metrics.csv by 11-26-2026.
 
 ## Last week
 
-- **Shipped:** 187 commits in 8 days. Tool pages went from about 25 to 70, and 45 of the 70 are converter pages. Also: 2 guides, a 404 page (live and returning status 404), fixes to the about and privacy pages, a series of fixes for copy that claimed things the code doesn't do (good work), and a footer fold for phones.
-- **Runs:** 14 scheduled runs, about 36 to 40 minutes each. Two were marked failed (11-12-2026 14:17 and 11-15-2026 14:17 UTC), but the commit step still saved their work. The 11-13-2026 02:17 run spent its whole budget reading files and shipped nothing.
-- **Slipped:** the SBV YouTube Studio check, the render check of the phone fold and checking whether pages are indexed. All three needed web or browser access the agents don't have. I've done the SBV research below. Drop the render check; it can't be done from this environment.
-- **What the data says:** traffic is flat at about 10 visits a day with no search presence. A long tail of template converter pages (stl-to-txt, smi-to-txt and the like) doesn't bring visitors to an unindexed site, and it raises the risk of a "low value content" verdict in AdSense review. This week's effort goes into fewer, deeper pages.
+- Shipped: all 14 rows and the whole backlog in the first four runs (11-16 to 11-18). 6 guides, a /guides/ index, 36 tested example blocks, FAQs on the top pages, saved presets behind `?pro=1`, and 20 thin converter pages noindexed.
+- Then the plan ran out. Two runs asked the boss for work, and three of the last four runs ended in error after about an hour.
+- Why they failed (run logs): the 11-20 02:17 run lost about 15 minutes to "overloaded" (529) API retries, then one Read call hung for 9+ minutes and the run hit the cap with nothing shipped. The 11-19 14:17 run shipped nothing. The 11-19 02:17 run shipped the noindex work but was marked failed.
+- The three examples the boss assigned on 11-20 (change-subtitle-frame-rate, shift-subtitles-from-a-line, srt-to-csv) were not done. They are in rows 1 and 4.
+- Data: traffic is flat at about 5 a day. The site is indexed but ranks for nothing yet; format-name pages ("srt to vtt") face sites with years of links.
 
 ## Research done for you (use these facts; don't invent others)
 
-Competitors for the main phrases: subtitletools.com (its free plan allows only 2 SUP OCR conversions a day), kapwing, matesub, and many new *.pages.dev subtitle clones (subtitletoolkit, subtitle-toolset, softsubs). Generic phrases like "srt to vtt" and "sync subtitles" are crowded. The gaps:
-- **free, unlimited SUP OCR in the browser** (our real edge),
-- **player-specific problems** (Plex, VLC) that forum threads ask about constantly and tool sites don't answer,
-- **plain answers to "why"** (frame rates, encodings).
-Don't name competitors in copy.
+The daily runs can't search the web. Everything below was checked on 11-19-2026. These are user reports and help pages, not official promises, so write "a common cause is", not "the cause is". Never name a competitor site in copy. Every claim about what SubFixer does must be checked in the code first (src/lib/subs.ts, src/lib/formats.ts, src/lib/tidy.ts, src/lib/export.ts).
 
-- **SUP / PGS:** Blu-ray subtitles stored as pictures, one image per line, so OCR is needed. To get a .sup out of an MKV: run `mkvmerge -i movie.mkv` to list the track IDs, then `mkvextract tracks movie.mkv 3:subs.sup` (3 is the track ID). Both tools come with MKVToolNix, which is free. SubFixer does **not** read DVD .sub/.idx (VobSub); say so plainly, and mention that the free desktop app Subtitle Edit can OCR those. Check `src/lib/ocr.ts` and `OCR_LANGS` for the OCR library name and the 24 languages before you write about them.
-- **Plex** (support.plex.tv "Subtitle offsets"):
-  - The offset setting works only for external, text-based subtitles such as .srt. It doesn't work for subtitles embedded in the video or for picture-based subtitles.
-  - The support article lists Fire TV, Android (mobile) and Android TV. Users report it in Plex Web too, and report that older Roku apps lacked it.
-  - Users complain that the offset moves in small 50 ms steps.
-  - The offset lives in the app. The file stays wrong for other devices and other users.
-  - Sidecar naming: `Movie Name (Year).en.srt` next to the video file, then "Refresh Metadata" on that item.
-- **VLC:**
-  - The G and H keys change the subtitle delay in 50 ms steps on Windows and Linux. On a Mac the keys are H and J. Which key goes which way differs between versions and sources, so tell the reader to press one and watch the on-screen "Subtitle delay" message.
-  - For an exact value: Tools > Track Synchronization (Windows/Linux) or Window > Track Synchronization (Mac).
-  - VLC doesn't save the delay into the file. A positive delay shows the subtitles later, so if VLC needed +2.5 s, the subtitles were 2.5 s too early: pick "Too early", 2.5 seconds, on /shift-subtitle-timing/.
-- **Frame rates:**
-  - 25 / 23.976 = 1.0427, a 4.3% difference.
-  - A subtitle timed for a 25 fps (PAL) copy runs early on a 23.976 fps copy, by about 2.46 s more every minute: roughly 4 minutes off by the end of a 100-minute film.
-  - 24 vs 23.976 is a 0.1% difference: about 3.6 s per hour.
-  - To find a video's frame rate: MediaInfo (free) shows it, or VLC Tools > Codec Information.
-  - Releases labeled PAL or European DVD are usually 25 fps; BluRay and WEB-DL releases are usually 23.976.
-- **Encoding:**
-  - "Ã©" is é saved as UTF-8 but read as Windows-1252.
-  - Central European text is usually Windows-1250, Cyrillic Windows-1251, Korean EUC-KR.
-  - Boxes in VLC can also mean the font has no such letters (VLC Preferences > Subtitles/OSD has the font and default encoding settings).
-  - Plex, Emby and Jellyfin read UTF-8 most reliably.
-  - Read `repairDoubleUtf8` and `REPAIR_UTF8` in src/lib/subs.ts before describing the "repaired" option.
-- **YouTube SBV:**
-  - YouTube Studio > Subtitles > pick the video. On the language row, open the options menu (three dots) and choose Download. YouTube offers .sbv, .srt and .vtt.
-  - Only works for videos on a channel you can sign into.
-  - This is consistent across several third-party guides but isn't official, so keep "options menu (three dots)" and avoid stating more exact labels.
+What SubFixer's code does (verified by the boss, still check before you quote it):
+- SRT and VTT output uses Windows line endings (CRLF): src/lib/subs.ts line 188.
+- The validator (`srt-validator`, issue kinds in src/lib/subs.ts around line 408) flags: empty lines, zero-length lines, lines that end before they start, too-short lines, overlaps, and lines out of order.
+- Reading speed (`subtitle-reading-speed`, src/lib/tidy.ts) measures characters per second, rewraps long lines into two rows and stretches fast lines where there is room.
+- CSV export has a BOM so Excel opens it as UTF-8 (src/lib/export.ts line 28). SRT output: check yourself whether it writes a BOM before you say anything about BOMs.
+- Whether a dot instead of a comma in an SRT timestamp (`00:00:05.000`) is accepted and fixed: check by running `parse` and `build` on a two-cue sample in a /tmp script. Write only what the output shows.
+
+Premiere Pro (phrases: "premiere pro srt import error", "the importer reported a generic error srt", "premiere pro captions won't import"):
+- Normal path: File > Import (Ctrl+I or Cmd+I), pick the .srt. Premiere 2021 and later puts it on a captions track above the video tracks.
+- "The importer reported a generic error" is the message people hit. Reported causes: a malformed timestamp (one beta showed "Parse Error: Invalid time stamp: 5.0 on line 2"), dots instead of commas in times, Mac-style line endings, a blank line at the top, characters outside the expected encoding (one report with Ukrainian text), and files from YouTube with a different time layout.
+- Import stops at the first bad line, so a file that imports only half the captions has an error where the captions stop.
+- Old captions from an earlier failed try can stay in the media cache; clearing it helped some users.
+- If captions start at 00:00 instead of the video time, the captions panel has Import Settings for start time.
+- Fix with SubFixer: run the file through /srt-validator/, then save it from any SRT tool (clean numbering, comma times, CRLF), /fix-subtitle-encoding/ for odd letters, /vtt-to-srt/ if it's really a VTT renamed to .srt.
+
+YouTube (phrases: "youtube subtitles upload failed", "youtube studio srt invalid file", "youtube sbv format"):
+- Upload path: YouTube Studio > Subtitles > pick the video > Add language or the language row > Upload file > "With timing" > pick the file.
+- Common causes: a VTT or ASS file renamed to .srt (the inside is still the old format; a file that starts with `WEBVTT` or `[Script Info]` is not SRT), a .txt extension, dots in times, missing blank lines between cues, numbering that skips.
+- SBV is YouTube's own simple format: no numbers, times like `0:00:01.000,0:00:04.000`. Download path (from the SBV pages): the options menu (three dots) on the language row > Download, which offers .sbv, .srt and .vtt, only for channels you can sign into.
+- Fix with SubFixer: /srt-validator/, /vtt-to-srt/, /ass-to-srt/, /srt-to-sbv/, /sbv-to-srt/.
+
+Jellyfin (phrases: "jellyfin subtitles wrong encoding", "jellyfin subtitles not showing", "jellyfin external subtitles"):
+- Wrong letters: the external .srt is in an old encoding (Windows-1250/1252/1251, ISO-8859-2), not UTF-8. Forum fix is to save it as UTF-8. Boxes or question marks can also mean the font lacks the letters.
+- Naming (jellyfin.org docs "External files"): the subtitle must start with the exact video file name, then an ISO language code: `Atomic Blonde.mkv` and `Atomic Blonde.en.srt`. Without a code the track shows as "Undefined". Flags: `Movie.en.forced.srt`; hearing-impaired tags `sdh`, `cc`, `hi` (10.9 and later), but `hi` alone reads as Hindi, so write `Movie.en.hi.srt`. Extra release tags in the name can stop the match. After renaming, rescan the library or refresh that item's metadata.
+- Sync: the web player has a subtitle offset for text subtitles (SRT, VTT), but it is per client and not saved in the file. Picture subtitles (PGS) can't be offset. A permanent fix is to shift the file.
+- Fix with SubFixer: /fix-subtitle-encoding/, /shift-subtitle-timing/, /sup-to-srt/ for picture subtitles. Link the Plex guide and the weird-characters guide.
+
+Subtitles too fast (phrases: "subtitles too fast", "subtitles too fast to read", "subtitle reading speed"):
+- Reading speed is measured in characters per second (CPS). Common guidance: 15 to 20 CPS is comfortable, about 21 CPS is a usual upper limit for Latin-alphabet languages. Children's content goes lower.
+- Fixes in order: give the line more time (extend its end into a gap), shorten the text, merge with a neighbour. Extending one line can squeeze the next, so check neighbours.
+- Different problem: if every line is early or late, or drift grows through the film, it's sync, not speed. Link /guides/subtitles-out-of-sync/ and /guides/23976-vs-25-fps-subtitles/.
+- Fix with SubFixer: /subtitle-reading-speed/ (check `cps` in src/lib/tidy.ts for the default limit before quoting a number), /fix-subtitle-timing/.
+
+Subtitle to transcript (phrases: "srt to text without timestamps", "convert srt to transcript", "srt to word"):
+- Tools: /srt-to-txt/, /vtt-to-txt/, /srt-to-word/, /srt-to-csv/. Read their presets in src/site.ts and the TXT/Word builders in src/lib/formats.ts and src/lib/export.ts before describing the options (joining lines, removing tags, keeping times or not).
+- Cross-link to Stayfile where a reader wants it: "To share the transcript as a PDF, paste it into Stayfile's free text to PDF tool" linking https://stayfile.app/text-to-pdf/, and for a spreadsheet of lines https://stayfile.app/csv-to-excel/. These are the only two outside links this week. No growth brief exists yet (ops/growth-brief.md is missing), so use exactly these.
+
+Samsung and LG TVs (phrases: "samsung tv subtitles not showing usb", "lg tv srt subtitles not working"):
+- The .srt must be in the same folder as the video with exactly the same base name: `Movie.mp4` and `Movie.srt`. Windows hides extensions, so a file can really be `Movie.srt.srt` or `Movie.srt.txt`; turn on "File name extensions" in File Explorer's View menu to check.
+- Turn subtitles on in the TV's playback options; re-open the folder or replug the stick after copying files.
+- A USB stick often works where a network share (DLNA) does not, with the same files. With Plex or Serviio as the server, users set the TV's profile in the server's settings.
+- Picture subtitles (PGS, VobSub) usually don't show; convert to SRT. Embedded subtitles in MP4 often fail where MKV works.
+- Garbled letters: LG's own help page recommends ANSI encoding for its TVs. Older TVs may not read UTF-8 well; say "try the other encoding if one fails". Check what encodings /fix-subtitle-encoding/ can save to before you promise one.
+- Fix with SubFixer: /sup-to-srt/, /fix-subtitle-encoding/, /vtt-to-srt/, /ass-to-srt/ (TVs read SRT most reliably).
 
 ## Day-by-day
 
-Each guide copies the structure of `src/pages/guides/subtitles-out-of-sync/index.astro`:
-- `Base` with `ogType="article"` and an `Article` jsonld,
-- an h1 and a lede, then h2 sections,
-- links to 3 or more tool pages and a "See also" to another guide.
+Every guide copies the structure of `src/pages/guides/plex-subtitles-out-of-sync/index.astro`: `Base` with `ogType="article"` and an `Article` jsonld, one h1 and a lede, 4 to 7 h2 sections, links to 3 or more tool pages, a "See also" link to another guide. Title at most 60 characters, description at most 160. At least 700 words of real text: the problem, how to tell the causes apart, the fix step by step, then the tool. Add `{ slug, title }` to the end of `GUIDES` in src/site.ts only when the guide builds and passes 700 words. Set `guide: '<slug>'` on the named tool page only if that page has no `guide` yet.
 
-Then add `{ slug, title }` to `GUIDES` in src/site.ts. Title at most 60 characters, description at most 160. At least 700 words of body text (check with `node scripts/wordcount.cjs` after the build). Follow the copy-style rules in the daily prompt. Every claim about what SubFixer does must be checked in the code first.
-
-**Example block spec (row 1 builds it; later rows fill it in):**
-- In `ToolPage`, add `example?: { before: string; after: string; note: string }` and `guide?: string` (a guide slug).
-- In `src/components/ToolPage.astro`, after "How it works", render a section: h2 "What changes in your file", `<p>{note}</p>`, then two labelled `<pre class="sample">` blocks, "Before" and "After". Add CSS: monospace, `overflow-x:auto`, small type, same block style. If `guide` is set, render a "Read the guide: <title>" link under the FAQ. Record this in ops/design.md.
-- Examples are 2 or 3 cues long.
-- Test in test/core.test.ts: import `PAGES` from `../src/site.ts`. For every page with `example` and mode `convert`, assert `build(parse(p.example.before).captions, p.preset.out).trim() === p.example.after.trim()`. Pass `{ name: 'x.<ext>' }` to parse if detection needs it. For non-convert pages, add one specific test per page using `retime`/`shiftFn`/`fpsFn`/`fixCommon` + `build`.
-- Never type the "after" by hand. Generate it by running the code, then paste it in.
+Each row is sized to finish in 40 minutes. Commit after each item, with explicit paths.
 
 | # | Run (PT) | Start (UTC) | Items |
 |---|---|---|---|
-| 1 | Sun 11-15 evening | 11-16-2026 02:17 | (a) Build the example block + `guide` field + generic convert test (spec above). Fill `example` for **srt-to-vtt** and **vtt-to-srt**. Done = tests pass, the built srt-to-vtt page shows Before/After. (b) Fix the SBV download wording on sbv-to-srt, sbv-to-vtt, sbv-to-txt and srt-to-sbv with the YouTube facts above. DONE 71119bb, fbd79b8 |
-| 2 | Mon 11-16 morning | 11-16-2026 14:17 | Guide 1: slug `sup-to-srt-guide`, title "How to convert Blu-ray SUP subtitles to SRT for free". Phrases: "sup to srt", "pgs to srt", "convert sup to srt". Sections: what SUP/PGS is; why it needs OCR; step by step on /sup-to-srt/; fixing OCR mistakes (Check and edit, plus Find and replace for a repeated error such as l read as I); getting the .sup out of an MKV (mkvextract); DVD .sub/.idx isn't supported; then converting on to VTT/ASS (/sup-to-vtt/, /sup-to-ass/). Set `guide: 'sup-to-srt-guide'` on the sup-to-srt page. DONE 757b58b |
-| 3 | Mon 11-16 evening | 11-17-2026 02:17 | (a) `example` for **ass-to-srt**, **sbv-to-srt**, **txt-to-srt**. (b) New `src/pages/guides/index.astro`: h1 "Subtitle guides", one line per guide with a one-sentence summary, path /guides/. Link it from the footer guides heading and the home Guides section. Done = /guides/ is in the sitemap. DONE 32cb232, 53de03e |
-| 4 | Tue 11-17 morning | 11-17-2026 14:17 | Guide 2: slug `plex-subtitles-out-of-sync`, title "Plex subtitles out of sync: fix the file for good". Phrase: "plex subtitles out of sync". Use the Plex facts above. Sections: why Plex's offset isn't enough; tell the three kinds of sync error apart (link the out-of-sync guide); fix the .srt (/shift-subtitle-timing/, /convert-25-fps-to-23976/, /shift-subtitles-from-a-line/); name and place the fixed file, then Refresh Metadata; embedded subtitles (extract first; picture ones need the SUP guide). Set `guide` on shift-subtitle-timing. DONE 4b4e827 |
-| 5 | Tue 11-17 evening | 11-18-2026 02:17 | `example` for **shift-subtitle-timing** (2.5 s later), **convert-25-fps-to-23976** (show times at 00:10:00 and 01:30:00 moving), **sync-subtitles**, **fix-subtitle-timing**. Each gets a specific test. DONE 80c0c4c (pulled forward into the 11-17 morning run) |
-| 6 | Wed 11-18 morning | 11-18-2026 14:17 | Guide 3: slug `subtitles-weird-characters`, title "Subtitles show Ã© or boxes instead of letters: the fix". Phrases: "subtitles weird characters", "srt encoding fix", "subtitles showing symbols". Use the encoding facts. Include a small table of symptom → likely encoding. Link /fix-subtitle-encoding/. Set `guide` on fix-subtitle-encoding and add an `example` there (a Windows-1252 é shown wrong and then right; test via `decode` or `repairDoubleUtf8`). DONE 647c4b2 (pulled forward into the 11-17 morning run) |
-| 7 | Wed 11-18 evening | 11-19-2026 02:17 | `example` for **remove-hearing-impaired-subtitles** (a line with [DOOR SLAMS] and JOHN:), **subtitle-cleaner**, **xml-to-srt**, **dfxp-to-srt**. DONE e7dfb95 (pulled forward into the 11-17 morning run) |
-| 8 | Thu 11-19 morning | 11-19-2026 14:17 | Guide 4: slug `23976-vs-25-fps-subtitles`, title "23.976 vs 25 fps: why subtitles drift, and the fix". Phrases: "subtitles drift out of sync", "25 fps to 23.976 subtitles". Use the frame-rate facts, including the worked numbers (2.46 s per minute, about 4 min at 100 min). How to find the fps (MediaInfo, VLC). MicroDVD .sub stores frames, so link /microdvd-sub-to-srt/. Set `guide` on convert-25-fps-to-23976 and change-subtitle-frame-rate. DONE 66eb7f6 (pulled forward into the 11-17 morning run) |
-| 9 | Thu 11-19 evening | 11-20-2026 02:17 | `example` for **srt-to-txt**, **ttml-to-srt**, **smi-to-srt**, **merge-subtitles** (stack mode; verify the output in code first). DONE 9734f10, 6ed1276 (pulled forward into the 11-17 morning run) |
-| 10 | Fri 11-20 morning | 11-20-2026 14:17 | Guide 5: slug `vlc-subtitle-delay`, title "VLC subtitle delay: save the fix into the file". Phrases: "vlc subtitle delay", "vlc subtitles out of sync". Use the VLC facts: keys, Track Synchronization, the sign of the delay → Too early/Too late, drift means frame rate (link guide 4). Set `guide` on shift-subtitle-timing only if guide 2 isn't already set there; otherwise on sync-subtitles. DONE d765274 (pulled forward into the 11-17 morning run; shift-subtitle-timing keeps the Plex guide, sync-subtitles got this one) |
-| 11 | Fri 11-20 evening | 11-21-2026 02:17 | `example` for **srt-to-ass**, **ass-to-vtt**, **srt-to-sbv**. Then add a link to each new guide from the matching paragraph of the older guides (srt-vtt-ass, subtitles-out-of-sync). examples DONE 509412d, 38eafd0, 3aeb8f5, guide links DONE c400a73 |
-| 12 | Sat 11-21 morning | 11-21-2026 14:17 | Guide 6: slug `dual-language-subtitles`, title "How to show two subtitle languages at once". Phrases: "dual subtitles", "merge two srt files", "two languages subtitles at the same time". Read the merge `stack` and `parts` code first: what goes on top, which players honor {\an8} (VLC, mpv; others stack both at the bottom), joining CD1 and CD2. Language learners are the audience. Link /merge-subtitles/ and set `guide` there. DONE 23bcf19 (pulled forward into the 11-17 morning run) |
-| 13 | Sat 11-21 evening | 11-22-2026 02:17 | QA sweep across all guides and example blocks: banned-word and dash scan, one h1 per page, every internal href resolves, sitemap count, `node scripts/wordcount.cjs` (each guide 700+). Fix what fails. Read every guide at 360px width in the built HTML for long `<pre>` or table overflow. Partial, done in the 11-17 morning run: dash and banned-word scan clean on all 9 guides; exactly one h1 on every guides page; every internal href in the built guide pages resolves to a page or asset in dist; sitemap lists /guides/ and all 8 guides; example blocks all locked by tests (68/68 pass). Two old guides are below 700 words and need expanding: srt-vtt-ass (about 614) and subtitles-out-of-sync (about 570). scripts/wordcount.cjs could not run here (needs approval), so counts were measured from the built HTML text nodes. Word counts fixed DONE 2febea0 (srt-vtt-ass and subtitles-out-of-sync expanded past 700). 360px: table wrapped for overflow, pre blocks already scroll DONE 3419d95. |
-| 14 | Sun 11-22 morning | 11-22-2026 14:17 | Finish anything marked not done above. If all done, take from the backlog in order. Morning metrics check as usual. Backlog 1 partial: ssa-to-ass cd895d7, microdvd-sub-to-srt and lrc-to-srt 4db7d52. Extra examples: vtt-to-ass and vtt-to-txt cd4ee85, sbv-to-vtt and txt-to-vtt 76108ea, srt-to-ssa and srt-to-dfxp a3674f6, srt-to-ttml and microdvd-sub-to-vtt fbfbbbf (36 example blocks total, all locked by tests). Backlog 2 partial: sup-to-srt a6d9c85, shift-subtitle-timing 02a3baf. Backlog 2 done this run: srt-to-vtt FAQs 4f86ab2 (shift-subtitle-timing minus-sign FAQ also in 4f86ab2). Extra: guide links f47dcc1. |
+| 1 | Fri 11-20 morning | 11-20-2026 14:17 | (a) AdSense: new page `src/pages/contact/index.astro`, path /contact/, title "Contact | SubFixer", h1 "Contact". Text: who runs it (copy the tone of /about/), email `hello@subfixer.app` as a mailto link, what to include in a bug report (browser, the format, a short sample with private lines removed), that files are never uploaded so we can't see yours, and that we reply within a few days. Add a Contact link in the footer of `src/layouts/Base.astro` line 93 next to About. Done = `dist/contact/index.html` exists and `/contact/` is in dist/sitemap-0.xml. (b) `example` on change-subtitle-frame-rate: 23.976 to 25, times at 00:10:00 and 01:30:00, generated by running the real code in /tmp, plus a specific test in test/core.test.ts. Done = 37 example blocks, `npm test` passes. |
+| 2 | Fri 11-20 evening | 11-21-2026 02:17 | Guide: slug `premiere-pro-srt-import-error`, title "Premiere Pro won't import your SRT? How to fix it". Use the Premiere facts. Sections: the generic error and what it usually means; check the file (validator); the common causes (times, line endings, blank top line, encoding, renamed VTT); half-imported captions; captions at the wrong start time; clearing the cache. Run the dot-vs-comma check in /tmp first. Set `guide` on srt-validator. |
+| 3 | Sat 11-21 morning | 11-21-2026 14:17 | Guide: slug `youtube-subtitle-upload-error`, title "YouTube won't accept your subtitle file: the fixes". Use the YouTube facts. Sections: the upload path; how to see what format the file really is (first line); renamed VTT/ASS; times and blank lines; SBV, YouTube's own format; after the upload (check timing in the preview). Set `guide` on srt-to-sbv. |
+| 4 | Sat 11-21 evening | 11-22-2026 02:17 | (a) `example` on shift-subtitles-from-a-line (cues 1 and 2 stay, cue 3 moves 2 s later) and on subtitle-reading-speed (a fast line before and after), each with a specific test. If either mode can't take a static example, use srt-to-csv instead. Done = 39 example blocks, `npm test` passes. (b) Set `guide: 'youtube-subtitle-upload-error'` on sbv-to-srt if it has no guide. |
+| 5 | Sun 11-22 morning | 11-22-2026 14:17 | Guide: slug `jellyfin-subtitles-fix`, title "Jellyfin subtitles: wrong letters, missing or out of sync". Use the Jellyfin facts. Sections: wrong letters (encoding); a table of file names that work and ones that don't; forced and SDH names; out of sync (offset vs fixing the file); picture subtitles. Link the weird-characters and Plex guides. |
+| 6 | Sun 11-22 evening | 11-23-2026 02:17 | Guide: slug `subtitles-too-fast`, title "Subtitles too fast to read? Check the reading speed". Use the reading-speed facts. Sections: what CPS is with a worked example (count a real line); comfortable limits; three fixes; when it's sync, not speed; check a whole file in one go. Set `guide` on subtitle-reading-speed. |
+| 7 | Mon 11-23 morning | 11-23-2026 14:17 | Guide: slug `subtitles-to-transcript`, title "Turn a subtitle file into a clean transcript". Use the transcript facts and the two Stayfile links. Sections: why strip times; to plain text; to Word; to a spreadsheet; tidy it first (remove hearing-impaired tags, find and replace); share it as a PDF (Stayfile link). Set `guide` on srt-to-txt. |
+| 8 | Mon 11-23 evening | 11-24-2026 02:17 | Home page: add a section "Fix a common problem" in `src/pages/index.astro`, below the tool list, with one line per problem guide (Plex, VLC, Jellyfin, Premiere, YouTube, weird letters, too fast, drift), each a link with the problem in the visitor's words ("Subtitles out of sync in Plex"). Build it from `GUIDES` if that is simpler. Done = build clean, every link resolves (`node scripts/check-links.mjs` if it runs), home page has one h1. |
+| 9 | Tue 11-24 morning | 11-24-2026 14:17 | Guide: slug `tv-subtitles-not-showing-usb`, title "TV won't show subtitles from USB? Samsung and LG fixes". Use the TV facts. Sections: name and folder (with the hidden-extension trap); turn them on; USB vs network; picture and embedded subtitles; garbled letters. |
+| 10 | Tue 11-24 evening | 11-25-2026 02:17 | QA on the six new guides and /contact/: banned-word and dash scan, one h1 each, titles at most 60 and descriptions at most 160 characters, every internal href resolves, sitemap count, 700+ words each, `<pre>` and tables wrapped for 360px. Fix what fails, one commit per fix. |
+| 11 | Wed 11-25 morning | 11-25-2026 14:17 | Two FAQs each, verified in code, on srt-validator, subtitle-reading-speed, fix-subtitle-encoding and vtt-to-srt. Each answers a question from the guides above in two sentences and links its guide. Done = tests and build pass, slug count still 70. |
+| 12 | Wed 11-25 evening | 11-26-2026 02:17 | Link each new guide from one matching paragraph in the older guides: Premiere and YouTube from srt-vtt-ass; Jellyfin from plex-subtitles-out-of-sync and subtitles-weird-characters; too fast from subtitles-out-of-sync; TV from sup-to-srt-guide. One sentence each, in context, not a list. |
+| 13 | Thu 11-26 morning | 11-26-2026 14:17 | Finish anything not DONE above, oldest first. Then the backlog in order. |
+| 14 | Thu 11-26 evening | 11-27-2026 02:17 | Finish anything not DONE above. Then the backlog in order. |
 
 ## Backlog (in order, for runs that finish early)
 
-1. More `example` blocks, in this order: ssa-to-ass, microdvd-sub-to-srt, lrc-to-srt, stl-to-srt, renumber-srt, remove-duplicate-subtitles, find-and-replace-subtitles.
-2. Two FAQs each, verified in code, on the top pages: sup-to-srt, shift-subtitle-timing, srt-to-vtt.
-3. scripts/report.mjs prints "Visitors yesterday: undefined" when yesterday's visitors cell is blank. Print "not counted yet" instead. It's a script, not a workflow, so you may edit it, but don't touch .github/.
-4. Saved presets, behind a flag (the first Pro feature): store the last mode and its settings in localStorage under `subfixer.presets`, read them only when `?pro=1` is in the URL, and show no pricing. Unit-test the serialize/parse functions. Only start this after targets 1 and 2 are met.
+Take one item, finish it, commit, then the next. Don't ask the boss for work until all of these are DONE.
+
+1. Pull the next guide row forward (the rows are independent). This beats any other backlog item.
+2. Guide: slug `burn-subtitles-vs-soft-subtitles`, title "Soft vs burned-in subtitles: which one you have". How to tell (can you turn them off), why burned-in can't be fixed with a file, picture vs text tracks. Links /sup-to-srt/, /srt-vtt-ass/ guide, /preview-subtitles-with-video/. Use only facts you can check in this repo's guides and code.
+3. Guide: slug `remove-sdh-from-subtitles`, title "Remove [music] and speaker names from subtitles". Built around /remove-hearing-impaired-subtitles/: read its options in code and show a before and after generated by the real code.
+4. `example` blocks, in order: srt-to-csv, srt-to-word (only if its output is text you can show), batch-convert-subtitles (skip if it can't take one).
+5. FAQ on srt-to-csv: "The CSV opens in one column in Excel" with a link to https://stayfile.app/guides/csv-opens-in-one-column-in-excel/. Check first that the CSV has a BOM and commas (src/lib/export.ts).
+6. Pro readiness, behind the flag only: in batch-convert-subtitles, when `?pro=1` is set, offer the saved preset from `subfixer.presets`. Unit-test the part that picks the preset. No pricing, no checkout.
 
 ## Cut this week, and why
 
-- **New converter (X-to-Y) pages:** there are 45 already, and nothing is indexed. More template pages raise AdSense's thin-content risk and earn nothing until indexing starts.
-- **Render or emulator checks of the footer fold:** headless Chromium can't run here. Three runs tried and none could finish.
-- **Re-checking SBV menus:** done by the planner above.
-- **Paid-tier checkout or pricing:** the trigger is at 8%. Only backlog item 4 is allowed, and only late.
-- **Owner questions about the 404 page and scratch files:** closed. /nonexistent/ returns the custom 404 with status 404. Leave scripts/wordcount.cjs (it's useful) and test/scratch-ssa.ts in place, and don't spend time on them.
+- New converter (X-to-Y) pages: CEO order, and they raise the AdSense thin-content risk. Slug count stays 70.
+- DaVinci Resolve SRT guide: sources disagree about what Resolve imports by version, and wrong facts in a guide cost trust. Dropped until the boss can verify it.
+- Kodi subtitle offset guide: no clear answer on saving the offset; not enough facts.
+- More example blocks beyond 39: done enough for the review; each one moves no search traffic.
+- Hire requests: the CEO's worker budget is 0.
 
 ## Guardrails (seen this week)
 
-- **Match rows by UTC.** Evening runs start at 02:17 UTC on the next UTC date (the 11-16-2026 02:17 run is "Sun 11-15 evening").
-- **Web search, WebFetch and headless browsers are blocked** for daily runs. Don't try them, and don't log "blocked again". The facts you need are in this file.
-- **`rm` is blocked.** Don't try to delete files. Put probes in /tmp, never in the repo.
-- **Stage with explicit paths only** (`git add src/site.ts test/core.test.ts`), never `git add -A` or `.`.
-- **Don't edit** ops/metrics.csv, ops/costs.json, ops/roadmap.md or anything in .github/.
-- **Don't spend a run only reading.** On 11-13-2026 a run read files for its whole budget. Read only the files your row names, start editing within 10 minutes, and commit after each item.
-- **site.ts is 1,400+ lines.** Edit with a unique `old_string` (the slug line plus the next line). If an Edit fails twice, run `git checkout -- src/site.ts`, note it and move on.
-- **Never claim a feature without checking the code.** Last week many copy fixes undid invented claims (folders, batch limits, offline use, every-player support). The same rule applies to the guides.
-- **A half-written guide must not go into `GUIDES`.** Commit a guide only when it builds and meets 700 words.
-- **Metrics:** sum the visitors column for 30 days and count blanks as 0. No decision issue unless 300 (ads) or 1,000 (Pro) is reached.
+- Find your row by Pacific date and hour. The 11-21-2026 02:17 UTC run is row 2, "Fri 11-20 evening".
+- Ship first, in small commits. Runs die at the cap and lose anything uncommitted. Commit each finished item at once, with explicit paths (`git add src/site.ts test/core.test.ts`), never `git add -A` or `.`.
+- Never Read all of src/site.ts. It is 1,400+ lines; use Grep with `-n` to find the slug, then Read with offset and limit (about 40 lines). A long Read hung for 9 minutes on 11-20.
+- If the API says "overloaded" again and again, keep going with the smallest item in your row; don't restart the row.
+- Write a guide in one go: draft the whole .astro file with Write, then build, then count words. Don't make many small Edits to a new file.
+- Don't ask the boss for work while the backlog has items. Ask only when something is blocked or unclear, at most twice per run.
+- Web search, WebFetch and headless browsers are blocked for daily runs. The facts you need are above. If a fact you need is missing, leave the claim out.
+- `rm` is blocked. Put probes in /tmp, never in the repo.
+- Don't edit ops/metrics.csv, ops/costs.json, ops/roadmap.md, src/noindex.mjs or anything in .github/.
+- If an Edit to src/site.ts fails twice, run `git checkout -- src/site.ts`, note it in the row and move on.
+- Never claim a feature the code doesn't have. Run the code in /tmp to check outputs; never type a "before and after" by hand.
+- A half-written guide must not go into `GUIDES`. Add it only when it builds and has 700+ words.
+- Metrics: sum the visitors column for 30 days, blanks count as 0. No decision issue unless 300 (ads) or 1,000 (Pro) is reached.

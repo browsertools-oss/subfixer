@@ -9,16 +9,10 @@ const jsonld = [
     '@type': 'ContactPage',
     'name': 'Contact',
     'description': 'Get in touch with the person behind SubFixer. Report a bug, ask a question, or suggest a feature.',
-    'url': 'https://subfixer.app/contact/',
-    'mainEntity': {
-      '@type': 'Organization',
-      'name': 'SubFixer',
-      'email': 'hello@subfixer.app',
-      'url': 'https://subfixer.app/'
-    }
+    'url': 'https://subfixer.app/contact/'
   }
 ];
-const ogType = 'article' as const;
+const ogType = 'website' as const;
 ---
 <Base title={title} description={description} path={path} jsonld={jsonld} ogType={ogType}>
   <div class="guide">
@@ -33,15 +27,15 @@ const ogType = 'article' as const;
     <ul class="plainlist spaced">
       <li>Your browser and version (e.g., Chrome 130, Firefox 132, Safari 18)</li>
       <li>The input format (SRT, VTT, ASS, etc.) and the output format you chose</li>
-      <li>A short sample of the subtitle file (10–20 lines) with any private text removed</li>
+      <li>A short sample of the subtitle file (10 to 20 lines) with any private text removed</li>
       <li>What you expected to happen and what happened instead</li>
     </ul>
-    <p>Files never leave your device, so I cannot see your file unless you paste or attach a sample.</p>
+    <p>A sample you choose to email is shared with us; files you open in the tools never leave your device.</p>
 
     <h2>Feature requests</h2>
     <p>If there is a format you need or a fix that would save you time, describe the problem you are trying to solve. The clearest requests come with a real example.</p>
 
     <h2>Other questions</h2>
-    <p>Licensing, attribution, or anything else — just ask. The tool is free and runs entirely in your browser.</p>
+    <p>Licensing, attribution, or anything else: just ask. The tool is free and runs entirely in your browser. The <a href="/about/">about page</a> says more about the project, and the <a href="/privacy/">privacy page</a> explains what the site collects.</p>
   </div>
 </Base>

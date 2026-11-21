@@ -36,6 +36,7 @@ export const GUIDES = [
   { slug: 'youtube-subtitle-upload-error', title: "YouTube won't accept your subtitle file: the fixes" },
   { slug: 'jellyfin-subtitles-fix', title: 'Jellyfin subtitles: wrong letters, missing or out of sync' },
   { slug: 'subtitles-too-fast', title: 'Subtitles too fast to read? Check the reading speed' },
+  { slug: 'subtitles-to-transcript', title: 'Turn a subtitle file into a clean transcript' },
 ];
 
 const PRIVACY_FAQ = {
@@ -614,6 +615,7 @@ export const PAGES: ToolPage[] = [
     slug: 'srt-to-txt',
     mode: 'convert',
     group: 'Convert',
+    guide: 'subtitles-to-transcript',
     preset: { out: 'txt' },
     title: 'SRT to TXT: turn subtitles into a plain text transcript',
     h1: 'Convert SRT to plain text',

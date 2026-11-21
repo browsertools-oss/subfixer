@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = 'Turn a subtitle file into a clean transcript';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Strip the timestamps from a subtitle file, join the lines into readable text, and export it as plain text, Word or a spreadsheet. Share it as a PDF if you need one." path="/guides/subtitles-to-transcript/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Strip the timestamps from a subtitle file and export the text as plain text, Word or a spreadsheet, then make a PDF if you need one." path="/guides/subtitles-to-transcript/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">A subtitle file is built for timing. Each line is a caption that appears for a few seconds. A transcript is built for reading: it is the words in order, without the times, without the hearing-impaired markers, and with the lines joined into paragraphs where it makes sense. This guide walks through the tools that do each step.</p>
@@ -12,26 +12,30 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>A caption file repeats time codes on every line. For reading, searching, quoting or pasting into another document, those times are noise. A transcript keeps the words and drops the timing. You can also keep a prefix with the time of each line if you want a timed transcript for reference, but the main use is a clean text block.</p>
 
     <h2>To plain text</h2>
-    <p>The <a href="/srt-to-txt/">SRT to text</a> page reads SRT, VTT, ASS, SSA, SBV and other formats and writes plain text. Under Save as, choose "Plain text" for just the words, or "Text with times" to put the start and end of each line in brackets at the front of the line. The tool strips formatting tags and hearing-impaired brackets, and it joins each caption into one line. Line breaks inside a caption become spaces, so a two-row caption reads as one sentence.</p>
-    <p>If your file is VTT, the <a href="/vtt-to-txt/">VTT to text</a> page does the same thing with a VTT preset. The output is the same; the only difference is the starting format.</p>
+    <p>The <a href="/srt-to-txt/">SRT to text</a> page reads SRT, VTT, ASS, SSA, SBV and other formats and writes plain text. Under Save as, choose "Plain text" for just the words, or "Text with times" to put the start and end of each line in brackets at the front of the line. The text output strips formatting tags such as <code>&lt;i&gt;</code> and ASS codes such as <code>&#123;\an8&#125;</code>, and it joins each caption into one line. Line breaks inside a caption become spaces, so a two-row caption reads as one sentence.</p>
+    <p>If your file is VTT, the <a href="/vtt-to-txt/">VTT to text</a> page does the same job. The output is the same; the only difference is the starting format.</p>
 
     <h2>To Word</h2>
-    <p>The <a href="/srt-to-word/">SRT to Word</a> page writes a .docx file. Each caption becomes a paragraph. The file has a single style, no bold or italics, so it opens in Word, Google Docs, LibreOffice and Pages without a font mismatch. The text is the same as the plain text export: tags stripped, line breaks in a caption turned into spaces, hearing-impaired markers removed. A time prefix is optional; when you enable it, each paragraph starts with the line's start and end in brackets.</p></p>
+    <p>The <a href="/srt-to-word/">SRT to Word</a> page writes a .docx file in one of two forms. "Word, as text" puts each caption in its own paragraph. The words are the same as the plain text export, except that a line break inside a caption stays a line break. The file starts with a bold title line and uses no other styling, so it opens in Word and most other word processors.</p>
+    <p>"Word, as a table" puts each caption in a row with its number, start time, end time and text. That layout is handy for translation and review, because you can see the timing next to each line.</p>
 
     <h2>To a spreadsheet</h2>
-    <p>If you need each caption in its own cell, the <a href="/srt-to-csv/">SRT to CSV</a> page writes a CSV file. Each row has the number, start time, end time, duration in seconds, and the text. The file has a UTF-8 BOM so Excel opens it as UTF-8 without a prompt, and commas are the separator. If you open it in Excel and the lines appear in one column, the <a href="https://stayfile.app/guides/csv-opens-in-one-column-in-excel/">Stayfile guide</a> explains the fix.</p>
+    <p>If you need each caption in its own cell, the <a href="/srt-to-csv/">SRT to CSV</a> page writes a CSV file. Each row has the number, start time, end time, duration in seconds, and the text. The file has a UTF-8 byte order mark, so Excel reads it as UTF-8, and commas are the separator. If you open it in Excel and the lines appear in one column, the <a href="https://stayfile.app/guides/csv-opens-in-one-column-in-excel/">Stayfile guide</a> explains the fix.</p>
     <p>For an .xlsx file directly, the <a href="/srt-to-excel/">SRT to Excel</a> page writes the same table as an Excel workbook. The columns are the same, and the file is a real .xlsx, not a renamed CSV.</p>
 
     <h2>What each export keeps and drops</h2>
-<p>Plain text and Word exports keep the words in order, with tags, brackets and speaker names removed, and line breaks inside a caption turned into spaces. CSV and Excel keep the timing columns as well as the text column. None of the exports keep the original formatting such as italics, position or colour, because the plain text formats do not store them.</p>
+    <p>Every text export keeps the words in order and drops formatting tags, so italics, position and colour are gone. Plain text joins each caption into a single line. The Word file keeps a line break inside a caption, as described above. The Word table, the CSV and the Excel file keep the timing columns, and the CSV, the Excel file and the Word table also keep the caption number.</p>
 
     <h2>Tidy it first</h2>
     <p>A raw subtitle file often has lines that are not meant for reading. Hearing-impaired markers such as <code>[DOOR SLAMS]</code>, speaker names such as <code>JOHN:</code>, music notes and italics tags are all things you usually do not want in a transcript. Two tools handle them.</p>
-    <p>The <a href="/remove-hearing-impaired-subtitles/">remove hearing impaired subtitles</a> tool has checkboxes for brackets, speakers, music markers and tags. Tick the ones you want gone, and the tool writes a cleaned file. The <a href="/find-and-replace-subtitles/">find and replace</a> tool takes it further: tick Use patterns, untick Whole words only, and put <code>\{</code> followed by a pattern that matches any characters except <code>}</code>, then <code>}</code> in Find with an empty Replace to strip ASS override tags in bulk, or a pattern that matches HTML tags in Find with an empty Replace to strip HTML tags.</p>
+    <p>The <a href="/remove-hearing-impaired-subtitles/">remove hearing impaired subtitles</a> tool removes sound descriptions in brackets, speaker names and music lines. Those three are ticked already, and you can untick any you want to keep. The <a href="/subtitle-cleaner/">subtitle cleaner</a> also has an option for formatting tags such as <code>&lt;i&gt;</code> and font tags.</p>
+    <p>The <a href="/find-and-replace-subtitles/">find and replace</a> tool takes it further. Tick "Use patterns (regular expressions)" and untick "Whole words only", then put one of these in Find and leave Replace empty:</p>
+    <p>For ASS override tags such as <code>&#123;\i1&#125;</code>: <code>\&#123;[^&#125;]*\&#125;</code></p>
+    <p>For HTML-style tags such as <code>&lt;i&gt;</code> or <code>&lt;font color="#ffff00"&gt;</code>: <code>&lt;[^&gt;]+&gt;</code></p>
     <p>After the file is clean, run it through one of the export tools above. The order is: clean first, then export.</p>
 
     <h2>Share it as a PDF</h2>
-    <p>If you need the transcript as a PDF, paste the plain text output into Stayfile's free <a href="https://stayfile.app/text-to-pdf/">text to PDF</a> tool. For a spreadsheet of lines, use Stayfile's <a href="https://stayfile.app/csv-to-excel/">CSV to Excel</a> tool. These are the only two outside links in this guide.</p>
+    <p>If you need the transcript as a PDF, paste the plain text output into Stayfile's free <a href="https://stayfile.app/text-to-pdf/">text to PDF</a> tool. For a spreadsheet of lines, use Stayfile's <a href="https://stayfile.app/csv-to-excel/">CSV to Excel</a> tool.</p>
 
     <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a> covers which format each tool reads and what survives a conversion.</p>
   </article>

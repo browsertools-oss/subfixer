@@ -601,6 +601,13 @@ test('change-subtitle-frame-rate example: 23.976 to 25 scales every time by 2400
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
+test('shift-subtitles-from-a-line example: cues 1 and 2 stay, cue 3 moves 2 s later', () => {
+  const page = PAGES.find((p) => p.slug === 'shift-subtitles-from-a-line');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const out = build(retime(d.captions, shiftFn(2000), d.captions[2].start), 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
 test('sync-subtitles example: two pinned points, everything else stretches to fit', () => {
   const page = PAGES.find((p) => p.slug === 'sync-subtitles');
   const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });

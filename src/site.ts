@@ -333,6 +333,7 @@ export const PAGES: ToolPage[] = [
     slug: 'sbv-to-srt',
     mode: 'convert',
     group: 'Convert',
+    guide: 'youtube-subtitle-upload-error',
     preset: { out: 'srt' },
     title: 'SBV to SRT converter: YouTube captions to SRT',
     h1: 'Convert YouTube SBV to SRT',
@@ -403,6 +404,10 @@ export const PAGES: ToolPage[] = [
       'Under "Shift timing", set "Starting at line" to the first line that is wrong.',
       'Enter the offset for that line, check the preview, and download.',
     ],
+    example: {
+      before: '1\n00:00:01,000 --> 00:00:03,000\nFirst line\n\n2\n00:00:04,000 --> 00:00:06,000\nSecond line\n\n3\n00:00:08,000 --> 00:00:10,000\nThird line\n',
+      after: '1\n00:00:01,000 --> 00:00:03,000\nFirst line\n\n2\n00:00:04,000 --> 00:00:06,000\nSecond line\n\n3\n00:00:10,000 --> 00:00:12,000\nThird line\n',
+    },
     faq: [
       {
         q: 'Why would subtitles go wrong halfway through?',

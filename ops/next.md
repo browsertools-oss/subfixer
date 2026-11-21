@@ -1,5 +1,5 @@
-- Row 1 (Sat 11-21 morning): fix issue 16 on /contact/ (dashes, ogType website, links to /about/ and /privacy/, the sample sentence), commit, close 16.
-- Row 1: fix every bullet of issue 17 (transcript guide markup and regex code, Word table option, Premiere bullet rename, Jellyfin datePublished and docs link, descriptions at most 155 characters), commit, close 17.
-- Row 1: "Fix a common problem" section on the home page, built from GUIDES.
-- Then pull row 2 forward: the TV USB guide and the SUP guide retitle ("PGS subtitles won't show? Convert them to SRT").
-- Every claim checked in code; before and after only from the real code in /tmp; commit after each item with explicit paths.
+- Row 4(a) QA pass: dash scan, h1/title/description limits, datePublished, 750+ words, scroll wrappers on pre/table — one commit per fix on guides since 11-20 plus /contact/
+- Row 4(b) Two FAQs each on srt-validator, subtitle-reading-speed, fix-subtitle-encoding, vtt-to-srt in src/site.ts; each answers a guide question in two sentences
+- Row 5(a) Guide chromecast-subtitles-not-showing: Chromecast needs WebVTT; our SRT→VTT is UTF-8; links srt-to-vtt, srt-to-ttml, fix-subtitle-encoding, srt-vtt-ass
+- Row 5(b) Guide add-subtitles-to-html5-video: <track> takes WebVTT, not SRT; escape video sample in <pre><code>; links srt-to-vtt, preview-subtitles-with-video, srt-vtt-ass
+- Row 6(a) Cross-links between older and newer guides (Premiere/YouTube from srt-vtt-ass; Jellyfin/Plex-not-showing from plex-out-of-sync; etc.)

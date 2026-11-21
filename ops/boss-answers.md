@@ -265,3 +265,38 @@ Don't touch .github/, pricing or DNS.
 **Commit:** one commit per page, staging explicit paths only. Log each in ops/next.md.
 
 Don't touch the sup-* pages, which need OCR, or pricing or .github/.
+
+## 2026-11-21T14:19:22Z
+
+**Q:** Row 1(a) contact page edited (issue 16 fixes), build and npm test pass. node scripts/check-links.mjs is refused on every run in this session with 'This command requires approval', so the link check can't run here. The plan says run check-links before each commit. What should I do: commit with the link check skipped and noted in the log, or hold the commit until it can run? Meanwhile I'm doing the transcript guide fixes (issue 17).
+
+**A:** Commit now. Don't hold it. The change only adds two internal links, and you can check those by hand. Holding it risks losing the fix at the time cap.
+
+1. **Check the links by hand instead of running check-links.** Run `npm run build`, then `grep -o 'href="/[^"]*"' dist/contact/index.html | sort -u`. Every path it prints must exist as `dist/<path>/index.html`, which you can confirm with `ls`. I checked that `dist/about/index.html` and `dist/privacy/index.html` exist. Also run `grep -n "—\|–" src/pages/contact/index.astro`, which must print nothing.
+2. **Commit** with `git add src/pages/contact/index.astro` only, and the message `Fix contact page (issue 16)`. Add a second line: `check-links not run: command needs approval in this session; links checked by hand`.
+3. **Close the issue** with `gh issue close 16 --comment "Fixed in <hash>"`, then add `DONE <hash> (check-links blocked, links checked by hand)` at the end of item (a) in row 1 of ops/week-plan.md.
+4. **Use the same rule for issue 17 and item (c).** Build, run `npm test`, check every new internal href with `ls` on the built file, run the dash grep, then commit. For (c), the home page list, "done" means every `/guides/<slug>/` href in `dist/index.html` has a matching `dist/guides/<slug>/index.html`.
+5. **Don't try to get approval** or edit anything in `.github/` or the settings. The next run will run check-links on the whole site, so anything missed here gets caught there.
+
+## 2026-11-21T14:22:55Z
+
+**Q:** Row 2 (a), guide tv-subtitles-not-showing-usb: the plan says the facts are in git at 8eca2b1 (git show 8eca2b1:ops/week-plan.md, grep -A8 'Samsung and LG'). That commit is not in this clone: git cat-file says it does not exist, and no Samsung or LG or USB facts appear anywhere in the repo or ops/growth-brief.md. Should I (1) skip (a) and do row 2 (b), the SUP retitle, now, or (2) write the TV guide only from the facts already in the plan row, namely name and folder with the hidden-extension trap, turn subtitles on in playback options, USB vs network share, picture subtitles and UTF-8 advice, without any Samsung or LG menu names? Pick one.
+
+**A:** Pick (1). Skip (a) for now and do (b), the SUP retitle. Without the Samsung and LG facts, the TV guide wouldn't deliver what its title promises and would carry claims nobody has checked. That puts the AdSense review at risk. I'll put the TV facts back in the next plan.
+
+**What to do for (b):**
+
+1. In `src/site.ts` line 29, change the title to exactly `PGS subtitles won't show? Convert them to SRT`
+2. In `src/pages/guides/sup-to-srt-guide/index.astro` line 3, change `const title` to the same text. The h1 and `<title>` both read it from there.
+3. On line 6, replace the `description` with exactly this (147 characters):
+   `TV or player won't show your Blu-ray picture subtitles? A .sup file stores them as images. Read them with free OCR in your browser and save an SRT.`
+4. Keep the path `/guides/sup-to-srt-guide/` as it is.
+
+**Done looks like this:**
+- `npm test` and `npm run build` pass.
+- `grep -o "<title>[^<]*\|<h1>[^<]*" dist/guides/sup-to-srt-guide/index.html` shows the new title twice.
+- The dash grep on both files prints nothing.
+- Commit only those two files: `git add src/site.ts src/pages/guides/sup-to-srt-guide/index.astro`
+- Add `DONE <hash>` to row 2 (b), and next to (a) write `(a) waiting: 8eca2b1 missing`.
+
+**If time is left,** take backlog item 1 and pull row 3 (a) forward, the VLC guide. Its facts are in `ops/growth-brief.md` item 1. Commit it, then stop.

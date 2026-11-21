@@ -1,0 +1,50 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = "Plex not finding your SRT? Fix the name and the file";
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Plex does not show your external subtitle file. The name has to match exactly, the library agent needs the right source, and the file itself must be real SRT in UTF-8." path="/guides/plex-subtitles-not-showing/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">You put an .srt file next to the video, but Plex does not list it as a subtitle track. This is the most common Plex subtitle problem, and it almost always comes down to the file name, the library agent settings, or the file itself. This guide walks through each one in the order that fixes it for most people.</p>
+
+    <h2>1. The file name has to match exactly</h2>
+    <p>Plex matches an external subtitle to a video by name. The subtitle file must start with the exact name of the video file, then a language code, then <code>.srt</code>. For a video named <code>Movie (2020).mkv</code>, the subtitle should be <code>Movie (2020).en.srt</code>. The language code (<code>.en</code>, <code>.es</code>, <code>.fr</code>) is required for the track to show its language in the menu; without it, the track appears as "Undefined" and is easy to miss.</p>
+    <p>Extra text in the file name stops the match. A file named <code>Movie (2020).BluRay.1080p.en.srt</code> will not attach, because Plex expects the base name to be exactly the video name plus the language code. Rename the file to the plain video name plus the language code.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Subtitle file name</th><th>What Plex does</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Movie (2020).en.srt</code></td><td>Attaches as English. This is the form to use.</td></tr>
+          <tr><td><code>Movie (2020).srt</code></td><td>Attaches, but the track shows as Undefined.</td></tr>
+          <tr><td><code>Movie (2020).en.forced.srt</code></td><td>Attaches as a forced track.</td></tr>
+          <tr><td><code>Movie (2020).en.sdh.srt</code></td><td>Attaches as hearing impaired. The tags <code>cc</code> and <code>hi</code> work the same way.</td></tr>
+          <tr><td><code>Movie (2020).hi.srt</code></td><td>The bare code <code>hi</code> reads as Hindi, not hearing impaired.</td></tr>
+          <tr><td><code>Movie (2020).BluRay.1080p.en.srt</code></td><td>Extra release tags stop the match. Rename to the plain video name plus language code.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>2. Enable Local Media Assets for the library</h2>
+    <p>In Plex Web, go to the library's settings (three dots next to the library name > Edit > Advanced) and make sure "Local Media Assets (Movies)" or "Local Media Assets (TV Shows)" is checked and dragged near the top of the agent source list. If it is unchecked, Plex will not scan for external subtitle files at all. This setting is per library, so check each one.</p>
+
+    <h2>3. Refresh the right item, not the whole library</h2>
+    <p>After you add or rename the subtitle file, open the movie or episode in Plex, click the three-dot menu, and choose Refresh Metadata. A full library refresh sometimes does not pick up the new file, but an item-level refresh does. If the track still does not appear, run Analyze on that item as well (same menu). The track should then appear in the subtitle menu with its language label.</p>
+
+    <h2>4. The file might not be real SRT, or it is not UTF-8</h2>
+    <p>Open the file in a plain text editor. If the first line says <code>WEBVTT</code> or <code>[Script Info]</code>, the file is VTT or ASS with an .srt name. Convert it with the <a href="/vtt-to-srt/">VTT to SRT</a> tool or the <a href="/ass-to-srt/">ASS to SRT</a> tool.</p>
+    <p>If the file is SRT but accents show as <code>Ã©</code> or other wrong letters, the encoding is not UTF-8. The <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool reads the file in its original encoding and saves it as UTF-8. Plex expects UTF-8, and a file in another encoding can fail to load or show wrong letters.</p>
+    <p>Run the file through the <a href="/srt-validator/">SRT validator</a> to catch other problems: blank lines that should not be there, times written with dots instead of commas, or numbering that is out of order. The validator lists each problem with the line it sits on.</p>
+
+    <h2>5. Some players drop external SRT in Direct Play</h2>
+    <p>User reports on the Apple TV and Fire TV apps say that external SRT tracks do not appear when the video plays in Direct Play. Try forcing a transcode (change the quality setting on the player) to see if the track appears. If it does, the file and the name are correct, and the issue is the player app. In that case, the fix is still to correct the file and name; the player limitation is a separate bug you cannot fix from the server.</p>
+
+    <h2>The same idea applies on Jellyfin</h2>
+    <p>Jellyfin matches external subtitle files by name in the same way. The <a href="/guides/jellyfin-subtitles-fix/">Jellyfin guide</a> has a naming table and covers the encoding fix with the same tool.</p>
+
+    <p>See also: <a href="/guides/plex-subtitles-out-of-sync/">Plex subtitles out of sync: fix the file for good</a></p>
+  </article>
+</Base>

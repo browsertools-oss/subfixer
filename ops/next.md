@@ -1,5 +1,5 @@
-- Row 8: Home page "Fix a common problem" section with links to all eight problem guides (built from GUIDES)
-- Row 9: Guide "TV won't show subtitles from USB? Samsung and LG fixes"
-- Row 10: QA on the six new guides and /contact/: word counts, titles, descriptions, links, phone layout
-- Row 11: Two FAQs each on srt-validator, subtitle-reading-speed, fix-subtitle-encoding, vtt-to-srt
-- Row 12: Cross-link new guides from older guides (Premiere/YouTube from srt-vtt-ass; Jellyfin from plex/weird-chars; too-fast from out-of-sync; TV from sup-to-srt-guide)
+- Row 1 (Sat 11-21 morning): fix issue 16 on /contact/ (dashes, ogType website, links to /about/ and /privacy/, the sample sentence), commit, close 16.
+- Row 1: fix every bullet of issue 17 (transcript guide markup and regex code, Word table option, Premiere bullet rename, Jellyfin datePublished and docs link, descriptions at most 155 characters), commit, close 17.
+- Row 1: "Fix a common problem" section on the home page, built from GUIDES.
+- Then pull row 2 forward: the TV USB guide and the SUP guide retitle ("PGS subtitles won't show? Convert them to SRT").
+- Every claim checked in code; before and after only from the real code in /tmp; commit after each item with explicit paths.

@@ -1,9 +1,9 @@
-# Foreman report 11-20-2026
+# Foreman report 11-21-2026
 
-Yesterday's runs: 11-20 02:17 UTC (11-19 evening) failed after 1h03m (a Read hung 9+ minutes, nothing shipped); 11-19 14:17 failed at 47m; 11-19 02:17 failed at 1h12m. Last success was 11-18 14:17. No worker commits in the last 26 hours except the boss-answers update; the boss's replan landed after that run.
+Yesterday's runs: 11-20 14:17 UTC (morning) failed at 1h03m with no commits; 11-21 02:17 UTC (evening, paid model) finished in 40m and shipped seven items (five guides: Premiere, YouTube, Jellyfin, too fast, transcript; two examples; 74/74 tests pass, 88 pages). Four free-model runs before it failed at the time cap.
 
-Plan check: nothing in the new plan is marked DONE (the 5 "DONE" hits are plan text). Confirmed in code: 36 example blocks, no /contact/ page yet, so row 1 is unstarted and accurate. No open `qa` issues.
+Plan check: the boss's new plan has nothing marked DONE yet; row 1 (contact page, QA issues 16 and 17, home page list) is unstarted. Open `qa` issues 16 and 17 are both still open and are already row 1's first items. The evening run's DONE marks were in the old plan, and its commits exist (125f69e, ba14f7d, f2603ab and others).
 
-Plan changes: row 1 now says to do the contact page first and commit it before the example block (so a timeout can't lose the AdSense item), and I added a guardrail about the site.ts Read hang and committing after every item.
+Plan changes: one edit to row 1(b): the last bullet of issue 17 (examples vs real output) is covered by the existing tests, so the worker just runs `npm test` and says so when closing. Also told the worker to commit after each of (a), (b), (c) on a free model. Guardrails already cover the earlier failures.
 
-Needs the boss: three of the last four runs failed by timeout/hang. If today's morning run fails too, the 40-minute rows may still be too big for the free model, or the hang needs a workflow fix (outside my scope).
+Needs the boss: none. Watch today's 14:17 UTC run: it is on the paid model until 11-27; after that, free-model runs have failed at the cap, so rows 15 and 16 may need smaller steps.

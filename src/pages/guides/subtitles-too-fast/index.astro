@@ -1,0 +1,39 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Subtitles too fast to read? Check the reading speed';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Subtitles flash by too quickly? Reading speed is measured in characters per second. Count a line, compare it with the limit, and fix the lines that are over it." path="/guides/subtitles-too-fast/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">A subtitle can be in sync and still be too fast to read. The line is on screen, but there is not enough time to take in every word. This guide explains how reading speed is measured, what a comfortable limit looks like, and the three fixes that work on the file itself.</p>
+
+    <h2>What characters per second means</h2>
+    <p>Reading speed is measured in characters per second, or CPS. It is the number of characters in a line, spaces included, divided by the number of seconds that line stays on screen. A higher number means the viewer has less time per character.</p>
+    <p>Take the line <em>Where are you going tonight?</em>. Counting every character, spaces and the question mark included, it has 28. At the default limit of 17 characters a second in <a href="/subtitle-reading-speed/">the reading speed tool</a>, that line needs 28 ÷ 17, which is 1.65 seconds on screen. If the caption is only up for 1.2 seconds, it runs at about 23 CPS, and most viewers will miss part of it.</p>
+    <p>Two things change the number. One is the length of the line, so a long sentence needs more time. The other is the time the line is on screen, which is set by its start and end times. Fixing a fast line means changing one of those two things.</p>
+
+    <h2>What a comfortable limit looks like</h2>
+    <p>Common guidance puts comfortable reading at about 15 to 20 characters a second. A limit of about 21 is a usual upper limit for Latin-alphabet languages, and it is the number many subtitle editors use. Children's programmes are usually timed more slowly, so a lower limit makes sense there.</p>
+    <p>The reading speed tool offers four limits: 15 characters a second for relaxed reading, 17 (the default), 20, and 25 for quick reading. A limit of 25 is useful for a quick check, but a line that passes at 25 may still feel rushed to a slow reader. For a film with many lines of dialogue, 17 or 20 is a more realistic target.</p>
+
+    <h2>Three fixes, in order</h2>
+    <p>Start with the cheapest fix. Each one changes less of the file than the one after it.</p>
+    <ol>
+      <li><strong>Give the line more time.</strong> Extend its end time into the gap before the next line. This needs no change to the text, and it is often enough. Check the next line after you extend, since a longer line can squeeze the one after it.</li>
+      <li><strong>Shorten the text.</strong> Cut words that repeat the picture or the line before it. Keep the meaning, and keep the line the way the speaker said it where you can.</li>
+      <li><strong>Merge it with a neighbour.</strong> Two short lines from the same speaker, shown back to back, can become one line with the same total time. This suits lines that are fast only because they are split.</li>
+    </ol>
+    <p>The reading speed tool does the first fix on its own where there is room. It extends a fast line into the gap after it, and it rewraps a long line into two even rows. Any line it cannot stretch is still listed, so you can fix it by hand in the editor.</p>
+
+    <h2>When the problem is sync, not speed</h2>
+    <p>Speed and sync look alike. A subtitle is fast when the text is correct but crowded into too little time. A subtitle is out of sync when the text comes early or late compared with the speaker. If every line is early or late by the same amount, the file is out of sync, and extending lines will not help.</p>
+    <p>If the gap grows as the film plays, the cause is usually a frame-rate mismatch rather than speed. The <a href="/guides/23976-vs-25-fps-subtitles/">23.976 vs 25 fps guide</a> explains how to check it. For a fixed offset, use the <a href="/shift-subtitle-timing/">shift subtitle timing</a> tool. The <a href="/guides/subtitles-out-of-sync/">out of sync guide</a> helps you tell the two problems apart before you change anything.</p>
+
+    <h2>Check the whole file in one go</h2>
+    <p>Fixing one line at a time is slow, so check the whole file first. Load it into <a href="/subtitle-reading-speed/">the reading speed checker</a>, pick the limit you want, and read the list of lines that are over it. Each entry names the line, so you can go straight to it.</p>
+    <p>After the lines are fixed, use <a href="/fix-subtitle-timing/">fix subtitle timing</a> to close any overlaps that the extensions created. Then download the file. Keep the original too, so you can compare the two if a line looks wrong.</p>
+
+    <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a> covers what each format keeps when you edit a file.</p>
+  </article>
+</Base>

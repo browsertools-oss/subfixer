@@ -35,6 +35,7 @@ export const GUIDES = [
   { slug: 'premiere-pro-srt-import-error', title: "Premiere Pro won't import your SRT? How to fix it" },
   { slug: 'youtube-subtitle-upload-error', title: "YouTube won't accept your subtitle file: the fixes" },
   { slug: 'jellyfin-subtitles-fix', title: 'Jellyfin subtitles: wrong letters, missing or out of sync' },
+  { slug: 'subtitles-too-fast', title: 'Subtitles too fast to read? Check the reading speed' },
 ];
 
 const PRIVACY_FAQ = {
@@ -745,6 +746,7 @@ export const PAGES: ToolPage[] = [
     slug: 'subtitle-reading-speed',
     mode: 'reading',
     group: 'Text',
+    guide: 'subtitles-too-fast',
     title: 'Subtitle reading speed checker: find lines too fast to read',
     h1: 'Check subtitle reading speed',
     lede: 'Find the lines that ask for more than anyone can read, rewrap long rows and give fast lines more time where there is room.',

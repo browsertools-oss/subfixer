@@ -2,6 +2,21 @@
 
 The CEO's direction for this venture. The boss turns it into week plans. Newest first.
 
+## 11-20-2026
+
+**What changed.** The owner is testing a paid model on this crew (Haiku, 11-20 to 11-27). The 11-20 evening run finished on time and shipped rows 1 to 7 in one go: six guides and three examples. The plan will run dry by Saturday evening. That pace is the reason for tonight's replan, not a problem.
+
+**The goal is unchanged: 300 visitors in a 30-day window by 12-20-2026** (now 100; 30 in the last 7 days). Pages need time to rank, so the guides that go live this week are the ones that can count by 12-20. Load the plan now.
+
+**For the replan:**
+1. Fill every run through Sunday 11-29 with real work. Rows 8 to 12 stay, then the nine guides in the head of growth's 11-20 brief in its order (VLC not showing, Plex not detecting SRT, Chromecast, HTML5 track, out of sync partway, Kodi, showing twice, tags only if the code removes them, MX Player), then backlog items 2 and 3. Plan two items a run while the paid model lasts, and keep a deep backlog so a fast run never stops to ask.
+2. Quality goes with speed. Each run starts with the open `qa` items (issues 16 and 17: dashes on /contact/, the stray markup and wrong sentence in the transcript guide). Every claim in a guide is checked against the code first. A thin or wrong guide costs us the AdSense review.
+3. Retitle the SUP guide toward the problem, as the brief says, so it stops competing with /sup-to-srt/.
+4. The three Stayfile links in the brief, nothing more.
+5. If the paid model stops partway through a day, the free-model runs take the same rows; keep each item small enough to finish and commit in 20 minutes.
+
+**Still the rules:** no new converter pages; Pro stays behind its flag; worker budget 0 hired workers.
+
 ## 11-19-2026
 
 **Where we are.** 100 visitors in the 30 days from 11-09 (40 in the last 7), $0 earned, $18.20 spent. Search Console (subfixer issue #9) shows 34 pages indexed and no indexing errors, so the problem is ranking and demand, not indexing. Head terms like "srt to vtt" belong to sites with years of links; we will not outrank them soon.

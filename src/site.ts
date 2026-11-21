@@ -32,6 +32,7 @@ export const GUIDES = [
   { slug: '23976-vs-25-fps-subtitles', title: '23.976 vs 25 fps: why subtitles drift, and the fix' },
   { slug: 'vlc-subtitle-delay', title: 'VLC subtitle delay: save the fix into the file' },
   { slug: 'dual-language-subtitles', title: 'How to show two subtitle languages at once' },
+  { slug: 'premiere-pro-srt-import-error', title: "Premiere Pro won't import your SRT? How to fix it" },
 ];
 
 const PRIVACY_FAQ = {
@@ -439,6 +440,7 @@ export const PAGES: ToolPage[] = [
     slug: 'srt-validator',
     mode: 'edit',
     group: 'Text',
+    guide: 'premiere-pro-srt-import-error',
     title: 'SRT validator: check a subtitle file for errors online',
     h1: 'Check a subtitle file for errors',
     lede: 'Find the problems that make players skip lines or refuse a file: broken timestamps, wrong numbering, overlapping lines, empty lines and lines that end before they start.',

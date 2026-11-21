@@ -27,6 +27,7 @@ export const GUIDES = [
   { slug: 'subtitles-out-of-sync', title: 'Why subtitles go out of sync, and which fix to use' },
   { slug: 'srt-vtt-ass', title: 'SRT, VTT and ASS: what is the difference?' },
   { slug: 'sup-to-srt-guide', title: "PGS subtitles won't show? Convert them to SRT" },
+  { slug: 'vlc-subtitles-not-showing', title: 'VLC not showing subtitles? Check these five things' },
   { slug: 'plex-subtitles-out-of-sync', title: 'Plex subtitles out of sync: fix the file for good' },
   { slug: 'subtitles-weird-characters', title: 'Subtitles show Ã© or boxes instead of letters: the fix' },
   { slug: '23976-vs-25-fps-subtitles', title: '23.976 vs 25 fps: why subtitles drift, and the fix' },

@@ -27,6 +27,13 @@ const jsonld = [
 <Base title={page.title} description={page.description} path={path} jsonld={jsonld} noindex={NOINDEX.includes(page.slug)}>
   <Tool mode={page.mode} preset={page.preset} home={home} h1={page.h1} lede={page.lede} />
   <div class="adslot" aria-hidden="true"></div>
+  {home && (
+    <section class="block">
+      <h2>Fix a common problem</h2>
+      <p>Each guide starts from what you see on screen, then walks through the cause and the fix.</p>
+      <ul class="plainlist">{GUIDES.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul>
+    </section>
+  )}
   <section class="block">
     <h2>How it works</h2>
     <ol class="steps">{page.steps.map((s, i) => <li><span class="stepno" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{s}</span></li>)}</ol>

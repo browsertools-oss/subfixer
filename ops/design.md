@@ -68,3 +68,7 @@ Read it before any UI change. Record new decisions here so later runs follow the
   and reads them back only when the URL carries the flag. No pricing, no new visible UI, no
   page for anyone without the flag; serialize/parse are unit-tested. Chosen as the smallest
   useful Pro slice that does not leak into the free experience.
+- 2026-11-21: The home page has a "Fix a common problem" section, one line per guide in
+  `GUIDES` (link text is the guide title), placed under the ad slot and above "How it works".
+  It lives in ToolPage.astro behind the `home` flag because src/pages/index.astro only renders
+  ToolPage. Same `block` and `plainlist` styles as the Guides section; no new layout.

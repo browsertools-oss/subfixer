@@ -1,0 +1,42 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = "YouTube won't accept your subtitle file: the fixes";
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="YouTube often rejects a subtitle file because it is not really SRT, or because its times are written wrong. Check the file first, fix it, then upload again." path="/guides/youtube-subtitle-upload-error/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">YouTube Studio will not take a subtitle file it cannot read as a caption track, and the message gives little detail. Many rejected uploads come from a file whose contents do not match its name, or from a small formatting fault that a text editor can show. This guide covers the upload steps, how to see what format the file really is, and the fixes for the faults people report most.</p>
+
+    <h2>The upload path</h2>
+    <p>In YouTube Studio, open Subtitles and pick the video. Use Add language, or the row for the language you want. Choose Upload file, then pick "With timing" so YouTube uses the times in your file. Then select the file. If the upload fails, the cause is almost always in the file, not in the steps, so the sections below cover what to check.</p>
+
+    <h2>Find out what format the file really is</h2>
+    <p>Open the file in a plain text editor and read the first line. A real SRT file starts with the number 1, then a time line, then the caption. A file that starts with <code>WEBVTT</code> is a WebVTT file. A file that starts with <code>[Script Info]</code> is an ASS or SSA file. Neither is SRT, whatever its name says.</p>
+    <p>Check the ending too. A file saved as .txt, or one that ends in .srt.txt, is a plain text file. Windows hides known extensions by default, so turn on file name extensions in File Explorer's View menu to see the real ending.</p>
+
+    <h2>Renamed VTT and ASS files</h2>
+    <p>A VTT or ASS file renamed to .srt is the most common case in the reports. The contents are still in the old format, so the file breaks at its first line. Renaming it again does not help. Convert it with the <a href="/vtt-to-srt/">VTT to SRT</a> tool for a VTT file, or the <a href="/ass-to-srt/">ASS to SRT</a> tool for an ASS file. The download is a real SRT file with comma times and numbers in order.</p>
+
+    <h2>Times, blank lines and numbers</h2>
+    <p>When the format is right, the file usually fails on its times or its layout. Check these three things first:</p>
+    <ul>
+      <li><strong>Dots instead of commas.</strong> SRT times look like 00:00:05,000. A time written as 00:00:05.000 is a common fault in files from other tools. The <a href="/srt-validator/">SRT validator</a> marks those lines as not in standard SRT form.</li>
+      <li><strong>No blank line between captions.</strong> Each caption block ends with an empty line. Without it, the next number runs into the text above it. Scroll through the file and check that every block has its own gap.</li>
+      <li><strong>Numbers that skip.</strong> The numbers should run 1, 2, 3 with no gaps. A skipped number can make a file look broken even when its times are fine.</li>
+    </ul>
+    <p>The validator lists dotted times and skipped numbers with their line numbers. Fix the list from the top and check it again, since one fix can move the problem to the next line. Saving the file from SubFixer writes comma times, numbers in order and Windows line endings, so a re-save covers the line-ending fault as well.</p>
+
+    <h2>SBV: YouTube's own format</h2>
+    <p>YouTube has its own simple format, SBV. It has no numbers. Each caption starts with one line that holds the start and end time, separated by a comma, such as <code>0:00:01.000,0:00:04.000</code>. The caption text comes on the lines below.</p>
+    <p>To download captions for a video, open the options menu (the three dots) on the language row in Subtitles and choose Download. The download offers SBV, SRT and VTT. This only works for channels you can sign in to. YouTube changes its menus from time to time, so if the labels differ, look for a download action on the caption track.</p>
+    <p>To edit a downloaded SBV file, convert it with the <a href="/sbv-to-srt/">SBV to SRT</a> tool. To make an SBV file for upload from an SRT you already have, use the <a href="/srt-to-sbv/">SRT to SBV</a> tool, then upload the result under Subtitles.</p>
+
+    <h2>After the upload, check the timing</h2>
+    <p>A file that uploads is not the same as a file that is in sync. Play the video with captions turned on. Check the first caption against the first spoken line, then one near the end. If every caption is early or late by the same amount, shift the file with the <a href="/shift-subtitle-timing/">shift subtitle timing</a> tool and upload the saved copy. If the gap grows across the video, the subtitles may have been made for a different frame rate. The <a href="/guides/23976-vs-25-fps-subtitles/">23.976 vs 25 fps guide</a> explains how to tell and fix that.</p>
+
+    <p>Keep the file you fixed. If a line needs changing later, edit that copy and upload it again, so the file on your computer always matches the caption track. Each language is its own track with its own upload, so repeat the steps above for every language you add.</p>
+
+    <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a> covers which format each platform expects. The same faults often cause a failed import in Premiere, covered in <a href="/guides/premiere-pro-srt-import-error/">the Premiere Pro guide</a>.</p>
+  </article>
+</Base>

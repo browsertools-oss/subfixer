@@ -594,6 +594,13 @@ test('convert-25-fps-to-23976 example: times at 10:00 and 01:30:00 stretch by 25
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
+test('change-subtitle-frame-rate example: 23.976 to 25 scales every time by 24000/1001 over 25', () => {
+  const page = PAGES.find((p) => p.slug === 'change-subtitle-frame-rate');
+  const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });
+  const out = build(retime(d.captions, fpsFn(24000 / 1001, 25)), 'srt');
+  assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
+});
+
 test('sync-subtitles example: two pinned points, everything else stretches to fit', () => {
   const page = PAGES.find((p) => p.slug === 'sync-subtitles');
   const d = parse(page!.example!.before, 23.976, { name: 'example.srt' });

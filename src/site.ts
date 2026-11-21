@@ -166,6 +166,10 @@ export const PAGES: ToolPage[] = [
       'Choose the frame rate the subtitles were made for, and the frame rate of your video.',
       'Download the converted file.',
     ],
+    example: {
+      before: '1\n00:10:00,000 --> 00:10:02,000\nLine at ten minutes\n\n2\n01:30:00,000 --> 01:30:02,500\nLine at an hour and a half\n',
+      after: '1\n00:09:35,425 --> 00:09:37,343\nLine at ten minutes\n\n2\n01:26:18,821 --> 01:26:21,219\nLine at an hour and a half\n',
+    },
     faq: [
       {
         q: 'Where do I find my video’s frame rate?',

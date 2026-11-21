@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = 'VLC subtitle delay: save the fix into the file';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="VLC's G and H keys nudge subtitle delay for the current play only. It never fixes the file. How to set the delay, then write it into the .srt so it stays fixed." path="/guides/vlc-subtitle-delay/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="VLC's G and H keys nudge subtitle delay for the current play only, not the file. How to set the delay and fix the .srt for good." path="/guides/vlc-subtitle-delay/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">VLC has two keys for subtitle delay and they are handy while you are watching. But the delay lives in the player, not in the file, so you will be pressing those keys for every session, on every device, forever, unless you fix the file itself.</p>

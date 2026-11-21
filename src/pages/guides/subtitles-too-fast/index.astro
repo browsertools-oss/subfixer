@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = 'Subtitles too fast to read? Check the reading speed';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Subtitles flash by too quickly? Reading speed is measured in characters per second. Count a line, compare it with the limit, and fix the lines that are over it." path="/guides/subtitles-too-fast/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Subtitles flash by too quickly? Reading speed is measured in characters per second. Count a line, compare it with the limit, and fix the ones over it." path="/guides/subtitles-too-fast/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">A subtitle can be in sync and still be too fast to read. The line is on screen, but there is not enough time to take in every word. This guide explains how reading speed is measured, what a comfortable limit looks like, and the three fixes that work on the file itself.</p>

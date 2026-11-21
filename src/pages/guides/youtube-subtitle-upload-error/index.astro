@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = "YouTube won't accept your subtitle file: the fixes";
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="YouTube often rejects a subtitle file because it is not really SRT, or because its times are written wrong. Check the file first, fix it, then upload again." path="/guides/youtube-subtitle-upload-error/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="YouTube often rejects a subtitle file because it is not really SRT or its times are wrong. Check the file, fix it, then upload again." path="/guides/youtube-subtitle-upload-error/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">YouTube Studio will not take a subtitle file it cannot read as a caption track, and the message gives little detail. Many rejected uploads come from a file whose contents do not match its name, or from a small formatting fault that a text editor can show. This guide covers the upload steps, how to see what format the file really is, and the fixes for the faults people report most.</p>

@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = '23.976 vs 25 fps: why subtitles drift, and the fix';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Subtitles that start in sync and drift further out are almost always a frame-rate problem. The numbers behind 25 vs 23.976 fps, and how to fix the file free in your browser." path="/guides/23976-vs-25-fps-subtitles/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Subtitles that start in sync and drift further out are usually a frame-rate problem. How to spot it and fix the file in your browser." path="/guides/23976-vs-25-fps-subtitles/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">Subtitles that are in sync at the start of a film and several seconds ahead by the end were timed for a video that runs at a different frame rate. It is the most common subtitle problem there is, and the fix is exact, not guesswork.</p>

@@ -1,9 +1,9 @@
 ---
 import Base from '../../../layouts/Base.astro';
 const title = 'Jellyfin subtitles: wrong letters, missing or out of sync';
-const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Jellyfin shows wrong letters, misses a subtitle or runs it out of sync? Save the file as UTF-8, name it so Jellyfin matches it, and shift the timing in the file." path="/guides/jellyfin-subtitles-fix/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Jellyfin shows wrong letters, misses a subtitle or runs it out of sync? Save the file as UTF-8, name it to match, then shift the timing." path="/guides/jellyfin-subtitles-fix/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">Most Jellyfin subtitle problems come from one of three things: the file's encoding, the file's name, or its timing. Each has its own fix. This guide goes through them in that order.</p>
@@ -13,7 +13,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>Boxes or question marks can mean something else. The font may not have those letters, so the file is fine and the player's font is the problem. The <a href="/guides/subtitles-weird-characters/">weird characters guide</a> covers how to tell the two apart. To convert a file to UTF-8, use the <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool, which saves the result as UTF-8.</p>
 
     <h2>Missing subtitles: check the file name</h2>
-    <p>Jellyfin matches an external subtitle to a video by name. The subtitle file has to start with the exact name of the video file, then a language code, then the .srt ending. Jellyfin's own documentation on external files uses this example: a video named <code>Atomic Blonde.mkv</code> with a subtitle named <code>Atomic Blonde.en.srt</code>.</p>
+    <p>Jellyfin matches an external subtitle to a video by name. The subtitle file has to start with the exact name of the video file, then a language code, then the .srt ending. <a href="https://jellyfin.org/docs/general/server/media/external-files/">Jellyfin's own documentation on external files</a> uses this example: a video named <code>Atomic Blonde.mkv</code> with a subtitle named <code>Atomic Blonde.en.srt</code>.</p>
     <p>A subtitle with no language code can still attach, but Jellyfin lists its track as "Undefined", which is easy to miss in the track menu. Extra release tags in the name can also stop the match, so a file named after a release with tags in it may not attach at all. The table shows what to expect from each kind of name.</p>
 
     <div class="table-wrap">

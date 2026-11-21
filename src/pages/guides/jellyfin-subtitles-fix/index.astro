@@ -1,0 +1,53 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Jellyfin subtitles: wrong letters, missing or out of sync';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Jellyfin shows wrong letters, misses a subtitle or runs it out of sync? Save the file as UTF-8, name it so Jellyfin matches it, and shift the timing in the file." path="/guides/jellyfin-subtitles-fix/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Most Jellyfin subtitle problems come from one of three things: the file's encoding, the file's name, or its timing. Each has its own fix. This guide goes through them in that order.</p>
+
+    <h2>Wrong letters: fix the encoding</h2>
+    <p>If accents show up as strange pairs of letters, or the words look almost right but wrong, the external .srt is probably saved in an old encoding such as Windows-1252, Windows-1250, Windows-1251 or ISO-8859-2. Jellyfin expects UTF-8, and a file in another encoding shows the wrong characters. The usual fix, from the Jellyfin forums, is to open the file and save it as UTF-8.</p>
+    <p>Boxes or question marks can mean something else. The font may not have those letters, so the file is fine and the player's font is the problem. The <a href="/guides/subtitles-weird-characters/">weird characters guide</a> covers how to tell the two apart. To convert a file to UTF-8, use the <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool, which saves the result as UTF-8.</p>
+
+    <h2>Missing subtitles: check the file name</h2>
+    <p>Jellyfin matches an external subtitle to a video by name. The subtitle file has to start with the exact name of the video file, then a language code, then the .srt ending. Jellyfin's own documentation on external files uses this example: a video named <code>Atomic Blonde.mkv</code> with a subtitle named <code>Atomic Blonde.en.srt</code>.</p>
+    <p>A subtitle with no language code can still attach, but Jellyfin lists its track as "Undefined", which is easy to miss in the track menu. Extra release tags in the name can also stop the match, so a file named after a release with tags in it may not attach at all. The table shows what to expect from each kind of name.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Subtitle file name</th><th>What Jellyfin does</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Atomic Blonde.en.srt</code></td><td>Attaches as English. This is the form to use.</td></tr>
+          <tr><td><code>Atomic Blonde.srt</code></td><td>Attaches, but the track shows as Undefined.</td></tr>
+          <tr><td><code>Atomic Blonde.en.forced.srt</code></td><td>Attaches as a forced track.</td></tr>
+          <tr><td><code>Atomic Blonde.en.hi.srt</code></td><td>Attaches as hearing impaired. The tags sdh and cc work the same way.</td></tr>
+          <tr><td><code>Atomic Blonde.hi.srt</code></td><td>The bare code hi reads as Hindi, not hearing impaired.</td></tr>
+          <tr><td><code>Atomic Blonde.BluRay.1080p.en.srt</code></td><td>Extra release tags can stop the match. Rename the file to the plain video name plus the language code.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The hearing-impaired tags need Jellyfin 10.9 or later. After renaming, rescan the library, or refresh that item's metadata, so Jellyfin looks for the file again.</p>
+    <p>Forced subtitles usually carry only the parts of a film in another language, such as a foreign-language scene in an English film. Hearing-impaired subtitles, often called SDH or CC, add sound cues such as a door slam or a speaker's name. Name the file for the kind you have, so the player can offer the right track when a viewer picks one from the menu.</p>
+    <p>If a subtitle still does not show after a rescan, go back over the name first. Check for a stray extra extension such as <code>.srt.txt</code>, which Windows can hide, and for a space or a release tag where the video name should be.</p>
+
+    <h2>Out of sync: the player offset is not a fix</h2>
+    <p>The web player has a subtitle offset for text subtitles such as SRT and VTT. The offset is set per client, and it is not saved in the file. Another phone, another TV app or another user on the same server still sees the original timing.</p>
+    <p>For a permanent fix, shift the file. Use the <a href="/shift-subtitle-timing/">shift subtitle timing</a> tool to move the whole file by a set amount. If you are not sure whether the gap is a fixed offset or a frame-rate drift, the <a href="/guides/subtitles-out-of-sync/">out of sync guide</a> explains how to tell. Save the corrected file under the same name, put it next to the video, and refresh the item. Every device then plays the corrected timing.</p>
+    <p>The same idea applies on Plex, where the offset is also per app. The <a href="/guides/plex-subtitles-out-of-sync/">Plex guide</a> walks through the file-first fix.</p>
+
+    <h2>Picture subtitles cannot be offset</h2>
+    <p>Picture-based subtitles, such as PGS tracks from Blu-ray rips, have no text to move, and the player offset does not apply to them. If a picture track is out of sync, the only way to fix it is to turn it into text first. The <a href="/sup-to-srt/">SUP to SRT</a> tool reads a .sup file and writes an SRT file that you can shift and name like any other. The <a href="/guides/sup-to-srt-guide/">SUP to SRT guide</a> covers how to get the .sup out of an MKV file first.</p>
+
+    <h2>When the file is right but the track still looks wrong</h2>
+    <p>If the name is right and the file attaches, but the letters are still wrong, the encoding step is the one to repeat. Save the file again as UTF-8 and rescan. If a picture track was the one that failed, go back to the picture section above, since no name or setting turns picture subtitles into text.</p>
+
+    <h2>A quick check after each fix</h2>
+    <p>Play the first minute, then jump to the last few minutes and check the timing at both points. A file that lines up at both points usually lines up in between. Then look at the track menu and confirm that the language and the forced or hearing-impaired label match what you named the file.</p>
+  </article>
+</Base>

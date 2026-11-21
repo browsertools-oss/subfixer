@@ -27,7 +27,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>Tidy it first</h2>
     <p>A raw subtitle file often has lines that are not meant for reading. Hearing-impaired markers such as <code>[DOOR SLAMS]</code>, speaker names such as <code>JOHN:</code>, music notes and italics tags are all things you usually do not want in a transcript. Two tools handle them.</p>
-    <p>The <a href="/remove-hearing-impaired-subtitles/">remove hearing impaired subtitles</a> tool has checkboxes for brackets, speakers, music markers and tags. Tick the ones you want gone, and the tool writes a cleaned file. The <a href="/find-and-replace-subtitles/">find and replace</a> tool takes it further: tick Use patterns, untick Whole words only, and put <code>\{[^}]*\}</code> in Find with an empty Replace to strip ASS override tags in bulk, or <code><[^>]+></code> to strip HTML tags.</p>
+    <p>The <a href="/remove-hearing-impaired-subtitles/">remove hearing impaired subtitles</a> tool has checkboxes for brackets, speakers, music markers and tags. Tick the ones you want gone, and the tool writes a cleaned file. The <a href="/find-and-replace-subtitles/">find and replace</a> tool takes it further: tick Use patterns, untick Whole words only, and put <code>\{</code> followed by a pattern that matches any characters except <code>}</code>, then <code>}</code> in Find with an empty Replace to strip ASS override tags in bulk, or a pattern that matches HTML tags in Find with an empty Replace to strip HTML tags.</p>
     <p>After the file is clean, run it through one of the export tools above. The order is: clean first, then export.</p>
 
     <h2>Share it as a PDF</h2>

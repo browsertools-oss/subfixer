@@ -21,7 +21,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>Use it when the styling matters and your player supports it, like VLC, mpv or MPC-HC. Most TVs and websites will not show it.</p>
 
     <h2>Picking one</h2>
-    <p>If you are not sure, pick SRT. TVs, media servers and most editors read it, and it is the easiest to fix by hand in a text editor if something goes wrong. Pick VTT when the subtitles will be played on a web page, since the browser does not read SRT into a video track. Pick ASS only when the styling is the point, for example a fansub with signs and karaoke, and only when you know the player reads it.</p>
+    <p>If you are not sure, pick SRT. TVs, media servers and most editors read it, and it is the easiest to fix by hand in a text editor if something goes wrong. Pick VTT when the subtitles will be played on a web page, since the browser does not read SRT into a video track. Pick ASS only when the styling is the point, for example a fansub with signs and karaoke, and only when you know the player reads it. For Chromecast, the <a href="/guides/chromecast-subtitles-not-showing/">Chromecast not showing subtitles guide</a> covers the WebVTT step.</p>
 
     <h2>How to tell them apart by eye</h2>
     <p>All three are plain text, so any text editor can open them. The cues look different in each one.</p>
@@ -37,6 +37,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
       <li>An ASS file that shows up as lines of raw text: the player does not read ASS, so convert to SRT and play that.</li>
       <li>Italic tags showing up as visible text in a player: that player does not read tags at all. Convert to plain text to get the words only.</li>
     </ul>
+    <p>If an editor or an upload page rejects an SRT, the <a href="/guides/premiere-pro-srt-import-error/">Premiere Pro import guide</a> and the <a href="/guides/youtube-subtitle-upload-error/">YouTube upload guide</a> cover the errors each one shows.</p>
 
     <h2>What survives a conversion</h2>
     <ul class="plainlist spaced">

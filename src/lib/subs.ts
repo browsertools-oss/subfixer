@@ -481,6 +481,41 @@ export const LANG_ENCODINGS: { lang: string; encs: string[] }[] = [
 
 export const REPAIR_UTF8 = 'UTF-8, repaired';
 
+// Single-byte code pages (the "ANSI" choices in Notepad and older TVs).
+export const SINGLE_BYTE = ENCODINGS.filter((e) => /^(windows-|ISO-8859|KOI8)/.test(e));
+
+const reverseTables = new Map<string, Map<string, number>>();
+function reverseTable(encoding: string): Map<string, number> {
+  let table = reverseTables.get(encoding);
+  if (!table) {
+    table = new Map();
+    const decoder = new TextDecoder(encoding.toLowerCase());
+    for (let b = 0; b < 256; b++) {
+      const ch = decoder.decode(new Uint8Array([b]));
+      if (ch && ch !== '�' && !table.has(ch)) table.set(ch, b);
+    }
+    reverseTables.set(encoding, table);
+  }
+  return table;
+}
+
+// Encode text in a single-byte code page. Characters the code page lacks become "?" and are counted in `lost`.
+export function encodeSingleByte(text: string, encoding: string): { bytes: Uint8Array; lost: number } {
+  const table = reverseTable(encoding);
+  const out: number[] = [];
+  let lost = 0;
+  for (const ch of text) {
+    const b = table.get(ch);
+    if (b === undefined) {
+      out.push(0x3f);
+      lost++;
+    } else {
+      out.push(b);
+    }
+  }
+  return { bytes: new Uint8Array(out), lost };
+}
+
 let cp1252: Map<string, number> | null = null;
 /** Undo UTF-8 that was read as Windows-1252 and saved again ("CafÃ©" -> "Café"). Returns null if it isn't that. */
 export function repairDoubleUtf8(text: string): string | null {

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssRaw, rebuildAss, parseTime, decode, validate, checkSrtRaw, repairDoubleUtf8, encodingCandidates, ENCODINGS, REPAIR_UTF8 } from '../src/lib/subs.ts';
+import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssRaw, rebuildAss, parseTime, decode, validate, checkSrtRaw, repairDoubleUtf8, encodingCandidates, ENCODINGS, REPAIR_UTF8, encodeSingleByte, SINGLE_BYTE } from '../src/lib/subs.ts';
 import { fixTiming } from '../src/lib/tidy.ts';
 import { toTxt, toCsv, toDocx, toXlsx, zipFiles } from '../src/lib/export.ts';
 import { unzipSync, strFromU8 } from 'fflate';
@@ -693,6 +693,29 @@ test('every guide has a title of 60 characters or less and a 120 to 155 characte
     if (desc.length < 120 || desc.length > 155) problems.push(`${g.slug}: description is ${desc.length} characters`);
   }
   assert.deepEqual(problems, []);
+});
+
+test('encodeSingleByte writes windows-1252 bytes and counts characters the page lacks', () => {
+  const hex = (b: Uint8Array) => [...b].map((x) => x.toString(16).toUpperCase().padStart(2, '0')).join(' ');
+  const cafe = encodeSingleByte('café €', 'windows-1252');
+  assert.equal(hex(cafe.bytes), '63 61 66 E9 20 80');
+  assert.equal(cafe.lost, 0);
+  const cjk = encodeSingleByte('日本', 'windows-1252');
+  assert.equal(hex(cjk.bytes), '3F 3F');
+  assert.equal(cjk.lost, 2);
+});
+
+test('encodeSingleByte round-trips Cyrillic text in windows-1251', () => {
+  const enc = encodeSingleByte('привет', 'windows-1251');
+  assert.equal(enc.lost, 0);
+  assert.equal(new TextDecoder('windows-1251').decode(enc.bytes), 'привет');
+});
+
+test('SINGLE_BYTE lists the code pages the save option offers, not UTF-8', () => {
+  assert.ok(SINGLE_BYTE.includes('windows-1252'));
+  assert.ok(SINGLE_BYTE.includes('ISO-8859-2'));
+  assert.ok(!SINGLE_BYTE.includes('UTF-8'));
+  assert.ok(!SINGLE_BYTE.some((e) => /Shift_JIS|EUC|GB18030|Big5|UTF-16/.test(e)));
 });
 
 test('every home page guide is in GUIDES', () => {

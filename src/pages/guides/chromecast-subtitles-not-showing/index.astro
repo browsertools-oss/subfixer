@@ -58,7 +58,7 @@ What time is it?</code></pre>
     <p>If the letters in your original file are already wrong, fix them first with the <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool. It reads a file in a chosen or guessed encoding and saves it as UTF-8. Then convert the fixed file to WebVTT, so the device gets clean text from the start.</p>
 
     <h2>Check the file before you convert it</h2>
-    <p>Run the SRT through the <a href="/srt-validator/">SRT validator</a> before you convert it. The validator flags overlapping lines and numbers that are out of order, among other problems. Each problem is listed with the line it sits on, so you can fix it in the original file. Fixing those first means you are not guessing later which step caused a problem.</p>
+    <p>Run the SRT through the <a href="/srt-validator/">SRT validator</a> before you convert it. The validator flags overlapping lines and numbers that are out of order, among other problems. Each problem is listed with the line it sits on, so you can fix it in the original file. Fixing those first makes it easier to tell which step caused a problem later.</p>
 
     <h2>When the file comes from a web address</h2>
     <p>Some apps do not send the subtitle file from your device. They give the Chromecast a web address, and the device fetches the file from there. The Google Cast documentation says that subtitle files need to be served with CORS headers in that case. CORS is a setting on the web server that tells browsers and devices which other sites may fetch a file.</p>
@@ -68,8 +68,8 @@ What time is it?</code></pre>
     <p>The Cast documentation also lists TTML. TTML is an XML format, and some streaming and broadcast workflows ask for it. The <a href="/srt-to-ttml/">SRT to TTML converter</a> keeps the timing and text of your file in that format. For a film or show you copied yourself, WebVTT is usually the shorter route, and the same .vtt file also plays in web browsers.</p>
 
     <h2>If it plays on a computer but not on the Chromecast</h2>
-    <p>Play the same video with the same subtitle file in another player on your computer. If the subtitles show there, the file is fine, and the difference is in how the cast app hands the track to the device. Look for a subtitle or CC setting in the cast app, or try a different app. If the subtitles still do not show, check the original file with the validator, fix anything it lists, and convert it again.</p>
+    <p>Play the same video with the same subtitle file in another player on your computer. If the subtitles show there, the file is probably fine, and the difference is likely in how the cast app hands the track to the device. Look for a subtitle or CC setting in the cast app, or try a different app. If the subtitles still do not show, check the original file with the validator, fix anything it lists, and convert it again.</p>
 
-    <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a>, which explains why these formats look alike and fail in different ways.</p>
+    <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a>, which compares what each format stores and where each one fails.</p>
   </article>
 </Base>

@@ -11,6 +11,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <h2>What the broken characters mean</h2>
     <p>A subtitle file stores letters as bytes, and a byte on its own is meaningless until something decides which character each number stands for. That decision is the encoding. Save a file as UTF-8 and open it as Windows-1252, and every accented character comes out as two odd ones, like "CafÃ©" instead of "Café". Save it in Korean and open it as Western text, and you get random symbols.</p>
     <p>The good news is that the bytes are all still there. Nothing is lost, so picking the right encoding brings the original text back exactly.</p>
+    <p>The same thing happens to spreadsheets; Stayfile explains <a href="https://stayfile.app/guides/csv-garbled-characters-excel/">the CSV version of this problem</a>.</p>
 
     <h2>Match the symptom to the likely encoding</h2>
     <div class="table-wrap">

@@ -6,7 +6,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 <Base title={`${title} | SubFixer`} description="A web page video shows subtitles through a track element, which takes WebVTT, not SRT. Convert the file, add the track, then check it loads." path="/guides/add-subtitles-to-html5-video/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
-    <p class="lede">You have a video on a web page and an SRT file, and the subtitles do not show. The usual reason is that the browser does not read SRT in the track element at all. The track element takes WebVTT files only. This guide covers the conversion and the markup, then the two problems that cause most failures: a wrong file path, and a file on another domain that the browser will not load.</p>
+    <p class="lede">You have a video on a web page and an SRT file, and the subtitles do not show. The usual reason is that the browser does not read SRT in the track element at all. The track element takes WebVTT files only. This guide covers the conversion and the markup, then the two problems that often break a track: a wrong file path, and a file on another domain that the browser will not load.</p>
 
     <h2>What the track element needs</h2>
     <p>A track element sits inside a video element. It points at a subtitle file with the <code>src</code> attribute, and it tells the browser what the file contains. The attributes that matter most are <code>kind</code>, <code>src</code>, <code>srclang</code> and <code>label</code>. Use <code>kind="subtitles"</code> for a translation of the dialogue. Use <code>kind="captions"</code> when the file also describes sounds, such as a door slamming. The <code>srclang</code> attribute holds a language code such as <code>en</code> or <code>fr</code>, and <code>label</code> is the name the player shows in its menu.</p>
@@ -48,8 +48,8 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>Check the timing before you publish</h2>
     <p>A file that loads can still be out of sync. The <a href="/preview-subtitles-with-video/">preview tool</a> plays your own video with its subtitles on top, in your browser, and lets you nudge the timing until the words match the speech. The video is never uploaded, so the tool works with a private film too.</p>
-    <p>Run the file through the <a href="/srt-validator/">SRT validator</a> before you convert it, too. It lists overlapping lines and numbers that are out of order, so you can fix them in the original file first.</p>
+    <p>Before you convert, run the original SRT through the <a href="/srt-validator/">SRT validator</a>. It lists overlapping lines and numbers that are out of order, so you can fix them in the original file first.</p>
 
-    <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a>, which explains why the three formats look alike and need different handling.</p>
+    <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a>, which compares what each format stores and where each one fails.</p>
   </article>
 </Base>

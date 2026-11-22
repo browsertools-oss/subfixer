@@ -6,7 +6,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 <Base title={`${title} | SubFixer`} description="VLC plays the video but shows no subtitles? Check the track menu, the file name, the encoding and the file type, then fix the file in your browser." path="/guides/vlc-subtitles-not-showing/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
-    <p class="lede">VLC is playing the video, but the subtitle track you expect is not there. In most cases the file is fine and VLC just did not pick it up, or the file has a small problem that stops VLC from reading it. This guide walks through the five things to check, in the order that catches the most common causes first.</p>
+    <p class="lede">VLC is playing the video, but the subtitle track you expect is not there. Often the file is fine and VLC did not pick it up. Other times the file has a small problem that stops VLC from reading it. This guide covers five checks, from the quickest one to the file itself.</p>
 
     <h2>1. Is the subtitle track turned on?</h2>
     <p>Open the Subtitle menu (Subtitle > Sub Track) while the video is playing. If the track says "Disabled" or the one you want is not ticked, select it. VLC sometimes defaults to "Disabled" even when a matching .srt sits next to the video.</p>
@@ -23,10 +23,10 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <h2>4. Is the file really SRT, and is it UTF-8?</h2>
     <p>Open the file in a plain text editor. A real SRT starts with a number, then a time line with an arrow, then the text. If the first line says <code>WEBVTT</code> or <code>[Script Info]</code>, the file is VTT or ASS with an .srt name. Rename it to .vtt or .ass, or convert it with the <a href="/vtt-to-srt/">VTT to SRT</a> tool or the <a href="/ass-to-srt/">ASS to SRT</a> tool.</p>
     <p>If the file is SRT but accents show as strange pairs of letters (for example, <code>Ã©</code> for <code>é</code>), the encoding is not UTF-8. The <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool reads the file in its original encoding and saves it as UTF-8. A file that is not UTF-8 can fail to load or show wrong letters in VLC.</p>
-    <p>Run the file through the <a href="/srt-validator/">SRT validator</a> to catch other problems: blank lines that should not be there, times written with dots instead of commas, or numbering that is out of order. The validator lists each problem with the line it sits on.</p>
+    <p>If the track loads but some lines are wrong, run the file through the <a href="/srt-validator/">SRT validator</a>. It flags blank lines in the wrong place and times written with dots, and it gives the line for each one.</p>
 
-    <h2>5. A renamed VTT or ASS still opens in our tools</h2>
-    <p>If you open a VTT or ASS file that was renamed to .srt in the SubFixer tools, the tool reads it by its content, not its name. The <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool and the <a href="/vtt-to-srt/">VTT to SRT</a> tool both detect the real format and convert it to a proper SRT. So you do not need to know the original format before you fix it.</p>
+    <h2>5. A renamed VTT or ASS file</h2>
+    <p>Our tools read the real format from the file's content, not its name, so a VTT or ASS file with an .srt name converts without you knowing its original format. The <a href="/guides/plex-subtitles-not-showing/">Plex guide</a> has the full version of this check.</p>
 
     <h2>If none of the five works</h2>
     <p>Play a subtitle file you know works, such as one that came with a disc or a file you have used before. Load it with Subtitle > Add Subtitle File. If that file shows, the problem is in the file you were testing, so run it through the checks in steps 4 and 5 again. If the known good file also fails, the problem is the setup, not the file. Check that the video plays with sound and that VLC is up to date. If no subtitle track appears in the menu at all, VLC has not picked up the file, so steps 2 and 3 are the ones to repeat.</p>

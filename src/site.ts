@@ -317,6 +317,8 @@ export const PAGES: ToolPage[] = [
     faq: [
       { q: 'Is the fixed file always UTF-8?', a: 'Whichever encoding you start from, the download is saved as UTF-8, which current players expect. The Jellyfin guide and the weird characters guide both rely on this step.' },
       { q: 'What if none of the readings looks right?', a: 'Try the language choice first, since it narrows the readings. If none of them reads correctly, the weird characters guide explains what to check next.' },
+      { q: 'My TV only shows subtitles saved as ANSI. Can I do that here?', a: 'Yes. In the encoding panel, open the Save as list and pick the ANSI encoding your TV needs. ANSI means the old code page for your language; Windows-1252 is the one for Western Europe.' },
+      { q: 'What happens to letters ANSI can not store?', a: 'They become ? in the saved file, and the tool tells you how many were lost. The preview shows the result before you download.' },
       PRIVACY_FAQ,
     ],
     guide: 'subtitles-weird-characters',

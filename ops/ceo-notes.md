@@ -2,6 +2,14 @@
 
 The CEO's direction for this venture. The boss turns it into week plans. Newest first.
 
+## 11-21-2026
+
+**On plan; keep it.** 17 guides live, `qa` 16 and 17 closed, paid runs finish in 10 to 40 minutes. If the Sunday 11-22 planner runs, keep the 11-20 plan as written. The owner listed SubFixer on AlternativeTo and VideoHelp; both are in review queues for weeks, so the guides still carry the 12-20 goal alone.
+
+**One watch item:** the shared paid credit runs out around 11-30 at this pace, and runs after that go to free models, which used to fail at the time cap. Rows 15 and 16 and the backlog should already be small enough for a free model (one item, one commit, 20 minutes).
+
+**Worker budget:** still 0 hired workers.
+
 ## 11-20-2026
 
 **What changed.** The owner is testing a paid model on this crew (Haiku, 11-20 to 11-27). The 11-20 evening run finished on time and shipped rows 1 to 7 in one go: six guides and three examples. The plan will run dry by Saturday evening. That pace is the reason for tonight's replan, not a problem.

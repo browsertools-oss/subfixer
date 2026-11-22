@@ -267,8 +267,18 @@ const ART: Record<string, string> = {
           {LANG_ENCODINGS.map((l, i) => <option value={String(i)}>{l.lang}</option>)}
         </select>
       </label>
+      <label>Save as
+        <select id="outEnc">
+          <option value="utf-8">UTF-8 (recommended)</option>
+          {SINGLE_BYTE.map((enc) => {
+            const match = LANG_ENCODINGS.find((l) => l.encs.some((e) => e.toLowerCase() === enc.toLowerCase()));
+            const label = match ? `${enc} (ANSI, ${match.lang.replace(/ \(.*/, '').replace('Western European', 'Western Europe')})` : `${enc} (ANSI)`;
+            return <option value={enc}>{label}</option>;
+          })}
+        </select>
+      </label>
+      <p class="hint" id="encHint">Choose UTF-8 unless an older device needs a specific ANSI encoding.</p>
       <fieldset class="cands" id="cands"><legend>Pick the version that reads correctly</legend><div id="candList"></div></fieldset>
-      <p class="hint">Whichever you pick, the download is saved as UTF-8, which every current player reads.</p>
     </div>
 
     <div class="panel stack" data-panel="clean" role="tabpanel" id="panel-clean" aria-labelledby="tab-clean">
@@ -359,7 +369,7 @@ const ART: Record<string, string> = {
     </div>
 
     <div class="outrow">
-      <label>Save as
+      <label>Format
         <select id="outFmt">
           <optgroup label="Subtitles">
             <option value="srt">SRT</option>
@@ -438,7 +448,7 @@ const ART: Record<string, string> = {
 <script>
   import {
     decode, parse, build, retime, retimeAssRaw, rebuildAss, shiftFn, fpsFn, twoPointFn, fixCommon, validate, checkSrtRaw,
-    encodingCandidates, garbleScore, fmtTime, parseTime, stripTags, ENCODINGS, LANG_ENCODINGS, REPAIR_UTF8, FORMAT_LABEL,
+    encodingCandidates, garbleScore, fmtTime, parseTime, stripTags, ENCODINGS, LANG_ENCODINGS, REPAIR_UTF8, FORMAT_LABEL, encodeSingleByte, SINGLE_BYTE,
     type Doc, type OutFormat, type Caption, type TimeFn, type Candidate,
   } from '../lib/subs';
   import { DOC_FORMATS, isDocFormat, exportDoc, zipFiles, type DocFormat } from '../lib/export';
@@ -1225,21 +1235,47 @@ const ART: Record<string, string> = {
   async function download() {
     const err = $('opError');
     const btn = $<HTMLButtonElement>('download');
+    const outEnc = $<HTMLSelectElement>('outEnc');
+    const encHint = $('encHint');
     try {
       btn.disabled = true;
       const fmt = outFmt.value;
       const list = targets();
       let savedAs = '';
+      const encoding = outEnc?.value ?? 'utf-8';
+      const isSingleByte = encoding !== 'utf-8';
+      const toBytes = (text: string) => isSingleByte ? encodeSingleByte(text, encoding) : { bytes: new TextEncoder().encode(text), lost: 0 };
+
       if (list.length === 1) {
         const data = await produce(list[0]);
-        const mime = isDocFormat(fmt) ? DOC_FORMATS.find((d) => d.value === fmt)!.mime : 'text/plain;charset=utf-8';
+        let mime = isDocFormat(fmt) ? DOC_FORMATS.find((d) => d.value === fmt)!.mime : 'text/plain;charset=utf-8';
+        if (typeof data === 'string' && isSingleByte) {
+          const { bytes, lost } = toBytes(data);
+          mime = 'text/plain;charset=' + encoding.toLowerCase();
+          save(bytes, outName(list[0], fmt), mime);
+          if (lost > 0) encHint.textContent = `${lost} character${lost > 1 ? 's' : ''} don't exist in this encoding and were saved as ?`;
+        } else {
+          save(data, outName(list[0], fmt), mime);
+          encHint.textContent = 'Choose UTF-8 unless an older device needs a specific ANSI encoding.';
+        }
         savedAs = outName(list[0], fmt);
-        save(data, savedAs, mime);
       } else {
         const out = [];
-        for (const f of list) out.push({ name: outName(f, fmt), data: await produce(f) });
+        let totalLost = 0;
+        for (const f of list) {
+          const data = await produce(f);
+          if (typeof data === 'string' && isSingleByte) {
+            const { bytes, lost } = toBytes(data);
+            out.push({ name: outName(f, fmt), data: bytes });
+            totalLost += lost;
+          } else {
+            out.push({ name: outName(f, fmt), data });
+          }
+        }
         savedAs = 'subtitles-fixed.zip';
         save(await zipFiles(out), savedAs, 'application/zip');
+        if (totalLost > 0) encHint.textContent = `${totalLost} character${totalLost > 1 ? 's' : ''} don't exist in this encoding and were saved as ?`;
+        else encHint.textContent = 'Choose UTF-8 unless an older device needs a specific ANSI encoding.';
       }
       $('doneMsg').textContent = savedMessage(savedAs, list.length > 1);
       $('done').hidden = false;

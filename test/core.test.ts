@@ -680,7 +680,7 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
-for (const slug of ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video']) {
+for (const slug of ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript']) {
   test(`${slug} guide has at least 750 words of article text`, () => {
     const src = readFileSync(`src/pages/guides/${slug}/index.astro`, 'utf8');
     const article = src.slice(src.indexOf('<article'), src.indexOf('</article>'));

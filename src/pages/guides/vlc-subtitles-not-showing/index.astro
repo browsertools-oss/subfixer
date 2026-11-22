@@ -10,13 +10,15 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>1. Is the subtitle track turned on?</h2>
     <p>Open the Subtitle menu (Subtitle > Sub Track) while the video is playing. If the track says "Disabled" or the one you want is not ticked, select it. VLC sometimes defaults to "Disabled" even when a matching .srt sits next to the video.</p>
+    <p>If the video file already has a subtitle track inside it, VLC lists that track under Sub Track next to any file you load. An MKV with two tracks shows both, so pick the language you want. Choosing the wrong one can look like missing subtitles.</p>
 
     <h2>2. Load the file by hand</h2>
-    <p>If the track does not appear in the menu at all, use Subtitle > Add Subtitle File and pick your .srt. This works even if the file name does not match the video. If the subtitles appear after you load them this way, the auto-load step below is the one to fix.</p>
+    <p>If the track does not appear in the menu at all, use Subtitle > Add Subtitle File and pick your .srt. This works even if the file name does not match the video. If the subtitles appear after you load them this way, the auto-load step below is the one to fix. If they still do not appear, the file itself is the problem, so go to step 4.</p>
 
     <h2>3. Does the file name match the video?</h2>
     <p>For VLC to load a subtitle file automatically, the .srt has to sit in the same folder as the video and share the same base name. A video named <code>Movie (2020).mkv</code> auto-loads <code>Movie (2020).en.srt</code> or <code>Movie (2020).srt</code>. If the video is <code>Movie.mkv</code> and the subtitle is <code>Movie.en.srt</code>, that works too. A language code such as <code>.en</code> is optional but helps when there are multiple tracks.</p>
     <p>A common trap on Windows: the file is actually <code>Movie.srt.txt</code> because Windows hides the .txt extension. In File Explorer, enable "File name extensions" on the View tab, or open the file in Notepad and save it with the correct name.</p>
+    <p>Subtitles downloaded from the internet often carry extra text in the name that the video does not have, such as a release group or a resolution tag. Rename the subtitle so its base name matches the video's base name, or rename the video to match. The two names have to match apart from the language code and the extension.</p>
 
     <h2>4. Is the file really SRT, and is it UTF-8?</h2>
     <p>Open the file in a plain text editor. A real SRT starts with a number, then a time line with an arrow, then the text. If the first line says <code>WEBVTT</code> or <code>[Script Info]</code>, the file is VTT or ASS with an .srt name. Rename it to .vtt or .ass, or convert it with the <a href="/vtt-to-srt/">VTT to SRT</a> tool or the <a href="/ass-to-srt/">ASS to SRT</a> tool.</p>
@@ -25,6 +27,9 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>5. A renamed VTT or ASS still opens in our tools</h2>
     <p>If you open a VTT or ASS file that was renamed to .srt in the SubFixer tools, the tool reads it by its content, not its name. The <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool and the <a href="/vtt-to-srt/">VTT to SRT</a> tool both detect the real format and convert it to a proper SRT. So you do not need to know the original format before you fix it.</p>
+
+    <h2>If none of the five works</h2>
+    <p>Play a subtitle file you know works, such as one that came with a disc or a file you have used before. Load it with Subtitle > Add Subtitle File. If that file shows, the problem is in the file you were testing, so run it through the checks in steps 4 and 5 again. If the known good file also fails, the problem is the setup, not the file. Check that the video plays with sound and that VLC is up to date. If no subtitle track appears in the menu at all, VLC has not picked up the file, so steps 2 and 3 are the ones to repeat.</p>
 
     <h2>When the problem is timing, not presence</h2>
     <p>If the subtitles appear but are early, late or drifting, that is a different problem. The <a href="/guides/vlc-subtitle-delay/">VLC subtitle delay guide</a> covers how VLC's G and H keys nudge the delay for the current play, and how to write that fix into the file so it stays fixed.</p>

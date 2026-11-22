@@ -5,7 +5,7 @@ import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssR
 import { fixTiming } from '../src/lib/tidy.ts';
 import { toTxt, toCsv, toDocx, toXlsx, zipFiles } from '../src/lib/export.ts';
 import { unzipSync, strFromU8 } from 'fflate';
-import { PAGES, GUIDES } from '../src/site.ts';
+import { PAGES, GUIDES, HOME_GUIDES } from '../src/site.ts';
 import { NOINDEX } from '../src/noindex.mjs';
 
 const SRT = '1\r\n00:00:01,000 --> 00:00:02,500\r\n<i>Hello</i>\r\n\r\n2\r\n00:00:02,400 --> 00:00:04,000\r\n[DOOR SLAMS]\r\nJOHN: World\r\n\r\n3\r\n00:00:05,000 --> 00:00:05,200\r\n(laughs)\r\n';
@@ -693,6 +693,11 @@ test('every guide has a title of 60 characters or less and a 120 to 155 characte
     if (desc.length < 120 || desc.length > 155) problems.push(`${g.slug}: description is ${desc.length} characters`);
   }
   assert.deepEqual(problems, []);
+});
+
+test('every home page guide is in GUIDES', () => {
+  const slugs = GUIDES.map((g) => g.slug);
+  assert.deepEqual(HOME_GUIDES.filter((slug) => !slugs.includes(slug)), []);
 });
 
 test('recent guides carry a datePublished in their Article data', () => {

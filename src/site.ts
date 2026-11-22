@@ -43,6 +43,9 @@ export const GUIDES = [
   { slug: 'add-subtitles-to-html5-video', title: 'Add subtitles to an HTML5 video: SRT to track' },
 ];
 
+// Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
+export const HOME_GUIDES = ['vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'subtitles-out-of-sync', 'subtitles-weird-characters', 'chromecast-subtitles-not-showing', 'subtitles-too-fast'];
+
 const PRIVACY_FAQ = {
   q: 'Is my subtitle file uploaded anywhere?',
   a: 'No. Your browser reads and fixes the file on your own computer. Nothing is sent to a server, so private files are fine.',

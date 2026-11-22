@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Tool from './Tool.astro';
-import { SITE, GUIDES, type ToolPage } from '../site';
+import { SITE, GUIDES, HOME_GUIDES, type ToolPage } from '../site';
 import { NOINDEX } from '../noindex.mjs';
 interface Props { page: ToolPage }
 const { page } = Astro.props;
@@ -31,7 +31,7 @@ const jsonld = [
     <section class="block">
       <h2>Fix a common problem</h2>
       <p>Each guide starts from what you see on screen, then walks through the cause and the fix.</p>
-      <ul class="plainlist">{GUIDES.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul>
+      <ul class="plainlist">{HOME_GUIDES.flatMap((slug) => GUIDES.filter((g) => g.slug === slug)).map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul>
     </section>
   )}
   <section class="block">

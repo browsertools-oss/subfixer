@@ -1,5 +1,5 @@
-- Row 4(a) QA pass: dash scan, h1/title/description limits, datePublished, 750+ words, scroll wrappers on pre/table — one commit per fix on guides since 11-20 plus /contact/
-- Row 4(b) Two FAQs each on srt-validator, subtitle-reading-speed, fix-subtitle-encoding, vtt-to-srt in src/site.ts; each answers a guide question in two sentences
-- Row 5(a) Guide chromecast-subtitles-not-showing: Chromecast needs WebVTT; our SRT→VTT is UTF-8; links srt-to-vtt, srt-to-ttml, fix-subtitle-encoding, srt-vtt-ass
-- Row 5(b) Guide add-subtitles-to-html5-video: <track> takes WebVTT, not SRT; escape video sample in <pre><code>; links srt-to-vtt, preview-subtitles-with-video, srt-vtt-ass
-- Row 6(a) Cross-links between older and newer guides (Premiere/YouTube from srt-vtt-ass; Jellyfin/Plex-not-showing from plex-out-of-sync; etc.)
+- Row 6(a) Cross-links between older and newer guides: Premiere/YouTube from srt-vtt-ass; Jellyfin/Plex-not-showing from plex-out-of-sync; too fast from subtitles-out-of-sync; TV from sup-to-srt-guide; VLC-not-showing from vlc-subtitle-delay; Chromecast from srt-vtt-ass
+- Row 6(b) Stayfile link 1: add FAQ to srt-to-csv about "CSV opens in one column in Excel" linking stayfile.app/guides/csv-opens-in-one-column-in-excel (check BOM at src/lib/export.ts line 28 first)
+- Row 6(b) Stayfile link 2: in weird-characters guide, link to stayfile.app/guides/csv-garbled-characters-excel/ (curl check 200, else "link 2 waiting")
+- Row 6(b) Stayfile link 3: in srt-to-word more text, link to stayfile.app/text-to-pdf/ (only if it reads naturally)
+- Row 7(a) Guide "Subtitles fine at first, then out of sync? The fix" (subtitles-out-of-sync-partway) with shift-subtitles-from-a-line step by step

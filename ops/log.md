@@ -2,6 +2,19 @@
 
 One dated entry per agent run.
 
+2026-11-22 (evening): Checked `npm test` (74/74 pass at start; 86/86 at end) and `npm run build` (90→92 pages) at 02:18 UTC. Metrics: ops/metrics.csv shows 110 visitors in the last 30 days (updated by report script), far below the ~300 monthly ads trigger. This run corresponds to row 4 in the week plan (Sun 11-22 evening, 11-22-2026 02:17 UTC). Items committed to main:
+
+1. Row 5(a) pulled forward: Guide "Chromecast not showing subtitles? Use WebVTT" (slug `chromecast-subtitles-not-showing`). Sections: Cast needs WebVTT not SRT; conversion with SRT to VTT (UTF-8 output verified by test); check file first; fix encoding first if letters are wrong; validator; CORS for remote files; TTML alternative. Links: srt-to-vtt, srt-to-ttml, fix-subtitle-encoding, srt-vtt-ass. Commit 526f44a.
+2. Row 5(b) pulled forward: Guide "Add subtitles to an HTML5 video: SRT to track" (slug `add-subtitles-to-html5-video`). Sections: track takes WebVTT; convert with SRT to VTT; escape sample code; check Network tab; crossorigin for cross-domain; multiple languages; preview tool and validator. Links: srt-to-vtt, preview-subtitles-with-video, srt-vtt-ass. Commit 6b31e49.
+3. Expanded VLC not-showing guide from 628 to 784 words (embedded tracks, extra text in names, test with known good file). Commit bd5214f.
+4. Expanded Plex not-finding guide from 712 to 805 words (quick file test in another player). Commit 81de1ee.
+5. QA: added datePublished to four recent guides (Premiere, YouTube, too fast, transcript). Commit ee0a590.
+6. QA: trimmed three guide descriptions to 120–155 characters (VLC, Plex, HTML5). Commit 08880f5.
+7. QA: added two FAQs per tool (srt-validator, fix-subtitle-encoding, vtt-to-srt, subtitle-reading-speed), each naming its guide and true in code. Commit 7c7496c.
+8. Test suite expanded to verify guide word counts (750+), title length (≤60), description range (120–155), datePublished on recent guides, and VTT UTF-8 output.
+
+All builds clean (92 pages). Tests pass 86/86. Guide count now 17. Week-plan row 4 marked DONE. Next: row 5 (Chromecast + HTML5 guides already done), then row 6 (cross-links and Stayfile links).
+
 2026-11-21 (scheduled run, evening): Checked `npm test` (72/72 pass at the start; 74/74 at the end) and `npm run build` (84 pages, clean) at 02:18 UTC. Metrics: ops/metrics.csv shows 100 visitors in the last 30 days (updated by report script), far below the ~300 monthly ads trigger and the 1,000/30-day paid-tier trigger, so no decision issue. This run corresponds to row 2 in the week plan (Fri 11-20 evening, 11-21-2026 02:17 UTC). All earlier rows were already DONE, so the run pulled forward the next guide rows. Items committed to main:
 
 1. Row 1(b) from the morning run: added `example` on change-subtitle-frame-rate (23.976 to 25, times at 00:10:00 and 01:30:00) with a test that runs the real fpsFn and build. Example count goes from 36 to 37. Commit f823a10.

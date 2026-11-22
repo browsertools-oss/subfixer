@@ -39,6 +39,7 @@ export const GUIDES = [
   { slug: 'jellyfin-subtitles-fix', title: 'Jellyfin subtitles: wrong letters, missing or out of sync' },
   { slug: 'subtitles-too-fast', title: 'Subtitles too fast to read? Check the reading speed' },
   { slug: 'subtitles-to-transcript', title: 'Turn a subtitle file into a clean transcript' },
+  { slug: 'chromecast-subtitles-not-showing', title: 'Chromecast not showing subtitles? Use WebVTT' },
 ];
 
 const PRIVACY_FAQ = {

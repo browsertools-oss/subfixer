@@ -2,6 +2,8 @@
 
 One dated entry per agent run.
 
+11-22-2026 (boss, weekly plan): Weekly plan 11-22-2026 to 11-29-2026, 14 rows (Sun 11-22 morning to Sat 11-28 evening), keeping the CEO's 11-20 order. Targets: 27 guides live (17 now), qa issue 20 closed, an ANSI save option on /fix-subtitle-encoding/ with a byte-level test, 160 visitors in 30 days by 11-28 (110 now). Top three items: issue 20 fixes (home page lists, datePublished on eight guides, VLC and Plex guides made distinct); the ANSI save option, because LG's help pages tell owners to save SRT as ANSI and no online tool does it; the TV USB guide with Samsung, LG and Sony facts now written into the plan.
+
 2026-11-22 (evening): Checked `npm test` (74/74 pass at start; 86/86 at end) and `npm run build` (90→92 pages) at 02:18 UTC. Metrics: ops/metrics.csv shows 110 visitors in the last 30 days (updated by report script), far below the ~300 monthly ads trigger. This run corresponds to row 4 in the week plan (Sun 11-22 evening, 11-22-2026 02:17 UTC). Items committed to main:
 
 1. Row 5(a) pulled forward: Guide "Chromecast not showing subtitles? Use WebVTT" (slug `chromecast-subtitles-not-showing`). Sections: Cast needs WebVTT not SRT; conversion with SRT to VTT (UTF-8 output verified by test); check file first; fix encoding first if letters are wrong; validator; CORS for remote files; TTML alternative. Links: srt-to-vtt, srt-to-ttml, fix-subtitle-encoding, srt-vtt-ass. Commit 526f44a.

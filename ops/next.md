@@ -1,5 +1,5 @@
-- Row 6(a) Cross-links between older and newer guides: Premiere/YouTube from srt-vtt-ass; Jellyfin/Plex-not-showing from plex-out-of-sync; too fast from subtitles-out-of-sync; TV from sup-to-srt-guide; VLC-not-showing from vlc-subtitle-delay; Chromecast from srt-vtt-ass
-- Row 6(b) Stayfile link 1: add FAQ to srt-to-csv about "CSV opens in one column in Excel" linking stayfile.app/guides/csv-opens-in-one-column-in-excel (check BOM at src/lib/export.ts line 28 first)
-- Row 6(b) Stayfile link 2: in weird-characters guide, link to stayfile.app/guides/csv-garbled-characters-excel/ (curl check 200, else "link 2 waiting")
-- Row 6(b) Stayfile link 3: in srt-to-word more text, link to stayfile.app/text-to-pdf/ (only if it reads naturally)
-- Row 7(a) Guide "Subtitles fine at first, then out of sync? The fix" (subtitles-out-of-sync-partway) with shift-subtitles-from-a-line step by step
+- First: `gh issue list --label qa --state open`. Issue 20 is open; rows 1 and 2 of ops/week-plan.md fix it.
+- Row 1(a): home page "Fix a common problem" shows only the six `HOME_GUIDES` (new export in src/site.ts), full "Guides" list stays lower down; test that each slug is in `GUIDES`.
+- Row 1(b): add `datePublished` to the eight older guides with the dates listed in the row; put the transcript guide's two regex patterns in a `<ul>` with `<code>`.
+- Row 1(c): the six cross-link sentences between older and newer guides listed in the row.
+- check-links may be refused; check hrefs by hand as the Guardrails say, commit after each item with explicit paths.

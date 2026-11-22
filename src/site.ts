@@ -40,6 +40,7 @@ export const GUIDES = [
   { slug: 'subtitles-too-fast', title: 'Subtitles too fast to read? Check the reading speed' },
   { slug: 'subtitles-to-transcript', title: 'Turn a subtitle file into a clean transcript' },
   { slug: 'chromecast-subtitles-not-showing', title: 'Chromecast not showing subtitles? Use WebVTT' },
+  { slug: 'add-subtitles-to-html5-video', title: 'Add subtitles to an HTML5 video: SRT to track' },
 ];
 
 const PRIVACY_FAQ = {

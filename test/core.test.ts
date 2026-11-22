@@ -680,12 +680,14 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
-test('chromecast guide has at least 750 words of article text', () => {
-  const src = readFileSync('src/pages/guides/chromecast-subtitles-not-showing/index.astro', 'utf8');
-  const article = src.slice(src.indexOf('<article'), src.indexOf('</article>'));
-  const words = article.replace(/<[^>]+>/g, ' ').replace(/&lt;|&gt;/g, ' ').split(/\s+/).filter(Boolean);
-  assert.ok(words.length >= 750, `only ${words.length} words`);
-});
+for (const slug of ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video']) {
+  test(`${slug} guide has at least 750 words of article text`, () => {
+    const src = readFileSync(`src/pages/guides/${slug}/index.astro`, 'utf8');
+    const article = src.slice(src.indexOf('<article'), src.indexOf('</article>'));
+    const words = article.replace(/<[^>]+>/g, ' ').replace(/&lt;|&gt;/g, ' ').split(/\s+/).filter(Boolean);
+    assert.ok(words.length >= 750, `only ${words.length} words`);
+  });
+}
 
 test('VTT output starts with WEBVTT and is saved as UTF-8 bytes (accents survive a Blob download)', async () => {
   const d = parse('1\n00:00:01,000 --> 00:00:02,500\nBonjour, ça va ?\n', 23.976, { name: 'example.srt' });

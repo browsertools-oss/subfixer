@@ -1,0 +1,55 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Add subtitles to an HTML5 video: SRT to track';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="A web page video shows subtitles through a track element, which takes WebVTT, not SRT. Convert the file, add the track, and check that the browser loads it." path="/guides/add-subtitles-to-html5-video/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">You have a video on a web page and an SRT file, and the subtitles do not show. The usual reason is that the browser does not read SRT in the track element at all. The track element takes WebVTT files only. This guide covers the conversion and the markup, then the two problems that cause most failures: a wrong file path, and a file on another domain that the browser will not load.</p>
+
+    <h2>What the track element needs</h2>
+    <p>A track element sits inside a video element. It points at a subtitle file with the <code>src</code> attribute, and it tells the browser what the file contains. The attributes that matter most are <code>kind</code>, <code>src</code>, <code>srclang</code> and <code>label</code>. Use <code>kind="subtitles"</code> for a translation of the dialogue. Use <code>kind="captions"</code> when the file also describes sounds, such as a door slamming. The <code>srclang</code> attribute holds a language code such as <code>en</code> or <code>fr</code>, and <code>label</code> is the name the player shows in its menu.</p>
+    <p>Add the <code>default</code> attribute to turn the track on when the page loads. Without it, the viewer has to pick the track from the player's captions menu.</p>
+
+    <h2>Step 1: Convert the file to WebVTT</h2>
+    <p>Open the <a href="/srt-to-vtt/">SRT to VTT converter</a>, drop in your file, and download the result. The converter writes the <code>WEBVTT</code> line at the top and changes the commas in the times to dots. The <a href="/guides/chromecast-subtitles-not-showing/">Chromecast guide</a> shows the same change with a before and after sample.</p>
+    <p>Open the new file in a text editor before you upload it. The first line must read <code>WEBVTT</code>, and each time must use a dot before the milliseconds, like <code>00:00:01.000</code>. If the first line is a number, the file is still SRT, so run the conversion again.</p>
+
+    <h2>Step 2: Add the track to the video</h2>
+    <p>Put the video and the track in your page like this. The file names are examples, so change them to match your own files.</p>
+    <div class="table-wrap">
+      <pre class="sample"><code>&lt;video controls width="640"&gt;
+  &lt;source src="movie.mp4" type="video/mp4"&gt;
+  &lt;track kind="subtitles" src="movie.vtt" srclang="en" label="English" default&gt;
+&lt;/video&gt;</code></pre>
+    </div>
+    <p>The <code>src</code> path is read from the page's own address. If <code>movie.vtt</code> sits in the same folder as the page, a plain file name is enough. A path that starts with a slash, such as <code>/media/movie.vtt</code>, is read from the root of the site instead. Pick the form that matches where the file really sits.</p>
+
+    <h2>Step 3: Check that the browser loads the file</h2>
+    <p>Open the page in a browser, open the developer tools, and go to the Network tab. Reload the page and look for a request to the <code>.vtt</code> file. The request should return a normal success response.</p>
+    <p>If no request appears at all, the browser is not using the track. Check that the track element sits inside the video element, and that the element has a <code>src</code> attribute. If the request returns a "not found" response, the path is wrong. Fix the path or move the file to where the path points.</p>
+    <p>If the file loads and the subtitles still do not show, open the file and check its first line and its times again. With the <code>controls</code> attribute on, the browser's own player usually lists the track in its captions menu, which tells you whether the track was accepted.</p>
+
+    <h2>When the file is on another domain</h2>
+    <p>If the video or the subtitle file sits on a different domain from your page, the browser checks the file's origin before it uses it. Add <code>crossorigin</code> to the video element. The value <code>anonymous</code> is the usual choice for public files, because it sends the request without cookies.</p>
+    <p>Then the server that hosts the <code>.vtt</code> file has to send an <code>Access-Control-Allow-Origin</code> header that allows your page's address. Without that header, the browser refuses the track and nothing shows. Check the response headers in the Network tab to see whether the header is there.</p>
+    <div class="table-wrap">
+      <pre class="sample"><code>&lt;video controls crossorigin="anonymous" width="640"&gt;
+  &lt;source src="https://media.example.com/movie.mp4" type="video/mp4"&gt;
+  &lt;track kind="subtitles" src="https://subs.example.com/movie.vtt" srclang="en" label="English" default&gt;
+&lt;/video&gt;</code></pre>
+    </div>
+    <p>If you do not run the server that hosts the file, you cannot add that header yourself. Host the .vtt file on the same domain as your page, or ask the owner of the server to allow your page's address.</p>
+
+    <h2>More than one language</h2>
+    <p>Add one track element for each language, inside the same video element. Give each one its own <code>srclang</code> and <code>label</code>, such as <code>fr</code> with "Français". Put the <code>default</code> attribute on one track only, so the page starts with one language on and the viewer can switch to the other from the menu.</p>
+    <p>If you have two files for the same film, the <a href="/guides/dual-language-subtitles/">dual-language guide</a> explains how to show both languages at once in one file, which is a different job from offering two tracks.</p>
+
+    <h2>Check the timing before you publish</h2>
+    <p>A file that loads can still be out of sync. The <a href="/preview-subtitles-with-video/">preview tool</a> plays your own video with its subtitles on top, in your browser, and lets you nudge the timing until the words match the speech. The video is never uploaded, so the tool works with a private film too.</p>
+    <p>Run the file through the <a href="/srt-validator/">SRT validator</a> before you convert it, too. It lists overlapping lines and numbers that are out of order, so you can fix them in the original file first.</p>
+
+    <p>See also: <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS: what is the difference?</a>, which explains why the three formats look alike and need different handling.</p>
+  </article>
+</Base>

@@ -5,7 +5,7 @@ import { parse, build, retime, shiftFn, fpsFn, twoPointFn, fixCommon, retimeAssR
 import { fixTiming } from '../src/lib/tidy.ts';
 import { toTxt, toCsv, toDocx, toXlsx, zipFiles } from '../src/lib/export.ts';
 import { unzipSync, strFromU8 } from 'fflate';
-import { PAGES } from '../src/site.ts';
+import { PAGES, GUIDES } from '../src/site.ts';
 import { NOINDEX } from '../src/noindex.mjs';
 
 const SRT = '1\r\n00:00:01,000 --> 00:00:02,500\r\n<i>Hello</i>\r\n\r\n2\r\n00:00:02,400 --> 00:00:04,000\r\n[DOOR SLAMS]\r\nJOHN: World\r\n\r\n3\r\n00:00:05,000 --> 00:00:05,200\r\n(laughs)\r\n';
@@ -680,7 +680,27 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
   assert.equal(out.replace(/\r\n/g, '\n').trim(), page!.example!.after.trim());
 });
 
-for (const slug of ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript']) {
+// Guides written since 11-20-2026: they carry a datePublished in their Article data.
+const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript'];
+
+test('every guide has a title of 60 characters or less and a 120 to 155 character description', () => {
+  const problems: string[] = [];
+  for (const g of GUIDES) {
+    const src = readFileSync(`src/pages/guides/${g.slug}/index.astro`, 'utf8');
+    const title = src.match(/const title = (['"])(.*?)\1;/)?.[2] ?? '';
+    const desc = src.match(/description="([^"]*)"/)?.[1] ?? '';
+    if (title.length > 60) problems.push(`${g.slug}: title is ${title.length} characters`);
+    if (desc.length < 120 || desc.length > 155) problems.push(`${g.slug}: description is ${desc.length} characters`);
+  }
+  assert.deepEqual(problems, []);
+});
+
+test('recent guides carry a datePublished in their Article data', () => {
+  const missing = RECENT_GUIDES.filter((slug) => !/datePublished: '\d{4}-\d{2}-\d{2}'/.test(readFileSync(`src/pages/guides/${slug}/index.astro`, 'utf8')));
+  assert.deepEqual(missing, []);
+});
+
+for (const slug of RECENT_GUIDES) {
   test(`${slug} guide has at least 750 words of article text`, () => {
     const src = readFileSync(`src/pages/guides/${slug}/index.astro`, 'utf8');
     const article = src.slice(src.indexOf('<article'), src.indexOf('</article>'));

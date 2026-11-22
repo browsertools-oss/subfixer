@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = 'VLC not showing subtitles? Check these five things';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="VLC plays the video but no subtitles appear. Check the track menu, the file name, the encoding, and whether the file is really SRT, then fix it free in your browser." path="/guides/vlc-subtitles-not-showing/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="VLC plays the video but shows no subtitles? Check the track menu, the file name, the encoding and the file type, then fix the file in your browser." path="/guides/vlc-subtitles-not-showing/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">VLC is playing the video, but the subtitle track you expect is not there. In most cases the file is fine and VLC just did not pick it up, or the file has a small problem that stops VLC from reading it. This guide walks through the five things to check, in the order that catches the most common causes first.</p>

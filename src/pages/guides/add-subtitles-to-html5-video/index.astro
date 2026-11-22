@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = 'Add subtitles to an HTML5 video: SRT to track';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="A web page video shows subtitles through a track element, which takes WebVTT, not SRT. Convert the file, add the track, and check that the browser loads it." path="/guides/add-subtitles-to-html5-video/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="A web page video shows subtitles through a track element, which takes WebVTT, not SRT. Convert the file, add the track, then check it loads." path="/guides/add-subtitles-to-html5-video/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">You have a video on a web page and an SRT file, and the subtitles do not show. The usual reason is that the browser does not read SRT in the track element at all. The track element takes WebVTT files only. This guide covers the conversion and the markup, then the two problems that cause most failures: a wrong file path, and a file on another domain that the browser will not load.</p>

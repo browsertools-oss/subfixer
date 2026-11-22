@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = "Plex not finding your SRT? Fix the name and the file";
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Plex does not show your external subtitle file. The name has to match exactly, the library agent needs the right source, and the file itself must be real SRT in UTF-8." path="/guides/plex-subtitles-not-showing/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Plex skips your external subtitle file? The name must match the video, Local Media Assets must be on, and the file must be real SRT in UTF-8." path="/guides/plex-subtitles-not-showing/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">You put an .srt file next to the video, but Plex does not list it as a subtitle track. This is the most common Plex subtitle problem, and it almost always comes down to the file name, the library agent settings, or the file itself. This guide walks through each one in the order that fixes it for most people.</p>

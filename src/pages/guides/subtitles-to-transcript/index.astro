@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 const title = 'Turn a subtitle file into a clean transcript';
-const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
 <Base title={`${title} | SubFixer`} description="Strip the timestamps from a subtitle file and export the text as plain text, Word or a spreadsheet, then make a PDF if you need one." path="/guides/subtitles-to-transcript/" jsonld={jsonld} ogType="article">
   <article class="guide">

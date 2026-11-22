@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 const title = "YouTube won't accept your subtitle file: the fixes";
-const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
 <Base title={`${title} | SubFixer`} description="YouTube often rejects a subtitle file because it is not really SRT or its times are wrong. Check the file, fix it, then upload again." path="/guides/youtube-subtitle-upload-error/" jsonld={jsonld} ogType="article">
   <article class="guide">

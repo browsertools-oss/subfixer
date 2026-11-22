@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 const title = 'Subtitles too fast to read? Check the reading speed';
-const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-21', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
 <Base title={`${title} | SubFixer`} description="Subtitles flash by too quickly? Reading speed is measured in characters per second. Count a line, compare it with the limit, and fix the ones over it." path="/guides/subtitles-too-fast/" jsonld={jsonld} ogType="article">
   <article class="guide">

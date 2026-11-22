@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 const title = 'Subtitles show Ã© or boxes instead of letters: the fix';
-const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, author: { '@type': 'Organization', name: 'SubFixer' } }];
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-17', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
 <Base title={`${title} | SubFixer`} description="Accents show as Ã©, or letters turn into boxes? The file was saved in one encoding and read as another. How to spot it and fix it in your browser." path="/guides/subtitles-weird-characters/" jsonld={jsonld} ogType="article">
   <article class="guide">

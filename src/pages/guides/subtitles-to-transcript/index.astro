@@ -30,8 +30,10 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>A raw subtitle file often has lines that are not meant for reading. Hearing-impaired markers such as <code>[DOOR SLAMS]</code>, speaker names such as <code>JOHN:</code>, music notes and italics tags are all things you usually do not want in a transcript. Two tools handle them.</p>
     <p>The <a href="/remove-hearing-impaired-subtitles/">remove hearing impaired subtitles</a> tool removes sound descriptions in brackets, speaker names and music lines. Those three are ticked already, and you can untick any you want to keep. The <a href="/subtitle-cleaner/">subtitle cleaner</a> also has an option for formatting tags such as <code>&lt;i&gt;</code> and font tags.</p>
     <p>The <a href="/find-and-replace-subtitles/">find and replace</a> tool takes it further. Tick "Use patterns (regular expressions)" and untick "Whole words only", then put one of these in Find and leave Replace empty:</p>
-    <p>For ASS override tags such as <code>&#123;\i1&#125;</code>: <code>\&#123;[^&#125;]*\&#125;</code></p>
-    <p>For HTML-style tags such as <code>&lt;i&gt;</code> or <code>&lt;font color="#ffff00"&gt;</code>: <code>&lt;[^&gt;]+&gt;</code></p>
+    <ul>
+      <li>For ASS override tags such as <code>&#123;\i1&#125;</code>: <code>\&#123;[^&#125;]*\&#125;</code></li>
+      <li>For HTML-style tags such as <code>&lt;i&gt;</code> or <code>&lt;font color="#ffff00"&gt;</code>: <code>&lt;[^&gt;]+&gt;</code></li>
+    </ul>
     <p>After the file is clean, run it through one of the export tools above. The order is: clean first, then export.</p>
 
     <h2>Share it as a PDF</h2>

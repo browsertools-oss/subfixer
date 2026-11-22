@@ -266,7 +266,8 @@ export const PAGES: ToolPage[] = [
       note: 'The WEBVTT line is dropped, cue numbers are added, and the dot before the milliseconds becomes a comma. The text and the timing stay the same.',
     },
     faq: [
-      { q: 'Will positioning and styling carry over?', a: 'SRT has no positioning, so cue settings like position and alignment are dropped. Italic, bold and underline tags are kept unless you strip them under "Clean up".' },
+      { q: 'Does the converter keep the times?', a: 'The times stay the same, and only the dot before the milliseconds becomes a comma. The guide on VLC not showing subtitles uses this converter when a file with an .srt name is really WebVTT.' },
+      { q: 'What if a file with an .srt name starts with WEBVTT?', a: 'The converter reads the content, not the name, so a file with an .srt name converts the same way. The guide on Plex not finding your SRT explains how to check which format a file really is.' },
       PRIVACY_FAQ,
     ],
   },
@@ -311,7 +312,8 @@ export const PAGES: ToolPage[] = [
       note: 'UTF-8 was read as Windows-1252 and saved again, so "UTF-8, repaired" is the option to pick. Each garbled run is rewritten on its own; the times and the rest of each line stay as they are.',
     },
     faq: [
-      { q: 'Which encoding should I pick?', a: 'Western European languages are usually Windows-1252. Polish, Czech, Croatian and Hungarian are usually Windows-1250. Russian and Bulgarian are Windows-1251, Greek is 1253, Turkish 1254.' },
+      { q: 'Is the fixed file always UTF-8?', a: 'Whichever encoding you start from, the download is saved as UTF-8, which current players expect. The Jellyfin guide and the weird characters guide both rely on this step.' },
+      { q: 'What if none of the readings looks right?', a: 'Try the language choice first, since it narrows the readings. If none of them reads correctly, the weird characters guide explains what to check next.' },
       PRIVACY_FAQ,
     ],
     guide: 'subtitles-weird-characters',
@@ -469,14 +471,8 @@ export const PAGES: ToolPage[] = [
       'Fix lines in the editor below the list, or use "Clean up" to fix overlaps in one go, then download.',
     ],
     faq: [
-      {
-        q: 'What counts as a problem?',
-        a: 'Line numbers out of sequence, a timestamp not written as 00:00:00,000, a line that starts before the line above it, a line that overlaps the next, a line with no text, a line that starts and ends at the same moment, a line on screen for under half a second, and a line that ends before it starts. Files that are not UTF-8 are noted too.',
-      },
-      {
-        q: 'My player shows nothing at all.',
-        a: 'Look for a timestamp error near the top of the list. One broken timestamp can stop some players from reading anything after it.',
-      },
+      { q: 'Does it check the problems the YouTube upload guide lists?', a: 'It flags numbers out of sequence and timestamps that use dots. The YouTube upload guide covers those checks in more detail.' },
+      { q: 'Does the tool change my file on its own?', a: 'Nothing changes until you edit a line or press "Clean up", and the file you download is the one you fixed.' },
       PRIVACY_FAQ,
     ],
   },
@@ -763,9 +759,8 @@ export const PAGES: ToolPage[] = [
       'See which lines are too fast, let the tool rewrap and stretch them, then download.',
     ],
     faq: [
-      { q: 'How is reading speed measured?', a: 'Characters per second: every letter, space and punctuation mark the viewer sees, divided by the time the line is up. Tags are not counted.' },
-      { q: 'Which limit should I pick?', a: 'Seventeen characters a second is a common choice for adult viewers. Pick fifteen for children or slow readers, and twenty or more for fast dialogue.' },
-      { q: 'Some lines are still too fast.', a: 'They have no free time before the next line. Shorten the words in "Check and edit", or split the line into two entries with "Add below".' },
+      { q: 'Does the tool shorten my words?', a: 'It rewraps long rows into two even lines and gives fast lines more time, but the words stay the same. The guide on subtitles that are too fast explains when more time is enough and when you need to shorten the text yourself.' },
+      { q: 'Does it check the whole file at once?', a: 'After you pick a reading speed, the tool lists the lines that are too fast before it changes anything. The guide on subtitles that are too fast walks through that list step by step.' },
       PRIVACY_FAQ,
     ],
   },

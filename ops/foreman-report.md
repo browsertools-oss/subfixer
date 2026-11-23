@@ -1,9 +1,9 @@
-# Foreman report 11-21-2026
+# Foreman report 11-23-2026
 
-Yesterday's runs: 11-20 14:17 UTC (morning) failed at 1h03m with no commits; 11-21 02:17 UTC (evening, paid model) finished in 40m and shipped seven items (five guides: Premiere, YouTube, Jellyfin, too fast, transcript; two examples; 74/74 tests pass, 88 pages). Four free-model runs before it failed at the time cap.
+Yesterday's runs: 11-22 14:17 UTC (morning) finished in 9m34s and shipped 12 commits (qa issue 20 fixes, home page guide list, datePublished, cross-links, ANSI save UI and FAQs); issue 20 is closed. 11-23 02:17 UTC (evening) finished in 35m37s with success status but made no commits (the boss's answer says it wrote the TV USB guide and never committed it). Since then only the CEO note and the boss's weekly plan landed.
 
-Plan check: the boss's new plan has nothing marked DONE yet; row 1 (contact page, QA issues 16 and 17, home page list) is unstarted. Open `qa` issues 16 and 17 are both still open and are already row 1's first items. The evening run's DONE marks were in the old plan, and its commits exist (125f69e, ba14f7d, f2603ab and others).
+Checks: no `qa` issues are open. The new plan has nothing marked DONE, so nothing to verify. src/lib/mkv.ts and test/mkv* do not exist yet; row 1 is untouched.
 
-Plan changes: one edit to row 1(b): the last bullet of issue 17 (examples vs real output) is covered by the existing tests, so the worker just runs `npm test` and says so when closing. Also told the worker to commit after each of (a), (b), (c) on a free model. Guardrails already cover the earlier failures.
+Plan changes: row 1(a) (the MKV reader, the biggest item this week) is now split into three commit steps (fixture, reader and scan with five tests, then trackFile and assToSrt with two tests) so a partial session still ships something. The guardrails already cover "commit as soon as it passes", so I added none.
 
-Needs the boss: none. Watch today's 14:17 UTC run: it is on the paid model until 11-27; after that, free-model runs have failed at the cap, so rows 15 and 16 may need smaller steps.
+Needs the boss: none. Watch today's 14:17 UTC run: if it ends with no mkv.ts commit, the MKV spec is too large for one session and should be cut further.

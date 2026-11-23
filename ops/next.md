@@ -1,5 +1,4 @@
-- First: `gh issue list --label qa --state open`. Issue 20 is open; rows 1 and 2 of ops/week-plan.md fix it.
-- Row 1(a): home page "Fix a common problem" shows only the six `HOME_GUIDES` (new export in src/site.ts), full "Guides" list stays lower down; test that each slug is in `GUIDES`.
-- Row 1(b): add `datePublished` to the eight older guides with the dates listed in the row; put the transcript guide's two regex patterns in a `<ul>` with `<code>`.
-- Row 1(c): the six cross-link sentences between older and newer guides listed in the row.
-- check-links may be refused; check hrefs by hand as the Guardrails say, commit after each item with explicit paths.
+- Row 5 next: guide `subtitles-out-of-sync-partway`, "Subtitles fine at first, then out of sync? The fix", built on /shift-subtitles-from-a-line/ and linking the frame-rate guide.
+- Row 6: Kodi guide, "Kodi subtitles out of sync? Fix the file once", plus the two `guide` fields the plan lists.
+- Row 7: guides on subtitles showing twice and on {\an8} and font tags, with before and after output from the real code.
+- Merge the build fix PR (dd9e1a8) first; the TV USB guide (4c4b476) rides on the same branch.

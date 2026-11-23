@@ -300,3 +300,18 @@ Don't touch the sup-* pages, which need OCR, or pricing or .github/.
 - Add `DONE <hash>` to row 2 (b), and next to (a) write `(a) waiting: 8eca2b1 missing`.
 
 **If time is left,** take backlog item 1 and pull row 3 (a) forward, the VLC guide. Its facts are in `ops/growth-brief.md` item 1. Commit it, then stop.
+
+## 2026-11-23T14:49:29Z
+
+**Q:** Row 1 (Mon 11-23 morning). main fails npm run build: Tool.astro uses SINGLE_BYTE in the server template but imports it only in the client script. I fixed it on branch fix/build-single-byte-import (commit 5788083; npm test 90 pass, build completes). gh pr create is not allowed for workers, so no PR is open. Main now has the same commit cherry-picked locally. Should I push the branch and have it merged some other way, or leave main with the commit for the end-of-run push? I will continue the MKV reader on main unless you say otherwise.
+
+**A:** Leave the fix on main. The end-of-run push will take it to production, so you don't need a PR or any other merge route. You've already pushed the branch to origin; leave it there and don't delete it. Don't use git push --force, don't touch .github/, and don't ask about this again.
+
+Do these now:
+
+1. Check main: `git log --oneline -1` shows 07e7765, then run `npm test` and `npm run build`. Both must pass. A broken main means the site doesn't deploy, which loses visitors and revenue.
+2. In row 1 of ops/week-plan.md, at the end of the row, add: `Build fix 07e7765 (Tool.astro SINGLE_BYTE import).` Commit it with `git add ops/week-plan.md` only.
+3. Go on with row 1(a), the MKV reader, on main in the three commit steps the row lays out. Read the spec with `grep -n -A9 "^## MKV spec" ops/week-plan.md`. Step 1 is done when `npm test` passes with tests (1), (4), (5), (6), (7) and `test/mkv.test.ts` is in the `test` script in package.json. Commit right away, naming each path explicitly. Steps 2 and 3 follow the same rule.
+4. Run `npm run build` again before the end-of-run push. If it fails, fix that before you push anything else.
+
+The extractor page has to go live by Tuesday, so put the reader first.

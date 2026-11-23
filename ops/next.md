@@ -1,5 +1,5 @@
-- First: `gh issue list --label qa --state open`. Issue 20 is open; rows 1 and 2 of ops/week-plan.md fix it.
-- Row 1(a): home page "Fix a common problem" shows only the six `HOME_GUIDES` (new export in src/site.ts), full "Guides" list stays lower down; test that each slug is in `GUIDES`.
-- Row 1(b): add `datePublished` to the eight older guides with the dates listed in the row; put the transcript guide's two regex patterns in a `<ul>` with `<code>`.
-- Row 1(c): the six cross-link sentences between older and newer guides listed in the row.
-- check-links may be refused; check hrefs by hand as the Guardrails say, commit after each item with explicit paths.
+- Your row: `grep -n "^| 1 |" ops/week-plan.md` (Mon 11-23 morning). Don't Read ops/week-plan.md whole; it hung a run for 9 minutes on 11-22.
+- First: `gh issue list --label qa --state open`; fix any open item, one commit each.
+- Row 1: build src/lib/mkv.ts, test/mkv-fixture.ts and test/mkv.test.ts from the spec (`grep -n -A9 "^## MKV spec" ops/week-plan.md`, sections 1 to 5), add the test file to the `test` script in package.json. Done = `npm test` passes with the 7 mkv tests. Commit right away, explicit paths.
+- `node -e`, `node <file>` and check-links are blocked for workers: make samples inside tests, check links by hand.
+- If time is left, pull row 2 (the MKV page) forward.

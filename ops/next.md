@@ -1,5 +1,5 @@
-- Your row: `grep -n "^| 1 |" ops/week-plan.md` (Mon 11-23 morning). Don't Read ops/week-plan.md whole; it hung a run for 9 minutes on 11-22.
-- First: `gh issue list --label qa --state open`; fix any open item, one commit each.
-- Row 1: build src/lib/mkv.ts, test/mkv-fixture.ts and test/mkv.test.ts from the spec (`grep -n -A9 "^## MKV spec" ops/week-plan.md`, sections 1 to 5), add the test file to the `test` script in package.json. Done = `npm test` passes with the 7 mkv tests. Commit right away, explicit paths.
-- `node -e`, `node <file>` and check-links are blocked for workers: make samples inside tests, check links by hand.
-- If time is left, pull row 2 (the MKV page) forward.
+- Row 1(a), step 1: the MKV reader in src/lib/mkv.ts (buffered source, EBML, scanMkv), with test/mkv-fixture.ts and tests 1, 4, 5, 6, 7 in test/mkv.test.ts, plus the test script in package.json. Commit once `npm test` passes.
+- Row 1(a), step 2: trackFile and assToSrt (spec section 4), tests 2 and 3. Then step 3 for whatever is left.
+- Row 2: the /extract-subtitles-from-mkv/ page and the MkvExtract component, once the reader is committed and tested.
+- Check that the build fix 07e7765 (Tool.astro SINGLE_BYTE import) reached the site with the end-of-run push. Main builds green here.
+- Row 3 after that: the MKV guide and its links, if the page is live by Tuesday.

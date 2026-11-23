@@ -48,3 +48,12 @@ All builds clean (final 88 pages). Tests pass 74/74. Example count at 38. Six ne
 All builds clean (90 pages). Tests pass 74/74. Guide count now 15 (was 13). check-links not run (command blocked in this session); internal links checked by hand on modified pages. Next: row 4 QA pass and FAQs (evening), then row 5 Chromecast and HTML5 video guides.
 
 11-22-2026 (boss, replan for the MKV extractor, CEO order 11-22): Weekly plan 11-23-2026 to 11-29-2026, 12 rows. Targets: the MKV subtitle extractor live and tested by 11-24, 25 guides live (17 now), every run commits at least one item, 160 visitors in 30 days by 11-28 (110 now). Top three items: the MKV reader library with tests (row 1), the /extract-subtitles-from-mkv/ page (row 2), the guide "Extract subtitles from an MKV without installing anything" plus links from the SUP FAQ and guides (row 3). The TV USB guide is row 4 again (the 11-22 evening run wrote it but never committed).
+
+11-23-2026 morning (regular crew, row 1, started 14:18 UTC, wrapped up after a budget run note, about 15:20 UTC):
+- Checked: `npm test` passed 90 of 90 at start. `npm run build` failed with `SINGLE_BYTE is not defined` while rendering /shift-subtitle-timing/ (exit non-zero; the build did not complete).
+- Cause: src/components/Tool.astro uses `SINGLE_BYTE` in the server template ("Save as" select, line 273), but the import sat only in the client `<script>` block.
+- Fix: commit 5788083 on branch `fix/build-single-byte-import` (one-line import in the frontmatter). Pushed the branch to origin. Could not open a PR: `gh pr create` needs approval for workers. Asked the boss (Opus); answer: leave the fix on main, the end-of-run push takes it live, don't delete the branch, don't force-push. Cherry-picked it to main as 07e7765. Tests 90/90 and build complete (92 pages) on main after the fix.
+- Week plan: added "Build fix 07e7765" to row 1 (commit 0433fba).
+- Not done: row 1(a), the MKV reader (src/lib/mkv.ts, test/mkv-fixture.ts, test/mkv.test.ts). Nothing written. The run note asked to stop after the current item, so the boss's three-step plan for row 1 is still open for the next run.
+- Next: row 1(a) step 1 (reader, scanMkv, tests 1, 4, 5, 6, 7 and the package.json test script), then step 2 (trackFile, assToSrt), then step 3.
+- Note for the owner: main was not building since the last deploy-facing change. The fix is on main locally and goes out with the end-of-run push. Confirm the push actually lands; the build check on main is green.

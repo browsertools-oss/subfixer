@@ -41,6 +41,7 @@ export const GUIDES = [
   { slug: 'subtitles-to-transcript', title: 'Turn a subtitle file into a clean transcript' },
   { slug: 'chromecast-subtitles-not-showing', title: 'Chromecast not showing subtitles? Use WebVTT' },
   { slug: 'add-subtitles-to-html5-video', title: 'Add subtitles to an HTML5 video: SRT to track' },
+  { slug: 'tv-subtitles-not-showing-usb', title: "TV won't show subtitles from USB? Samsung, LG, Sony" },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.

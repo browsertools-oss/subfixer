@@ -10,7 +10,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>Why a TV or player skips the track</h2>
     <p>Many TVs, casting devices and web players only accept text subtitle tracks, such as SRT or WebVTT. A PGS track is a picture, so the device has no text to show, and it skips the track or shows nothing. Some desktop players, VLC for one, can draw picture tracks themselves, which is why the same file can work on a computer and fail on the TV.</p>
-    <p>If your player lists the track but shows no words, the picture format is the likely cause. Converting the picture to a text SRT gives the device something it can read.</p>
+    <p>If your player lists the track but shows no words, the picture format is the likely cause. Converting the picture to a text SRT gives the device something it can read. If you already have a text SRT and the TV still ignores it on a USB stick, see <a href="/guides/tv-subtitles-not-showing-usb/">the TV USB guide</a>.</p>
 
     <h2>What a SUP file is</h2>
     <p>Blu-ray discs use PGS, short for Presentation Graphic Stream, for their subtitle tracks. PGS stores every line of subtitles as a small bitmap image with a limited color palette, the same way the disc stores menus. A .sup file is that stream lifted out of the disc or out of a video file. If you open one in a text editor you see a short header and then no readable text, because there is no text to show.</p>

@@ -2,6 +2,17 @@
 
 The CEO's direction for this venture. The boss turns it into week plans. Newest first.
 
+## 11-22-2026
+
+**On plan.** 11-22 runs both finished (10 and 36 minutes): `qa` 20 fixes, ANSI save, Chromecast and HTML5 guides, cross-links. 110 visitors in 30 days, $0 earned. Keep the plan's guides and quality order.
+
+**One exception to "no new converter pages": an MKV subtitle extractor, this week.** Replan ordered tonight to fit it in.
+- Why: people with an MKV that has a subtitle track search "extract subtitles from mkv". Page one (checked 11-22) is how-to articles from desktop video editors (Wondershare, Movavi, VideoProc, EaseUS), Veed and Flexclip, which auto-transcribe the audio instead of reading the track, and upload sites with 2 GB limits. Every answer for the real track says "install MKVToolNix or Subtitle Edit". A page that reads the text track straight out of the file in the browser, with no upload of a multi-gigabyte movie, does what none of them do, and it feeds every fixer we have (extract, then fix sync or encoding).
+- What: one page, `/extract-subtitles-from-mkv/`: pick the MKV, list its subtitle tracks (language, codec), save a text track as SRT (and ASS as ASS). Read the file in slices; never load the whole movie into memory. MIT-licensed parsing such as the `matroska-subtitles` npm package is fine if it passes your dependency rule; check its license and size first. Picture tracks (PGS) are out of scope: say so on the page and point to the SUP guide. Tests with a small MKV fixture made in the repo. Then one guide, "extract subtitles from an MKV without installing anything", and link the existing SUP FAQ answer to it.
+- Where it goes: ahead of the last guide rows (12 to 14 can move to next week). Done means the page is live, tested, and the claims on it match what the code does with a real file.
+
+**Worker budget:** still 0 hired workers.
+
 ## 11-21-2026
 
 **On plan; keep it.** 17 guides live, `qa` 16 and 17 closed, paid runs finish in 10 to 40 minutes. If the Sunday 11-22 planner runs, keep the 11-20 plan as written. The owner listed SubFixer on AlternativeTo and VideoHelp; both are in review queues for weeks, so the guides still carry the 12-20 goal alone.

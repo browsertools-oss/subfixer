@@ -2,7 +2,18 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { scanMkv, trackFile, assToSrt } from '../src/lib/mkv.ts';
 import { build } from '../src/lib/subs.ts';
-import { sampleMkv, recordingSource } from './mkv-fixture.ts';
+import { zlibSync } from 'fflate';
+import {
+  sampleMkv,
+  recordingSource,
+  cat,
+  el,
+  elUnknown,
+  uint,
+  str,
+  simpleBlock,
+  trackEntry,
+} from './mkv-fixture.ts';
 
 const NOT_MKV = 'This is not an MKV or WebM file.';
 
@@ -38,6 +49,24 @@ test('mkv reads never ask for more than one chunk, so the 3 MB video block is sk
   assert.ok(bytes.length > 3 * 1024 * 1024);
   assert.ok(reads.length > 0);
   assert.ok(Math.max(...reads) <= 1 << 20, `longest read ${Math.max(...reads)}`);
+});
+
+test('mkv zlib block that inflates past 8 MB is skipped and counted, not kept', async () => {
+  const big = zlibSync(new Uint8Array(9 * 1024 * 1024));
+  const small = zlibSync(new TextEncoder().encode('Short.'));
+  const bytes = cat(
+    el(0x1a45dfa3, uint(0x4287, 4), str(0x4282, 'matroska')),
+    elUnknown(
+      0x18538067,
+      el(0x1654ae6b, trackEntry({ number: 2, type: 17, codec: 'S_TEXT/UTF8', language: 'eng', isDefault: true, zlib: true })),
+      el(0x1f43b675, uint(0xe7, 0), simpleBlock(2, 0, big), simpleBlock(2, 2000, small)),
+    ),
+  );
+  const { cues, skipped } = await scanMkv(recordingSource(bytes, []));
+  assert.equal(skipped, 1);
+  const list = cues.get(2) ?? [];
+  assert.equal(list.length, 1);
+  assert.equal(new TextDecoder().decode(list[0].data), 'Short.');
 });
 
 test('random bytes are rejected with a plain message', async () => {

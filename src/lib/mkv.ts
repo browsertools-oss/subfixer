@@ -9,6 +9,9 @@ export interface MkvSource {
 }
 
 const CHUNK = 1 << 20;
+// A subtitle block that inflates to more than this is skipped and counted, so a
+// damaged or hostile file cannot fill memory with one huge cue.
+const MAX_PAYLOAD = 8 << 20;
 
 export interface MkvTrack {
   number: number;
@@ -247,12 +250,30 @@ export async function scanMkv(
   const cues = new Map<number, MkvCue[]>();
 
   // Turns a block's payload into the text the track holds.
-  async function payloadOf(track: ParsedTrack, raw: Uint8Array): Promise<Uint8Array> {
+  // Returns null when the payload is larger than MAX_PAYLOAD once inflated.
+  async function payloadOf(track: ParsedTrack, raw: Uint8Array): Promise<Uint8Array | null> {
     const comp = track.compression;
     if (!comp) return raw.slice();
     if (comp.algo === 0) {
-      const { unzlibSync } = await lazyFflate();
-      return unzlibSync(raw);
+      const { Unzlib } = await lazyFflate();
+      const parts: Uint8Array[] = [];
+      let total = 0;
+      let over = false;
+      // Streaming inflate: chunks past the cap are dropped as they arrive.
+      const inflater = new Unzlib((chunk) => {
+        total += chunk.length;
+        if (total > MAX_PAYLOAD) over = true;
+        else parts.push(chunk);
+      });
+      inflater.push(raw, true);
+      if (over) return null;
+      const out = new Uint8Array(total);
+      let at = 0;
+      for (const part of parts) {
+        out.set(part, at);
+        at += part.length;
+      }
+      return out;
     }
     if (comp.algo === 3) {
       const out = new Uint8Array(comp.settings.length + raw.length);
@@ -279,6 +300,10 @@ export async function scanMkv(
     const start = Math.round(((clusterTime + relSigned) * scale) / 1e6);
     const end = durationTicks === null ? -1 : start + Math.round((durationTicks * scale) / 1e6);
     const data = await payloadOf(track, block.subarray(tn.length + 3));
+    if (!data) {
+      skipped++;
+      return;
+    }
     const list = cues.get(tn.value) ?? [];
     list.push({ start, end, data });
     cues.set(tn.value, list);

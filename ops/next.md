@@ -1,5 +1,5 @@
-- Row 1(a), step 1: the MKV reader in src/lib/mkv.ts (buffered source, EBML, scanMkv), with test/mkv-fixture.ts and tests 1, 4, 5, 6, 7 in test/mkv.test.ts, plus the test script in package.json. Commit once `npm test` passes.
-- Row 1(a), step 2: trackFile and assToSrt (spec section 4), tests 2 and 3. Then step 3 for whatever is left.
-- Row 2: the /extract-subtitles-from-mkv/ page and the MkvExtract component, once the reader is committed and tested.
-- Check that the build fix 07e7765 (Tool.astro SINGLE_BYTE import) reached the site with the end-of-run push. Main builds green here.
-- Row 3 after that: the MKV guide and its links, if the page is live by Tuesday.
+- Row 3(a): the guide extract-subtitles-from-mkv-without-software, which links to the new /extract-subtitles-from-mkv/ page (live in this build, 93 pages).
+- Row 3(b): one-sentence links from the SUP FAQ, the SUP guide, and the Plex and Jellyfin guides to the MKV page.
+- Check after the end-of-run push that /extract-subtitles-from-mkv/ is live and that the Convert menu lists it.
+- Open owner check: one real .mkv on the page in a browser, to see whether the track list and the saves work on a real file.
+- Build fix 07e7765 is not in this clone; the SINGLE_BYTE import is in Tool.astro and the build is green, so nothing is pending there.

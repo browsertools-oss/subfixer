@@ -57,3 +57,17 @@ All builds clean (90 pages). Tests pass 74/74. Guide count now 15 (was 13). chec
 - Not done: row 1(a), the MKV reader (src/lib/mkv.ts, test/mkv-fixture.ts, test/mkv.test.ts). Nothing written. The run note asked to stop after the current item, so the boss's three-step plan for row 1 is still open for the next run.
 - Next: row 1(a) step 1 (reader, scanMkv, tests 1, 4, 5, 6, 7 and the package.json test script), then step 2 (trackFile, assToSrt), then step 3.
 - Note for the owner: main was not building since the last deploy-facing change. The fix is on main locally and goes out with the end-of-run push. Confirm the push actually lands; the build check on main is green.
+
+11-23-2026 evening (regular crew, row 2, started 02:18 UTC on 11-24):
+- Checked: `npm test` passed 90 of 90 and `npm run build` completed (92 pages) at start. The build fix from the morning is in src/components/Tool.astro (SINGLE_BYTE imported in the frontmatter, line 3). Commit 07e7765 is not in this clone; the fix is in the code and the build is green, so nothing was redone.
+- Row 1(a), MKV reader, in three steps as the plan asked:
+  - Step 1, commit 79ef652: src/lib/mkv.ts (buffered reader, EBML walk, scanMkv), test/mkv-fixture.ts (a sample MKV built in code, unknown-size Segment, Void, zlib track, a 3 MB video block), test/mkv.test.ts tests 1, 4, 5, 6, 7, and mkv.test.ts added to the test script.
+  - Step 2, commit 5b610bf: trackFile and assToSrt, tests 2 and 3.
+  - Deviation, for the record: scanMkv also returns `codecPrivate` (a Map of track number to the CodecPrivate text). trackFile needs that text and the spec's return shape had no place for it. It is an added field, no existing field changed.
+  - Also for the record: the fixture writes FlagDefault on every track, because the Matroska default for that flag is 1.
+- Row 2(a), MKV page, commit 7f2c460: the `extract` mode and PAGES entry at /extract-subtitles-from-mkv/ (Convert group, title 53 characters, description 137), MkvExtract.astro (drop zone, track table, Save and Save as SRT for ASS, Stop button, a skipped-lines note), and the ToolPage switch. Built as page 93. The lede and FAQs say only what mkv.ts does: read in 1 MB pieces, nothing uploaded, PGS and VobSub are pictures, burned-in subtitles can't be pulled out, MKV and WebM only.
+- Choice: the FAQ answer on PGS points to mkvextract plus /sup-to-srt/ (the same route the SUP FAQ already gives). Chosen because it is the one way to get picture tracks to text in this set of tools.
+- Checks: `npm test` 97 of 97 pass. `npm run build` complete, 93 pages, dist/extract-subtitles-from-mkv/index.html exists. Dash grep on the new files prints nothing. Links on the new page (/shift-subtitle-timing/, /fix-subtitle-encoding/, /sup-to-srt/) exist in the build output; checked by hand, since check-links is blocked for workers.
+- Not checked: the page has not been run in a browser with a real MKV. The reader is tested only on the fixture. The week plan's owner check (one real file) still stands.
+- Week plan: row 1 and row 2 marked DONE.
+- Next: row 3(a), the guide extract-subtitles-from-mkv-without-software, then the links in row 3(b). Day count: the MKV page is live for the next deploy.

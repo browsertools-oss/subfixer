@@ -681,7 +681,7 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
 });
 
 // Guides written since 11-20-2026: they carry a datePublished in their Article data.
-const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software'];
+const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice'];
 
 test('every guide has a title of 60 characters or less and a 120 to 155 character description', () => {
   const problems: string[] = [];
@@ -744,4 +744,14 @@ test('VTT output starts with WEBVTT and is saved as UTF-8 bytes (accents survive
   assert.ok(out.includes('ça va'));
   const bytes = new Uint8Array(await new Blob([out]).arrayBuffer());
   assert.deepEqual(bytes, new TextEncoder().encode(out));
+});
+
+// Before and after for guide subtitles-showing-twice (removeDuplicates).
+test('guide sample: a cue repeated back to back is merged into one', () => {
+  const before = '1\n00:00:01,000 --> 00:00:03,000\nWe leave now.\n\n2\n00:00:01,000 --> 00:00:03,000\nWe leave now.\n\n3\n00:00:04,000 --> 00:00:06,000\nWhere are the keys?\n';
+  const { captions, report } = fixCommon(parse(before).captions, { removeDuplicates: true });
+  assert.equal(report.merged, 1);
+  assert.deepEqual(captions.map((c) => [c.start, c.end, c.text]), [[1000, 3000, 'We leave now.'], [4000, 6000, 'Where are the keys?']]);
+  const after = build(captions, 'srt').replace(/\r/g, '').trim();
+  assert.equal(after, '1\n00:00:01,000 --> 00:00:03,000\nWe leave now.\n\n2\n00:00:04,000 --> 00:00:06,000\nWhere are the keys?');
 });

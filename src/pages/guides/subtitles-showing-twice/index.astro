@@ -1,0 +1,71 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Subtitles showing twice? Two tracks or repeated lines';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Two subtitle lines on screen at once, or every line showing twice? Find out whether two tracks are on or the file repeats its lines, then fix it." path="/guides/subtitles-showing-twice/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">When every line appears twice, or two different subtitles sit on screen at the same time, the player is showing two sources at once. A common cause is two subtitle tracks turned on together. The other common cause is a subtitle file that repeats its own lines. The two look alike, so check which one you have before you change anything.</p>
+
+    <h2>Cause one: two tracks are on</h2>
+    <p>Many video files carry their subtitles inside the video, as a track. If you also load a separate subtitle file next to the video, the player can show both. The two copies may be the same language, which looks like a doubled line, or two languages, which looks like two lines in different languages.</p>
+    <p>To check, open the player's subtitle menu and look at the list. If there is more than one entry for the same language, or an entry you did not add yourself, one of them is coming from inside the file. Turn that one off and see if the doubling stops.</p>
+    <p>To see the tracks inside an MKV file, use <a href="/extract-subtitles-from-mkv/">the MKV subtitle extractor</a>. It lists each track in the file and says whether it is a text track or a picture track. The extractor does not play the video, so it will not tell you which track your player has on. It shows what is inside the file, which is enough to match the list in your player to the file.</p>
+    <p>Fix it by keeping one source. Either turn off the embedded track in the player, or remove the separate file from the folder. If you want both languages, the file has to be built with both, which is covered in <a href="/guides/dual-language-subtitles/">the guide to dual-language subtitles</a>.</p>
+
+    <h2>Cause two: the file repeats its lines</h2>
+    <p>The other cause is inside the subtitle file. A cue is a block with a start time, an end time and the text. If the same text appears twice, one block after another, with times that overlap or almost touch, the player shows the line twice. The repeat can come from a bad merge, a copy and paste, or a file that was exported twice.</p>
+    <p>You can see it in a text editor. Two blocks with the same text and times that touch or overlap are the sign.</p>
+    <p>Run <a href="/srt-validator/">the SRT validator</a> on the file first. It checks the numbering, the times and the overlaps, so a repeated block often shows up as an overlap. Then fix the repeats in one step.</p>
+
+    <h2>How the repeat is removed</h2>
+    <p>The remove duplicates option looks for a cue that repeats the one before it. When two cues have the same words and the second one starts no more than half a second after the first one ends, the two are joined into one cue. The end time becomes the later of the two, so the line stays on screen for the full time.</p>
+    <p>Here is a small example. The first two cues are the same line, and the third is different. Cue 2 is merged into cue 1.</p>
+    <p><strong>Before:</strong></p>
+    <pre><code>1
+00:00:01,000 --&gt; 00:00:03,000
+We leave now.
+
+2
+00:00:01,000 --&gt; 00:00:03,000
+We leave now.
+
+3
+00:00:04,000 --&gt; 00:00:06,000
+Where are the keys?
+</code></pre>
+    <p><strong>After:</strong></p>
+    <pre><code>1
+00:00:01,000 --&gt; 00:00:03,000
+We leave now.
+
+2
+00:00:04,000 --&gt; 00:00:06,000
+Where are the keys?
+</code></pre>
+    <p>The line now appears once, for the same time it had before. Only the extra block was removed.</p>
+
+    <h2>Fix it with the cleaner</h2>
+    <p>Open <a href="/remove-duplicate-subtitles/">the remove duplicate subtitles tool</a> and drop in the file. Check the preview. Look at a line that repeated and a line near it that did not, to make sure the tool did not join two lines that are meant to be separate. Then download the result and play it.</p>
+    <p>The tool only joins a cue with the one before it, or a repeat that is still on screen a few cues back. If a repeat sits far from the original, the tool will leave it in place. Those are rare, and they are easy to find with the validator.</p>
+
+    <h2>Check that the lines are not meant to repeat</h2>
+    <p>Some films repeat a line on purpose. A character says "No" three times in a row, and the subtitle has three blocks with the same word. The cleaner would join two of those only if the times are close together. Check the scene before you accept the change. If the repeats are real, the file does not need a fix.</p>
+    <p>In a song or a chant, the lyrics may repeat with different times. Those are not duplicates, and the tool leaves them alone when the times are apart.</p>
+
+    <h2>When it is not a repeat at all</h2>
+    <p>Two lines on screen at once can also be a timing problem. If one cue ends later than the next one starts, both show together, and that looks like a doubled line when the two texts are close. Use <a href="/fix-subtitle-timing/">the timing fixer</a> to remove overlaps, or check the file with the validator to see how many overlaps it has.</p>
+    <p>A line that stays on screen after the speaker has stopped can also look like a repeat. That is a timing problem, not a duplicate block, so the timing fixer is the tool for it.</p>
+
+    <h2>A quick way to tell the causes apart</h2>
+    <ul>
+      <li>Turn off the separate file in the player. If the doubling stops, it was two sources.</li>
+      <li>Open the file in a text editor. If the same text is in two blocks with near times, it is a repeat.</li>
+      <li>If the two lines are in different languages, check for two tracks, not a repeat.</li>
+    </ul>
+    <p>Once you know which one it is, the fix takes one step: turn off a source, or run the duplicate option on the file.</p>
+
+    <p>See also <a href="/guides/dual-language-subtitles/">dual-language subtitles</a> and <a href="/guides/subtitles-out-of-sync/">subtitles out of sync</a>, since a bad merge can also shift the timing.</p>
+  </article>
+</Base>

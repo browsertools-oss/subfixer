@@ -45,6 +45,7 @@ export const GUIDES = [
   { slug: 'tv-subtitles-not-showing-usb', title: "TV won't show subtitles from USB? Samsung, LG, Sony" },
   { slug: 'subtitles-out-of-sync-partway', title: 'Subtitles fine at first, then out of sync? The fix' },
   { slug: 'kodi-subtitles-out-of-sync', title: 'Kodi subtitles out of sync? Fix the file once' },
+  { slug: 'subtitles-showing-twice', title: 'Subtitles showing twice? Two tracks or repeated lines' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.

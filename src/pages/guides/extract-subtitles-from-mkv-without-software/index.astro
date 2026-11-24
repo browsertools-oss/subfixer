@@ -6,7 +6,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 <Base title={`${title} | SubFixer`} description="Pull the subtitles out of an MKV file in your browser, with no install and no upload. How to tell a track from burned-in text, and how to save and name it." path="/guides/extract-subtitles-from-mkv-without-software/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
-    <p class="lede">Many MKV movies keep their subtitles as a separate track inside the file. You can save that track as a text file in your browser, with no program to install. This guide shows how to tell whether your subtitles are a track, how to save it with the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, and how to name the file so your player finds it.</p>
+    <p class="lede">Many MKV movies keep their subtitles as a separate track inside the file. You can save that track as a text file in your browser. This guide shows how to tell whether your subtitles are a track, how to save it with the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, and how to name the file so your player finds it.</p>
 
     <h2>Is the subtitle a track, or part of the picture?</h2>
     <p>There are two cases, and only one of them can be saved. A subtitle track is a separate stream of text stored inside the MKV, next to the video and the sound. Burned-in subtitles are different: the words are drawn onto every frame of the picture. No tool can take burned-in words out as a file, because the words are no longer stored as text anywhere.</p>
@@ -19,7 +19,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
       <li>Text tracks hold plain SRT text, styled ASS or SSA text, or WebVTT. The extractor saves these as text.</li>
       <li>Picture tracks hold one image per line. They are usually PGS from Blu-ray discs, or VobSub from DVDs. Saving them gives you images, not words, so they need an OCR step before you can edit the text.</li>
     </ul>
-    <p>The track list on the extractor page uses plain labels: "Text (SRT)", "Styled text (ASS)", "WebVTT" and "Picture (PGS or VobSub)". If you see a picture track, skip to the section on picture tracks below. Everything else saves without any extra program.</p>
+    <p>The track list on the extractor page uses plain labels: "Text (SRT)", "Styled text (ASS)", "WebVTT" and "Picture (PGS or VobSub)". If you see a picture track, skip to the section on picture tracks below. </p>
 
     <h2>Save a text track, step by step</h2>
     <ol>
@@ -29,7 +29,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
       <li>Click Save on the text track you want. The file downloads straight away, and the page does not send it anywhere.</li>
       <li>For an ASS track, you can also click Save as SRT. Choose it if your player or editor does not read styled text, because SRT is the plainest format and most players accept it.</li>
     </ol>
-    <p>Keep the saved file open in a text editor only if you need to change it. A plain SRT file opens in any editor, including Notepad and TextEdit.</p>
+    <p>Open the saved file in a text editor only if you need to change it. A plain SRT file opens in any editor, including Notepad and TextEdit.</p>
 
     <h2>Name the file so your player finds it</h2>
     <p>The page builds the file name from the video's name and the language code, for example <code>Movie.eng.srt</code>. Put the file in the same folder as the video, and keep the part before the language code exactly the same as the video's name.</p>

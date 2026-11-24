@@ -1,9 +1,9 @@
-# Foreman report 11-23-2026
+# Foreman report 11-24-2026
 
-Yesterday's runs: 11-22 14:17 UTC (morning) finished in 9m34s and shipped 12 commits (qa issue 20 fixes, home page guide list, datePublished, cross-links, ANSI save UI and FAQs); issue 20 is closed. 11-23 02:17 UTC (evening) finished in 35m37s with success status but made no commits (the boss's answer says it wrote the TV USB guide and never committed it). Since then only the CEO note and the boss's weekly plan landed.
+Runs: the last 6 daily-agent runs all finished successfully (11-23 evening took 38 min). Nothing failed or timed out.
+Shipped (checked in git, tests 98 of 98 pass, build 94 pages): MKV reader (79ef652, 5b610bf), MKV page (7f2c460), the MKV guide (8edd6f4) and its three links (cebbc56). Rows 1 to 3 are really done; guides now 18.
+QA issue #25 (four minor items) is open; I did not close it. Three are real (guide wording, no size cap on zlib output in src/lib/mkv.ts, no focus style or status announcement on the MKV page). The fourth, the "subtitles-too-fast" slug, is a false alarm (it exists in GUIDES).
 
-Checks: no `qa` issues are open. The new plan has nothing marked DONE, so nothing to verify. src/lib/mkv.ts and test/mkv* do not exist yet; row 1 is untouched.
+Plan changes: put the #25 fixes at the top of row 4 (the next row the workers will take, since row 3 is done) with exact files and text, and added a guardrail saying the morning run starts at row 4. No DONE marks removed.
 
-Plan changes: row 1(a) (the MKV reader, the biggest item this week) is now split into three commit steps (fixture, reader and scan with five tests, then trackFile and assToSrt with two tests) so a partial session still ships something. The guardrails already cover "commit as soon as it passes", so I added none.
-
-Needs the boss: none. Watch today's 14:17 UTC run: if it ends with no mkv.ts commit, the MKV spec is too large for one session and should be cut further.
+Needs the boss: nothing. Still open from the plan: the owner should drop one real .mkv on the page (reader is tested only on a built fixture).

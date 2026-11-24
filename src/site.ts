@@ -41,6 +41,7 @@ export const GUIDES = [
   { slug: 'subtitles-to-transcript', title: 'Turn a subtitle file into a clean transcript' },
   { slug: 'chromecast-subtitles-not-showing', title: 'Chromecast not showing subtitles? Use WebVTT' },
   { slug: 'add-subtitles-to-html5-video', title: 'Add subtitles to an HTML5 video: SRT to track' },
+  { slug: 'extract-subtitles-from-mkv-without-software', title: 'Extract subtitles from an MKV without installing anything' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
@@ -1532,6 +1533,7 @@ export const PAGES: ToolPage[] = [
     slug: 'extract-subtitles-from-mkv',
     mode: 'extract',
     group: 'Convert',
+    guide: 'extract-subtitles-from-mkv-without-software',
     title: 'Extract subtitles from MKV online: save SRT, no upload',
     h1: 'Extract subtitles from an MKV file',
     lede: 'Pick an MKV and see its subtitle tracks. Save any text track as SRT or ASS. The movie is read on your computer and never uploaded.',

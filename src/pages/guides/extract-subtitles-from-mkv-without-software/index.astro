@@ -1,0 +1,70 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Extract subtitles from an MKV without installing anything';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Pull the subtitles out of an MKV file in your browser, with no install and no upload. How to tell a track from burned-in text, and how to save and name it." path="/guides/extract-subtitles-from-mkv-without-software/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Many MKV movies keep their subtitles as a separate track inside the file. You can save that track as a text file in your browser, with no program to install. This guide shows how to tell whether your subtitles are a track, how to save it with the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, and how to name the file so your player finds it.</p>
+
+    <h2>Is the subtitle a track, or part of the picture?</h2>
+    <p>There are two cases, and only one of them can be saved. A subtitle track is a separate stream of text stored inside the MKV, next to the video and the sound. Burned-in subtitles are different: the words are drawn onto every frame of the picture. No tool can take burned-in words out as a file, because the words are no longer stored as text anywhere.</p>
+    <p>A quick test tells you which one you have. Turn the subtitles off in your player. If they go away, they are most likely a track. If they stay on screen whatever you do, they are most likely burned in.</p>
+    <p>VLC gives a second check. Open the movie, go to the Subtitle menu and look at Sub Track. Any subtitle tracks inside the MKV are listed there by language or name. VLC lists them but cannot save them, so the list only tells you what the file holds. It does not give you the text.</p>
+
+    <h2>Text tracks and picture tracks</h2>
+    <p>The codec name of each track says what kind it is. Some kinds hold text, and some hold pictures.</p>
+    <ul>
+      <li>Text tracks hold plain SRT text, styled ASS or SSA text, or WebVTT. The extractor saves these as text.</li>
+      <li>Picture tracks hold one image per line. They are usually PGS from Blu-ray discs, or VobSub from DVDs. Saving them gives you images, not words, so they need an OCR step before you can edit the text.</li>
+    </ul>
+    <p>The track list on the extractor page uses plain labels: "Text (SRT)", "Styled text (ASS)", "WebVTT" and "Picture (PGS or VobSub)". If you see a picture track, skip to the section on picture tracks below. Everything else saves without any extra program.</p>
+
+    <h2>Save a text track, step by step</h2>
+    <ol>
+      <li>Open the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a> and pick the MKV file, or drop it on the page. The file is read on your device in pieces of about 1 MB. Nothing is uploaded.</li>
+      <li>Wait while the file is read. A full film can take a minute or more, and the bar shows how far it has got. Stop ends the read if you picked the wrong file.</li>
+      <li>Look at the track list. Each row shows the track number, the language, the name the maker gave it, and the type. A track named "Commentary" or "Forced" is usually not the one you want for a full film.</li>
+      <li>Click Save on the text track you want. The file downloads straight away, and the page does not send it anywhere.</li>
+      <li>For an ASS track, you can also click Save as SRT. Choose it if your player or editor does not read styled text, because SRT is the plainest format and most players accept it.</li>
+    </ol>
+    <p>Keep the saved file open in a text editor only if you need to change it. A plain SRT file opens in any editor, including Notepad and TextEdit.</p>
+
+    <h2>Name the file so your player finds it</h2>
+    <p>The page builds the file name from the video's name and the language code, for example <code>Movie.eng.srt</code>. Put the file in the same folder as the video, and keep the part before the language code exactly the same as the video's name.</p>
+    <p>Plex and Jellyfin read a short language code in a name like <code>Movie (2020).eng.srt</code>, so the subtitle shows up under the right language in their menus. A small difference in the name, such as an extra space or a different year, can stop the match. The <a href="/guides/plex-subtitles-not-showing/">Plex guide</a> has a table of names that work and names that do not.</p>
+    <p>If you save two tracks, for example English and French, each file gets its own language code, so they sit side by side in the same folder without clashing.</p>
+
+    <h2>Fix the file after you save it</h2>
+    <p>A track copied out of an MKV is usually right, but not always. Movies that were cut or re-encoded can carry timing from a different version. Check the file in three places before you rely on it.</p>
+    <ul>
+      <li>Timing. If the lines are early or late by the same amount all the way through, use the <a href="/shift-subtitle-timing/">shift timing</a> tool. Play the video to a spoken line, note the time it is said, and enter the difference.</li>
+      <li>Letters. If accents show as odd symbols, such as Ã© where é should be, use the <a href="/fix-subtitle-encoding/">encoding fixer</a> and save the file again as UTF-8.</li>
+      <li>Structure. The <a href="/srt-validator/">SRT validator</a> reports lines that overlap, lines with no length, and numbers out of order. Fix those before you load the file into an editor or a video site.</li>
+    </ul>
+
+    <h2>Picture tracks: the one case that needs a program</h2>
+    <p>If the track is a picture track, you need a small desktop tool once. The free MKVToolNix can list the tracks and save one of them. It is the only route in this guide that installs anything, and it is needed only for picture tracks.</p>
+    <ol>
+      <li>Run <code>mkvmerge -i movie.mkv</code> in a terminal, or use the track list in MKVToolNix. It shows each track's ID and its type.</li>
+      <li>Save the track you want. For a PGS track, the command is <code>mkvextract tracks movie.mkv 3:subs.sup</code>, where 3 is the ID of that track. The result is a .sup file.</li>
+      <li>Convert the .sup file to text with <a href="/sup-to-srt/">SUP to SRT</a>. The reader works from the pictures, so check the letters afterwards. It can mix up l and I, or rn and m.</li>
+    </ol>
+    <p>The <a href="/guides/sup-to-srt-guide/">SUP guide</a> goes through the conversion in more detail.</p>
+
+    <h2>When the subtitles are not in the file at all</h2>
+    <p>Sometimes an MKV has no subtitle track, and the track list is empty. Check two other places before you give up. The subtitles may be in a separate file next to the movie, often with a name that ends in .srt or .sub. Or they may be burned in, which means the text is part of the picture and no tool can save it as a file.</p>
+    <p>In the burned-in case, the only way to get text is to make a new subtitle file. You can write one by hand, or use a transcription tool that reads the sound. A transcript made that way still needs its timing checked against the picture.</p>
+
+    <h2>Common mistakes</h2>
+    <ul>
+      <li>Saving the wrong track. A movie often has a full track, a forced track for foreign words only, and a commentary track. Read the names in the list before you save.</li>
+      <li>Naming the file differently from the video. Players match on the name, so a small change stops the subtitle from loading.</li>
+      <li>Expecting the picture tracks to save as text. They save as images, and they need OCR.</li>
+      <li>Assuming the timing is right because the track came from the same MKV. A track can be tied to a different cut of the film, so play a few minutes to check.</li>
+    </ul>
+
+    <p class="guide-link">See also: <a href="/guides/sup-to-srt-guide/">PGS subtitles won't show? Convert them to SRT</a> and <a href="/guides/plex-subtitles-not-showing/">Plex subtitles not showing</a>.</p>
+  </article>
+</Base>

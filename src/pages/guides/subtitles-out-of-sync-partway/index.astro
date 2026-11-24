@@ -1,0 +1,73 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Subtitles fine at first, then out of sync? The fix';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Subtitles right at the start, then off by a set amount from one scene on? Shift only the lines after the cut. Free, in your browser." path="/guides/subtitles-out-of-sync-partway/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">The first few minutes line up, then the subtitles drift or jump, and stay wrong until the end. This is a different problem from a file that is out of sync from the first line. The cause is usually that your video and the subtitle file were not cut the same way. The fix is to shift only the lines after the point where the cut happens.</p>
+
+    <h2>Two patterns, two causes</h2>
+    <p>Watch when the subtitles go wrong. The two patterns look alike at first, but they have different causes.</p>
+    <ul>
+      <li><strong>A sudden jump.</strong> The subtitles are right, then one line is early or late by a fixed amount, and every line after it has the same gap. This means the video has a different cut at that point. A release may have removed an ad break, an extra scene may have been added, or a recap may have been cut.</li>
+      <li><strong>A steady growth.</strong> The gap starts small and gets bigger the longer the video plays, often ending minutes off by the credits. This is a frame-rate mismatch, not a cut. The subtitles were timed for one frame rate and the video runs at another. The guide on <a href="/guides/23976-vs-25-fps-subtitles/">23.976 vs 25 fps subtitles</a> explains that case and the fix for it.</li>
+    </ul>
+    <p>This guide covers the first pattern. If the gap keeps growing, stop here and use the frame-rate guide.</p>
+
+    <h2>Find the exact line where it jumps</h2>
+    <p>Play the video until the subtitles are clearly out of step. Go back a little, and note the moment a line starts to be wrong. Then look at the subtitle file, in a text editor or in the preview on the tool, and find the first line that is wrong. That is your starting line.</p>
+    <p>Be careful with the line before it. If the line just before the jump is also a little off, the cut may be a few seconds before the point you noticed. Check two or three lines around the jump and pick the first one that is clearly wrong.</p>
+
+    <h2>Work out the gap</h2>
+    <p>Play the first wrong line in the video and write down the time the speaker starts. Then find the same line in the subtitle file. The difference between the two times is the offset for that line.</p>
+    <p>If the subtitles show after the speaker has started, they are late and the lines need to move earlier. If they show before the speaker, they are early and the lines need to move later. Pick "Too late" or "Too early" to match, then enter the size of the gap in seconds.</p>
+
+    <h2>Shift only the lines after the cut</h2>
+    <p>Use <a href="/shift-subtitles-from-a-line/">the shift from a line tool</a>. It moves the lines from one starting line onward and leaves every earlier line as it was. That is the difference from a plain shift, which moves the whole file and makes the start wrong again.</p>
+    <p>The steps are short:</p>
+    <ol>
+      <li>Drop in the subtitle file. Nothing is uploaded.</li>
+      <li>Under "Shift timing", set "Starting at line" to the first wrong line.</li>
+      <li>Pick "Too late" or "Too early", then enter the gap you worked out.</li>
+      <li>Check the preview at the cut, and at a line before it and one near the end.</li>
+      <li>Download the file and play it.</li>
+    </ol>
+    <p>Here is what the change looks like. Lines 1 and 2 stay where they are. Line 3 moves two seconds later, from 00:00:08,000 to 00:00:10,000.</p>
+    <pre><code>1
+00:00:01,000 --&gt; 00:00:03,000
+First line
+
+2
+00:00:04,000 --&gt; 00:00:06,000
+Second line
+
+3
+00:00:08,000 --&gt; 00:00:10,000
+Third line</code></pre>
+    <p>The text is the same. Only the time of the lines after the cut changed.</p>
+
+    <h2>When the video was cut in two places</h2>
+    <p>Some videos were cut in two places, for example an ad break in one spot and a recap in another. Fix the first jump, then download the result. Load the downloaded file again, find the second wrong line, and shift from there.</p>
+    <p>Check each jump before you move on. A shift that looks right at one point can be wrong at the next jump if the second cut is not where you expected.</p>
+
+    <h2>Check the result on the device</h2>
+    <p>A subtitle file can be right on a computer and still look wrong on a TV or a phone, because the player may add its own offset. Play the video on the device you use most. Check the cut, a line near the start, and a line near the end. If the start is wrong on the device only, the player has an offset setting. That setting is per device and per playback, so it does not change the file.</p>
+    <p>Plex's offset setting only works on some devices. The <a href="/guides/plex-subtitles-out-of-sync/">Plex guide</a> explains why fixing the file is usually the better choice.</p>
+
+    <h2>A tool for the whole file</h2>
+    <p>If the whole file is off by the same amount, the wrong tool is the one for one line onward. Use <a href="/shift-subtitle-timing/">the shift timing tool</a> to move every line by one offset. If the gap grows steadily instead of jumping, use <a href="/sync-subtitles/">the sync tool</a>, which works from two points where you know the right time.</p>
+    <p>For a file that is wrong in many places, the <a href="/guides/subtitles-out-of-sync/">out-of-sync guide</a> covers how to tell the causes apart before you start shifting.</p>
+
+    <h2>Common mistakes</h2>
+    <ul>
+      <li><strong>Shifting the whole file.</strong> The start was right, so the start is now wrong. Set the starting line first.</li>
+      <li><strong>Picking the wrong line.</strong> Choose the first line that is clearly wrong, not the one where the speaker starts to talk.</li>
+      <li><strong>Choosing the wrong direction.</strong> A subtitle that shows late needs to move earlier. Check the preview before you download.</li>
+      <li><strong>Fixing a growing gap as a jump.</strong> A gap that keeps growing is a frame-rate problem. Shifting from one line will not fix it.</li>
+    </ul>
+
+    <p>See also <a href="/guides/subtitles-out-of-sync/">subtitles out of sync</a> and <a href="/guides/23976-vs-25-fps-subtitles/">23.976 vs 25 fps subtitles</a>.</p>
+  </article>
+</Base>

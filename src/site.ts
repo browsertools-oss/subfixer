@@ -43,6 +43,7 @@ export const GUIDES = [
   { slug: 'add-subtitles-to-html5-video', title: 'Add subtitles to an HTML5 video: SRT to track' },
   { slug: 'extract-subtitles-from-mkv-without-software', title: 'Extract subtitles from an MKV without installing anything' },
   { slug: 'tv-subtitles-not-showing-usb', title: "TV won't show subtitles from USB? Samsung, LG, Sony" },
+  { slug: 'subtitles-out-of-sync-partway', title: 'Subtitles fine at first, then out of sync? The fix' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.

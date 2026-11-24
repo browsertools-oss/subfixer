@@ -1,5 +1,5 @@
-- Row 3(a): the guide extract-subtitles-from-mkv-without-software, which links to the new /extract-subtitles-from-mkv/ page (live in this build, 93 pages).
-- Row 3(b): one-sentence links from the SUP FAQ, the SUP guide, and the Plex and Jellyfin guides to the MKV page.
+- Row 4(a): the TV USB guide (tv-subtitles-not-showing-usb) with Samsung, LG, Sony facts from the week plan. Only TV facts. Links: fix-subtitle-encoding (LG ANSI), vtt-to-srt, ass-to-srt, extract-subtitles-from-mkv, sup-to-srt, subtitles-weird-characters. Set guide on fix-subtitle-encoding if empty.
+- Row 4(b): set guide on fix-subtitle-encoding only if empty.
+- Row 5: two guides - subtitles fine at first then out of sync (subtitles-out-of-sync-partway), and Kodi subtitles out of sync (kodi-subtitles-out-of-sync).
 - Check after the end-of-run push that /extract-subtitles-from-mkv/ is live and that the Convert menu lists it.
-- Open owner check: one real .mkv on the page in a browser, to see whether the track list and the saves work on a real file.
-- Build fix 07e7765 is not in this clone; the SINGLE_BYTE import is in Tool.astro and the build is green, so nothing is pending there.
+- Owner check still open: one real .mkv on the page in a browser, to see whether the track list and the saves work on a real file.

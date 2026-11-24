@@ -71,3 +71,10 @@ All builds clean (90 pages). Tests pass 74/74. Guide count now 15 (was 13). chec
 - Not checked: the page has not been run in a browser with a real MKV. The reader is tested only on the fixture. The week plan's owner check (one real file) still stands.
 - Week plan: row 1 and row 2 marked DONE.
 - Next: row 3(a), the guide extract-subtitles-from-mkv-without-software, then the links in row 3(b). Day count: the MKV page is live for the next deploy.
+
+Row 3(a) and 3(b) (same run, continued):
+- Row 3(a), commit 8edd6f4: the guide extract-subtitles-from-mkv-without-software. Structure follows plex-subtitles-out-of-sync. Title 57 chars, description 139 chars, 1300+ words, datePublished 2026-11-24. Sections: track vs burned-in (turn off to check, VLC Sub Track lists them), text vs picture tracks (codec names in plain words), step-by-step with the extractor (what the track list shows, what each save gives), naming for Plex and Jellyfin (Movie.eng.srt), fix after save (shift timing, encoding fixer, validator), picture tracks need MKVToolNix then SUP to SRT, what to do when no tracks at all, common mistakes. See also SUP guide and Plex not-showing.
+- Row 3(b), commit cebbc56: three links added in one commit. SUP FAQ answer, SUP guide, Jellyfin guide each get one sentence pointing text tracks to /extract-subtitles-from-mkv/. Plex guide skipped (no spot mentioning subtitles inside the video file).
+- Checks: npm test 98 of 98 pass (the new guide is now in RECENT_GUIDES). npm run build 94 pages. Dash grep clean on new files.
+- Guide count now 18 (was 17). Week plan rows 3(a) and 3(b) marked DONE.
+- Next: row 4(a) TV USB guide with Samsung, LG, Sony facts.

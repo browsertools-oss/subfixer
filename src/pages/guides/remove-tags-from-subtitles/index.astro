@@ -1,0 +1,72 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Subtitles show {\\an8} or font tags? Remove them';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Subtitle files with codes like &#123;\an8&#125;, font colour tags or italic tags can show them as text. Find them, remove them, and what you lose." path="/guides/remove-tags-from-subtitles/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Some subtitle files are full of codes. You may see a line that starts with <code>&#123;\an8&#125;</code>, or text wrapped in <code>&lt;font color="#ffff00"&gt;</code>, or a word between <code>&lt;i&gt;</code> tags. Some players and devices show those codes on screen as plain text. Others read them and move or colour the line. Either way, removing them gives a clean file that plays the same everywhere.</p>
+
+    <h2>What the codes are</h2>
+    <p>There are two kinds of code in these files, and they come from different formats.</p>
+    <ul>
+      <li><strong>Curly-brace codes</strong> like <code>&#123;\an8&#125;</code> come from the ASS and SSA formats. The number after <code>\an</code> is a screen position. Eight means top centre, so the line sits at the top of the picture instead of the bottom.</li>
+      <li><strong>Angle-bracket tags</strong> like <code>&lt;font color="#ffff00"&gt;</code> and <code>&lt;i&gt;</code> are HTML-style tags. The font tag sets a colour, and the i tag sets italics. Many SRT files use them.</li>
+    </ul>
+    <p>A file can have one kind, the other, or both. Open it in a text editor to see which codes are there before you change anything.</p>
+
+    <h2>Check whether the codes show on screen</h2>
+    <p>Play a few minutes of the film with the subtitles on. If you see the codes as letters, like <code>&#123;\an8&#125;</code> in the middle of the line, the player is showing the codes as text. That is the clear case for removing them.</p>
+    <p>If the codes do not show, the player is reading them. That is the case to think about first. A top-of-screen line, for example, may be a sign or a caption in the film that the subtitle has to avoid covering. If you remove <code>&#123;\an8&#125;</code>, the line moves to the bottom and may cover that text. In that case, keep the code and check the rest of the file.</p>
+
+    <h2>Remove the codes with the cleaner</h2>
+    <p>Open <a href="/subtitle-cleaner/">the subtitle cleaner</a> and drop in the file. Turn on the tags option. The tool removes three kinds of code in one pass: <code>&lt;i&gt;</code> and the other angle-bracket tags, <code>&lt;font&gt;</code> tags with their colours, and <code>&#123;\an8&#125;</code> style codes in curly braces. Then check the preview and download the result.</p>
+    <p>The option is all or nothing. It does not keep italics and drop only the colour. An <code>&lt;i&gt;</code> tag is removed along with the rest, so italic words become plain text. If you want the italics back, add them by hand in a text editor after the cleaning.</p>
+
+    <h2>Before and after</h2>
+    <p>Here is a small file with a positioned line and a coloured line with an italic word. Cue 1 is the positioned line. Cue 2 has a font tag and an italic tag.</p>
+    <p><strong>Before:</strong></p>
+    <pre><code>1
+00:00:01,000 --&gt; 00:00:02,000
+&#123;\an8&#125;Top line
+
+2
+00:00:03,000 --&gt; 00:00:04,000
+&lt;font color="#ffff00"&gt;Yellow&lt;/font&gt; and &lt;i&gt;slanted&lt;/i&gt;
+</code></pre>
+    <p><strong>After:</strong></p>
+    <pre><code>1
+00:00:01,000 --&gt; 00:00:02,000
+Top line
+
+2
+00:00:03,000 --&gt; 00:00:04,000
+Yellow and slanted
+</code></pre>
+    <p>The times are the same. The words are the same. The codes are gone, and so is the italic on "slanted", which is the cost of this option.</p>
+
+    <h2>ASS and SSA files</h2>
+    <p>An ASS or SSA file has its codes inside the lines it calls Dialogue, along with styles and positions for the whole file. Removing the codes from an ASS file flattens its styling. If you want to keep the styling, leave the file as it is and use a player that reads ASS.</p>
+    <p>If you need an SRT or a WebVTT file from an ASS file, convert it with <a href="/ass-to-srt/">the ASS to SRT converter</a> or <a href="/ass-to-vtt/">the ASS to VTT converter</a>. SRT has no positioning codes, so a line that sat at the top of the picture in the ASS file will sit at the bottom after conversion. Check those lines in the preview.</p>
+    <p>The <a href="/guides/srt-vtt-ass/">guide to SRT, VTT and ASS</a> explains which format keeps which kind of code.</p>
+
+    <h2>Remove only what you need</h2>
+    <p>Sometimes the file has only one kind of tag, and the other kind is fine. An italic tag that shows as plain text on your device is easy to spot. A font colour the player already ignores may not need removing. Changing only the codes that cause the problem keeps the rest of the look.</p>
+    <p>To do that, find the code in a text editor and replace it with nothing. A find and replace in a text editor works on the whole file at once. Replace <code>&lt;font color="#ffff00"&gt;</code> and <code>&lt;/font&gt;</code> with nothing, and the colour goes without touching the italics. Save the file as UTF-8 afterwards.</p>
+
+    <h2>Check the result on the device</h2>
+    <p>Play the file on the device where you saw the problem. Check three things: no codes appear as text, the lines that used to be at the top are still readable, and the words in the italic parts still look right. A file with no codes can still have timing or encoding problems, so run the <a href="/srt-validator/">SRT validator</a> too.</p>
+    <p>If you removed positioning codes, play a scene with on-screen text, such as a sign or a phone screen, to make sure the subtitle does not cover it.</p>
+
+    <h2>Common mistakes</h2>
+    <ul>
+      <li><strong>Removing the top-line code from a file that needs it.</strong> The line moves to the bottom and may cover text in the picture. Check the scene before you remove it.</li>
+      <li><strong>Expecting the italics to stay.</strong> The tags option removes the italic tag along with the others.</li>
+      <li><strong>Running the cleaner on the wrong file.</strong> If the file has no codes, the tool changes nothing. Open the file first to see what it has.</li>
+      <li><strong>Saving over the original.</strong> Keep the original file, so you can go back to the styling if you need it.</li>
+    </ul>
+
+    <p>See also <a href="/guides/subtitles-weird-characters/">subtitles with weird characters</a>, which covers the letters, not the codes.</p>
+  </article>
+</Base>

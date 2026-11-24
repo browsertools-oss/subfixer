@@ -46,6 +46,7 @@ export const GUIDES = [
   { slug: 'subtitles-out-of-sync-partway', title: 'Subtitles fine at first, then out of sync? The fix' },
   { slug: 'kodi-subtitles-out-of-sync', title: 'Kodi subtitles out of sync? Fix the file once' },
   { slug: 'subtitles-showing-twice', title: 'Subtitles showing twice? Two tracks or repeated lines' },
+  { slug: 'remove-tags-from-subtitles', title: 'Subtitles show {\\an8} or font tags? Remove them' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.

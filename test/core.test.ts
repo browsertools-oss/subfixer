@@ -681,7 +681,7 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
 });
 
 // Guides written since 11-20-2026: they carry a datePublished in their Article data.
-const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice'];
+const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice', 'remove-tags-from-subtitles'];
 
 test('every guide has a title of 60 characters or less and a 120 to 155 character description', () => {
   const problems: string[] = [];
@@ -744,6 +744,15 @@ test('VTT output starts with WEBVTT and is saved as UTF-8 bytes (accents survive
   assert.ok(out.includes('ça va'));
   const bytes = new Uint8Array(await new Blob([out]).arrayBuffer());
   assert.deepEqual(bytes, new TextEncoder().encode(out));
+});
+
+// Before and after for guide remove-tags-from-subtitles (removeTags).
+test('guide sample: {\\an8}, font and i tags are removed, the words stay', () => {
+  const before = '1\n00:00:01,000 --> 00:00:02,000\n{\\an8}Top line\n\n2\n00:00:03,000 --> 00:00:04,000\n<font color="#ffff00">Yellow</font> and <i>slanted</i>\n';
+  const { captions } = fixCommon(parse(before).captions, { removeTags: true });
+  assert.deepEqual(captions.map((c) => [c.start, c.end, c.text]), [[1000, 2000, 'Top line'], [3000, 4000, 'Yellow and slanted']]);
+  const after = build(captions, 'srt').replace(/\r/g, '').trim();
+  assert.equal(after, '1\n00:00:01,000 --> 00:00:02,000\nTop line\n\n2\n00:00:03,000 --> 00:00:04,000\nYellow and slanted');
 });
 
 // Before and after for guide subtitles-showing-twice (removeDuplicates).

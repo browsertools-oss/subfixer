@@ -4,7 +4,7 @@ export const SITE = {
   url: 'https://subfixer.app',
 };
 
-export type Mode = 'shift' | 'fps' | 'sync' | 'timing' | 'encoding' | 'clean' | 'reading' | 'replace' | 'edit' | 'convert' | 'merge';
+export type Mode = 'shift' | 'fps' | 'sync' | 'timing' | 'encoding' | 'clean' | 'reading' | 'replace' | 'edit' | 'convert' | 'merge' | 'extract';
 export type Group = 'Timing' | 'Text' | 'Convert';
 export const GROUPS: Group[] = ['Timing', 'Text', 'Convert'];
 
@@ -1526,6 +1526,27 @@ export const PAGES: ToolPage[] = [
       { q: 'My EBU file starts at 10:00:00.', a: 'Broadcast files usually start the programme at ten hours. When every line is after that point, the converter counts from there, so the first line lands near zero.' },
       { q: 'Accented letters came out wrong.', a: 'EBU files name their own character set. The tool reads the Latin, Cyrillic, Greek, Arabic and Hebrew sets. For a Spruce file, pick the reading that looks right under "Fix characters".' },
       PRIVACY_FAQ,
+    ],
+  },
+  {
+    slug: 'extract-subtitles-from-mkv',
+    mode: 'extract',
+    group: 'Convert',
+    title: 'Extract subtitles from MKV online: save SRT, no upload',
+    h1: 'Extract subtitles from an MKV file',
+    lede: 'Pick an MKV and see its subtitle tracks. Save any text track as SRT or ASS. The movie is read on your computer and never uploaded.',
+    description: 'Extract subtitle tracks from an MKV file in your browser and save them as SRT or ASS. No upload and no install, so a 4 GB movie is fine.',
+    steps: [
+      'Pick the MKV file. It is read on your device, and nothing is uploaded.',
+      'Wait while the file is read. A full film can take a minute or more.',
+      'Save the track you want. Text tracks can be saved as SRT, and ASS tracks as ASS or SRT.',
+    ],
+    faq: [
+      { q: 'Is the movie uploaded?', a: 'No. The file is read in pieces of about 1 MB on your device. Only the subtitle text is kept in memory, so a large film needs no more memory than a small one.' },
+      { q: 'Why can I not save some tracks?', a: 'PGS and VobSub tracks are pictures, not text, so this page cannot save them as SRT. Use mkvextract from the free MKVToolNix to save the track as a .sup file, then convert it with SUP to SRT.' },
+      { q: 'Why does the file show no subtitles?', a: 'The subtitles may be burned into the picture. No tool can pull burned-in text out as a track. They may also be in a separate file next to the movie.' },
+      { q: 'Which file name should I use?', a: 'Use the video name with the language code, for example Movie.eng.srt, and keep it in the same folder as the video. The page builds that name for each track.' },
+      { q: 'Does it work with MP4 files?', a: 'No. It reads MKV and WebM files only.' },
     ],
   },
   {

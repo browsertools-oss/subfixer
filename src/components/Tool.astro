@@ -12,7 +12,7 @@ interface Props {
 }
 const { mode, preset = {}, home = false, h1, lede } = Astro.props;
 type Group = 'timing' | 'text' | 'convert';
-const GROUP_OF: Record<Mode, Group> = { shift: 'timing', fps: 'timing', sync: 'timing', timing: 'timing', encoding: 'text', clean: 'text', reading: 'text', replace: 'text', edit: 'text', convert: 'convert', merge: 'convert' };
+const GROUP_OF: Record<Mode, Group> = { shift: 'timing', fps: 'timing', sync: 'timing', timing: 'timing', encoding: 'text', clean: 'text', reading: 'text', replace: 'text', edit: 'text', convert: 'convert', merge: 'convert', extract: 'convert' };
 const tabs: { id: Mode; label: string }[] = [
   { id: 'shift', label: 'Shift timing' },
   { id: 'fps', label: 'Change frame rate' },

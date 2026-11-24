@@ -1,0 +1,196 @@
+---
+interface Props { h1: string; lede: string }
+const { h1, lede } = Astro.props;
+---
+<section class="tool mkv" id="mkv">
+  <h1>{h1}</h1>
+  <p class="lede">{lede}</p>
+
+  <label class="drop" id="mkvDrop">
+    <input type="file" id="mkvFile" class="visually-hidden" accept=".mkv,.mks,.webm" />
+    <span class="drop-body">
+      <span class="drop-main">Drop an MKV file here</span>
+      <span class="drop-sub">A movie can be several gigabytes. Nothing leaves your device.</span>
+      <span class="drop-row">
+        <span class="drop-btn" aria-hidden="true">Choose a file</span>
+      </span>
+    </span>
+  </label>
+  <ul class="trust" aria-label="The deal"><li>Free</li><li>No upload</li><li>No sign-up</li></ul>
+  <p class="error" id="mkvError" hidden></p>
+
+  <div class="mkv-status" id="mkvStatus" aria-live="polite" hidden>
+    <p id="mkvText"></p>
+    <progress id="mkvProgress" max="1" value="0"></progress>
+    <button type="button" id="mkvStop">Stop</button>
+  </div>
+
+  <div id="mkvTracks"></div>
+
+  <p class="mkv-next">Next, fix the timing with <a href="/shift-subtitle-timing/">shift subtitle timing</a> or the letters with <a href="/fix-subtitle-encoding/">fix subtitle encoding</a>.</p>
+</section>
+
+<script>
+  import type { MkvTrack } from '../lib/mkv';
+
+  type Result = {
+    tracks: MkvTrack[];
+    cues: Map<number, { start: number; end: number; data: Uint8Array }[]>;
+    codecPrivate: Map<number, string>;
+    skipped: number;
+  };
+
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+  let stopCtl: AbortController | null = null;
+  let current: { base: string; lib: typeof import('../lib/mkv'); result: Result } | null = null;
+
+  const TYPE: Record<MkvTrack['kind'], string> = {
+    srt: 'Text (SRT)',
+    ass: 'Styled text (ASS)',
+    vtt: 'WebVTT',
+    picture: 'Picture (PGS or VobSub)',
+    other: 'Not supported',
+  };
+
+  function showError(msg: string) {
+    const e = $('mkvError');
+    e.textContent = msg;
+    e.hidden = false;
+  }
+
+  function clearError() {
+    $('mkvError').hidden = true;
+  }
+
+  function save(track: MkvTrack, asSrt: boolean) {
+    if (!current) return;
+    const { lib, result, base } = current;
+    const file = lib.trackFile(track, result.cues.get(track.number) ?? [], result.codecPrivate.get(track.number) ?? '');
+    let text = file.text;
+    let name = file.name;
+    if (asSrt) {
+      text = lib.assToSrt(file.text);
+      name = `.${track.language}.srt`;
+    }
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = base + name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+
+  function button(label: string, onClick: () => void): HTMLButtonElement {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function renderTracks() {
+    if (!current) return;
+    const { result } = current;
+    const box = $('mkvTracks');
+    box.replaceChildren();
+
+    const intro = document.createElement('p');
+    intro.textContent = result.tracks.length
+      ? `This file has ${result.tracks.length} subtitle ${result.tracks.length === 1 ? 'track' : 'tracks'}.`
+      : 'No subtitle tracks were found in this file.';
+    box.append(intro);
+
+    if (result.skipped > 0) {
+      const note = document.createElement('p');
+      note.textContent = `${result.skipped} lines were stored in a way this tool can't read.`;
+      box.append(note);
+    }
+    if (!result.tracks.length) return;
+
+    const table = document.createElement('table');
+    const head = table.createTHead().insertRow();
+    for (const h of ['Track', 'Language', 'Name', 'Type', 'Save']) {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = h;
+      head.append(th);
+    }
+    const body = table.createTBody();
+    for (const track of result.tracks) {
+      const row = body.insertRow();
+      row.insertCell().textContent = String(track.number);
+      row.insertCell().textContent = track.language;
+      row.insertCell().textContent = track.name || '-';
+
+      const typeCell = row.insertCell();
+      if (track.encrypted) {
+        typeCell.textContent = "Encrypted, can't be read";
+      } else if (track.kind === 'picture') {
+        typeCell.append(`${TYPE.picture}, see the `);
+        const link = document.createElement('a');
+        link.href = '/sup-to-srt/';
+        link.textContent = 'SUP guide';
+        typeCell.append(link);
+      } else {
+        typeCell.textContent = TYPE[track.kind];
+      }
+
+      const saveCell = row.insertCell();
+      if (!track.encrypted && track.kind !== 'picture' && track.kind !== 'other') {
+        saveCell.append(button('Save', () => save(track, false)));
+        if (track.kind === 'ass') saveCell.append(' ', button('Save as SRT', () => save(track, true)));
+      }
+    }
+    box.append(table);
+  }
+
+  async function load(file: File) {
+    clearError();
+    $('mkvTracks').replaceChildren();
+    current = null;
+    $('mkvStatus').hidden = false;
+    $('mkvText').textContent = `Reading ${file.name}. A full film can take a minute or more.`;
+    const progress = $('mkvProgress') as HTMLProgressElement;
+    progress.value = 0;
+    stopCtl = new AbortController();
+    try {
+      const lib = await import('../lib/mkv');
+      const source = {
+        size: file.size,
+        read: (offset: number, length: number) =>
+          file.slice(offset, offset + length).arrayBuffer().then((b) => new Uint8Array(b)),
+      };
+      const result = (await lib.scanMkv(
+        source,
+        (done, total) => {
+          progress.value = total ? done / total : 0;
+        },
+        stopCtl.signal,
+      )) as Result;
+      current = { base: file.name.replace(/\.(mkv|mks|webm)$/i, ''), lib, result };
+      renderTracks();
+    } catch (err) {
+      const aborted = err instanceof DOMException && err.name === 'AbortError';
+      showError(aborted ? 'Stopped. Pick the file again to start over.' : (err as Error).message || 'This file could not be read.');
+    } finally {
+      $('mkvStatus').hidden = true;
+      stopCtl = null;
+    }
+  }
+
+  $('mkvStop').addEventListener('click', () => stopCtl?.abort());
+
+  const input = $('mkvFile') as HTMLInputElement;
+  input.addEventListener('change', () => {
+    const file = input.files?.[0];
+    if (file) load(file);
+  });
+
+  const drop = $('mkvDrop');
+  drop.addEventListener('dragover', (e) => e.preventDefault());
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    if (file) load(file);
+  });
+</script>

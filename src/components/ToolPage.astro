@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Tool from './Tool.astro';
+import MkvExtract from './MkvExtract.astro';
 import { SITE, GUIDES, HOME_GUIDES, type ToolPage } from '../site';
 import { NOINDEX } from '../noindex.mjs';
 interface Props { page: ToolPage }
@@ -25,7 +26,9 @@ const jsonld = [
 ];
 ---
 <Base title={page.title} description={page.description} path={path} jsonld={jsonld} noindex={NOINDEX.includes(page.slug)}>
-  <Tool mode={page.mode} preset={page.preset} home={home} h1={page.h1} lede={page.lede} />
+  {page.mode === 'extract'
+    ? <MkvExtract h1={page.h1} lede={page.lede} />
+    : <Tool mode={page.mode} preset={page.preset} home={home} h1={page.h1} lede={page.lede} />}
   <div class="adslot" aria-hidden="true"></div>
   {home && (
     <section class="block">

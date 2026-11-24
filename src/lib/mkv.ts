@@ -1,6 +1,8 @@
 // Reads the subtitle tracks of an MKV (Matroska) or WebM file without loading the whole file.
 // Video and audio blocks are skipped by moving the read position, never read.
 
+import { build, parse, type Caption } from './subs.ts';
+
 export interface MkvSource {
   size: number;
   read(offset: number, length: number): Promise<Uint8Array>;
@@ -394,4 +396,54 @@ export async function scanMkv(
     if (!t || t.info.kind === 'picture' || t.info.kind === 'other') cues.delete(n);
   }
   return { tracks, cues, codecPrivate, skipped };
+}
+
+// ASS time: H:MM:SS.cc (centiseconds).
+function assTime(ms: number): string {
+  const cs = Math.max(0, Math.round(ms / 10));
+  const h = Math.floor(cs / 360000);
+  const m = Math.floor((cs % 360000) / 6000);
+  const s = Math.floor((cs % 6000) / 100);
+  const c = cs % 100;
+  return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(c).padStart(2, '0')}`;
+}
+
+// Saves a track as SRT, VTT or ASS text. The name is the language and format suffix,
+// for example ".eng.srt", to put after the video's file name.
+export function trackFile(
+  track: MkvTrack,
+  cues: MkvCue[],
+  codecPrivate: string,
+): { name: string; text: string } {
+  const dec = new TextDecoder();
+  const lang = track.language || 'eng';
+  const sorted = [...cues].sort((a, b) => a.start - b.start);
+
+  if (track.kind === 'ass') {
+    // Payload: ReadOrder,Layer,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+    const dialogue = sorted.map((c) => {
+      const f = dec.decode(c.data).split(',');
+      const text = f.slice(8).join(',').replace(/\n+$/, '');
+      return `Dialogue: ${f[1]},${assTime(c.start)},${assTime(c.end)},${f[2]},${f[3]},${f[4]},${f[5]},${f[6]},${f[7]},${text}`;
+    });
+    const head = codecPrivate.replace(/\s+$/, '');
+    const parts = [head];
+    if (!/^\[Events\]/m.test(head)) {
+      parts.push('', '[Events]', 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text');
+    }
+    return { name: `.${lang}.ass`, text: [...parts, ...dialogue].join('\r\n') + '\r\n' };
+  }
+
+  const captions: Caption[] = sorted.map((c) => ({
+    start: c.start,
+    end: c.end,
+    text: dec.decode(c.data).replace(/\n+$/, ''),
+  }));
+  if (track.kind === 'vtt') return { name: `.${lang}.vtt`, text: build(captions, 'vtt') };
+  return { name: `.${lang}.srt`, text: build(captions, 'srt') };
+}
+
+// An ASS file as SRT, for a track that was saved as ASS.
+export function assToSrt(text: string): string {
+  return build(parse(text).captions, 'srt');
 }

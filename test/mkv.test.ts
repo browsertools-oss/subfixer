@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { scanMkv } from '../src/lib/mkv.ts';
+import { scanMkv, trackFile, assToSrt } from '../src/lib/mkv.ts';
+import { build } from '../src/lib/subs.ts';
 import { sampleMkv, recordingSource } from './mkv-fixture.ts';
 
 const NOT_MKV = 'This is not an MKV or WebM file.';
@@ -42,4 +43,37 @@ test('mkv reads never ask for more than one chunk, so the 3 MB video block is sk
 test('random bytes are rejected with a plain message', async () => {
   const junk = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   await assert.rejects(() => scanMkv(recordingSource(junk, [])), { message: NOT_MKV });
+});
+
+test('mkv SRT track: captions, trackFile text equals build(captions, srt), name ends .eng.srt', async () => {
+  const { tracks, cues, codecPrivate } = await scanMkv(recordingSource(sampleMkv(), []));
+  const track = tracks.find((t) => t.number === 2);
+  assert.ok(track);
+  const captions = [
+    { start: 1000, end: 2500, text: 'Hello there.' },
+    { start: 3000, end: 4200, text: '<i>Café</i>\nsecond line' },
+  ];
+  const file = trackFile(track, cues.get(2) ?? [], codecPrivate.get(2) ?? '');
+  assert.equal(file.text, build(captions, 'srt'));
+  assert.ok(file.name.endsWith('.eng.srt'), file.name);
+});
+
+test('mkv ASS track: header kept, two Dialogue lines with their times and override tags', async () => {
+  const { tracks, cues, codecPrivate } = await scanMkv(recordingSource(sampleMkv(), []));
+  const track = tracks.find((t) => t.number === 3);
+  assert.ok(track);
+  const file = trackFile(track, cues.get(3) ?? [], codecPrivate.get(3) ?? '');
+  assert.ok(file.name.endsWith('.fre.ass'), file.name);
+  assert.ok(file.text.includes('[Script Info]'));
+  assert.ok(file.text.includes('Style: Default,Arial,20'));
+  assert.ok(file.text.includes('[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text'));
+  const dialogue = file.text.split('\r\n').filter((l) => l.startsWith('Dialogue: '));
+  assert.equal(dialogue.length, 2);
+  assert.ok(dialogue[0].includes('0:00:01.00,0:00:02.50'), dialogue[0]);
+  assert.ok(dialogue[0].endsWith(',Bonjour.'), dialogue[0]);
+  assert.ok(dialogue[1].includes('0:00:03.00,0:00:04.20'), dialogue[1]);
+  assert.ok(dialogue[1].endsWith('{\\an8}En haut'), dialogue[1]);
+  const srt = assToSrt(file.text);
+  assert.ok(srt.includes('00:00:01,000 --> 00:00:02,500'), srt);
+  assert.ok(srt.includes('Bonjour.'), srt);
 });

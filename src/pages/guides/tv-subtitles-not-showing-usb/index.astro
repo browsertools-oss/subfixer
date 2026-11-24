@@ -1,0 +1,69 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = "TV won't show subtitles from USB? Samsung, LG, Sony";
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Subtitles that play on a computer but not from a USB stick on a Samsung, LG or Sony TV? Check the file name, the folder, the extension and the encoding." path="/guides/tv-subtitles-not-showing-usb/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">The video plays from the stick, but no subtitles appear. Usually the TV has not found a subtitle file it can use. It looks for a file with a matching name, in the same folder, in an encoding it accepts. This guide goes through those checks in order, from the cheapest to the most work.</p>
+
+    <h2>Check that the names match exactly</h2>
+    <p>A TV player finds an external subtitle file by matching it to the video. The two files need the same base name and sit in the same folder. The part after the last dot is the extension, so <code>Movie.mkv</code> and <code>Movie.srt</code> match, and a file named after a different film does not.</p>
+    <p>The brands are strict about small differences. These are the mistakes that come up most often:</p>
+    <table>
+      <thead>
+        <tr><th>Video and subtitle</th><th>What goes wrong</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>Movie.mkv</code> and <code>Movie .srt</code></td><td>LG's help page says a blank space difference breaks the match.</td></tr>
+        <tr><td><code>Movie.mkv</code> and <code>Movie.SRT</code></td><td>Sony's support page asks for a lowercase extension, <code>.srt</code>.</td></tr>
+        <tr><td><code>Movie.mkv</code> and <code>Movie.srt.txt</code></td><td>Windows hides known extensions, so this file looks like a subtitle file but is a text file. See the next section.</td></tr>
+        <tr><td>Subtitle in a different folder</td><td>Samsung users report that the fix was to keep both files in the same folder.</td></tr>
+      </tbody>
+    </table>
+    <p>Rename the subtitle so the base name is identical to the video, with nothing before or after the name, and put both files in the same folder on the stick. Keep the extension lowercase.</p>
+
+    <h2>Show the hidden extension</h2>
+    <p>This is one of the most common causes on Windows. A subtitle can really be named <code>Movie.srt.txt</code>. Windows hides the <code>.txt</code> by default, so the file appears as <code>Movie.srt</code> in Explorer, and the TV sees a text file it will not load.</p>
+    <p>To check, open File Explorer and turn on "File name extensions" in the View menu. Each file then shows its full name. If the subtitle ends in <code>.txt</code>, rename it to remove that part.</p>
+    <p>If a file that is named correctly still fails, check its content with <a href="/srt-validator/">the SRT validator</a>. A file with the right name can still hold another format inside.</p>
+
+    <h2>Turn subtitles on in the TV's playback options</h2>
+    <p>Subtitles can stay off until you pick them for a video. While the video plays, open the playback options. Each brand names this menu a little differently, so look for the one that lists audio and subtitles. Choose the subtitle file from the list.</p>
+    <p>If the file name appears in that list, the TV has found it, and the problem is the text inside the file. If no file appears at all, go back to the name and folder checks. The file is not being matched.</p>
+
+    <h2>LG and the ANSI encoding</h2>
+    <p>LG's help page "LG TV: USB video subtitle issue" gives a specific fix. Open the .srt file in Notepad, choose Save As, and set the encoding to ANSI. The page also says the stick should be FAT32 or NTFS. If the video itself fails to play, the TV may not support its codec.</p>
+    <p>"ANSI" in Notepad is not one standard. It means the PC's own old code page. On US and Western European Windows that is Windows-1252. On Cyrillic Windows it is Windows-1251. If the code page does not match the letters in the file, accents come out wrong.</p>
+    <p>You can skip Notepad. On <a href="/fix-subtitle-encoding/">the encoding fixer</a>, open the "Save as" list and pick the ANSI code page that matches the language of the subtitles, then download the file. The tool's own hint says to choose UTF-8 unless a device needs a specific ANSI encoding. LG's help page is the case where an ANSI file is what the TV expects.</p>
+    <p>If the letters are still wrong after saving, read <a href="/guides/subtitles-weird-characters/">the guide on subtitles with weird characters</a>, which explains how to find the right code page by checking a few lines.</p>
+
+    <h2>Check the file type</h2>
+    <p>A file called <code>.srt</code> can still hold another format inside. A WebVTT file that was renamed to <code>.srt</code> is a common case, and so is an ASS file with styling. Use <a href="/vtt-to-srt/">the WebVTT to SRT converter</a> or <a href="/ass-to-srt/">the ASS to SRT converter</a> to turn the content into a real SRT, then save it under the same name as the video.</p>
+    <p>Picture subtitles are a separate case. Blu-ray subtitles (PGS, often saved as .sup) are images, and most TVs need a text SRT instead. Convert them to text with <a href="/sup-to-srt/">the SUP to SRT tool</a> first.</p>
+
+    <h2>USB or network playback</h2>
+    <p>Some users report that subtitles show when the video plays from a USB stick, but not when the same video plays over the network, from a NAS or through DLNA. If that happens, copy both files to the stick and play the video from there.</p>
+    <p>Test the stick first. If the subtitles work from USB, the files are fine, and the network path is the limit.</p>
+
+    <h2>Subtitles still inside an MKV</h2>
+    <p>If the video is an MKV and its subtitles are a track inside the file, there is no separate subtitle file for the TV to find. Save the track with <a href="/extract-subtitles-from-mkv/">the MKV subtitle extractor</a>. The extractor shows which tracks the file has and saves a text track as SRT or ASS in your browser, so the movie is not uploaded. Then put the saved file next to the video under the same base name.</p>
+    <p>If the MKV has only picture tracks, the extractor cannot save them as text. The guide on <a href="/guides/extract-subtitles-from-mkv-without-software/">extracting subtitles from an MKV</a> covers the desktop route for picture tracks.</p>
+
+    <h2>A quick test before you blame the TV</h2>
+    <p>Copy the same two files to a laptop and play them in a desktop player. If the subtitles show there, the files are usually fine, and the problem is how the TV reads the stick. If they do not show on the laptop either, the file has a problem, and <a href="/srt-validator/">the validator</a> will point to it.</p>
+    <p>Keep one known-good file on the stick. When a new film fails, the good file shows whether the TV is still reading external subtitles at all.</p>
+
+    <h2>Short checklist</h2>
+    <ul>
+      <li>The names match, with nothing extra before or after the base name.</li>
+      <li>Both files are in the same folder on the stick.</li>
+      <li>The extension is lowercase <code>.srt</code>, and it is not <code>.srt.txt</code>.</li>
+      <li>The file is saved in the encoding the TV expects, ANSI on LG when the letters break.</li>
+      <li>Subtitles are switched on in the playback options and the file is selected.</li>
+    </ul>
+
+    <p>See also <a href="/guides/subtitles-weird-characters/">subtitles with weird characters</a>, and the <a href="/guides/vlc-subtitles-not-showing/">VLC guide</a> if the same file works on a computer but not in one player.</p>
+  </article>
+</Base>

@@ -1,0 +1,53 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Kodi subtitles out of sync? Fix the file once';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Kodi's subtitle delay only changes one playback. Fix the subtitle file once with a shift or a sync, and save it next to the video so every play is right." path="/guides/kodi-subtitles-out-of-sync/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Kodi lets you move subtitles earlier or later while a video plays. That is useful for one film, but the change is lost when the video ends. If the same subtitle file is out of sync every time you play it, the file is the problem, and the fix is to correct the file once.</p>
+
+    <h2>Why the player offset is not a fix</h2>
+    <p>While a video is playing, Kodi's player has a subtitle delay control. It moves the subtitles by a set amount, and you can nudge it up and down until the words match the speech. It works, but the setting applies to that one playback only. Start the film again, or open it on another device that runs Kodi, and the subtitles are out of sync again.</p>
+    <p>That makes the player offset a good test and a poor cure. Use it to find out how far off the subtitles are. Then write the amount down, and correct the file with that number.</p>
+
+    <h2>Find out how far off they are</h2>
+    <p>Play the video to the first spoken line, and note how many seconds the subtitle is early or late. Do the same at two or three points: near the start, in the middle, and near the end. The three numbers tell you which kind of problem you have.</p>
+    <ul>
+      <li>The same gap at all three points means a constant offset. The subtitles were made for a video with a different intro, logo or opening credits. Fix it with a single shift.</li>
+      <li>A gap that is small at the start and larger at the end means the speed is wrong. This is usually a frame-rate mismatch, such as 25 fps subtitles on 23.976 fps video. The <a href="/guides/23976-vs-25-fps-subtitles/">frame-rate guide</a> explains that case.</li>
+      <li>A gap that is fine until one point and then jumps means the video was cut differently at that point. Shift only the lines after the cut, as the <a href="/guides/subtitles-out-of-sync-partway/">guide on subtitles that go out of sync partway</a> describes.</li>
+    </ul>
+
+    <h2>Fix a constant offset</h2>
+    <p>Open <a href="/shift-subtitle-timing/">the shift timing tool</a> and drop in the subtitle file. Enter the gap you wrote down, and pick "Too early" or "Too late" so the subtitles move the right way. Check the preview at the start and at the end of the file, then download the result.</p>
+    <p>Keep the original file. If the shift turns out to be wrong, you can start again from it.</p>
+
+    <h2>Fix a gap that grows</h2>
+    <p>If the gap starts small and grows, a single shift will be right at one point and wrong at the other. Use <a href="/sync-subtitles/">the sync tool</a>. It works from two points in the video where you know the right time. Pick a line near the start and a line near the end, enter the time each one should have, and download the corrected file.</p>
+
+    <h2>Save the fixed file next to the video</h2>
+    <p>Kodi loads an external subtitle file that has the same name as the video and sits in the same folder. After the fix, save the corrected subtitle with the video's file name, for example <code>Film.srt</code> next to <code>Film.mkv</code>. Then play the video again and do not touch the subtitle delay.</p>
+    <p>If you already played the film with the old file, copy the fixed file over the old one in the same folder, then play the video again.</p>
+    <p>Keep the video and the subtitle together. If you move the video to another folder, move the subtitle with it.</p>
+
+    <h2>Check the timing once, on the device you use most</h2>
+    <p>Play the file from the start, through the first scene change, and to the end. The fixed file should be right in all three places with the player's delay left at zero. If it is still wrong at one point, the video has a different cut there, and that point needs its own shift.</p>
+    <p>A file that is right on Kodi on a computer may still look wrong on a TV or a phone, because those devices can add their own offset. Test the file on each device where you watch it. The fix belongs in the file, so each device gets the same timing.</p>
+
+    <h2>The same file on other players</h2>
+    <p>A corrected file works in most players that load external subtitles. Plex is one example. Its offset setting only helps on some devices, so the <a href="/guides/plex-subtitles-out-of-sync/">Plex guide</a> recommends the same file fix.</p>
+    <p>Check the file itself before you change anything else. If the letters are wrong as well as the timing, fix the encoding first with <a href="/fix-subtitle-encoding/">the encoding fixer</a>. Then correct the timing on the fixed file.</p>
+
+    <h2>Common mistakes</h2>
+    <ul>
+      <li><strong>Changing the delay and leaving the file alone.</strong> The next play starts from the original timing again.</li>
+      <li><strong>Saving the fixed file under a new name.</strong> Kodi looks for a subtitle that has the video's name, so a new name is not picked up.</li>
+      <li><strong>Fixing the whole file for a cut in the middle.</strong> If the start was right, shift only from the line where the jump happens.</li>
+      <li><strong>Using a shift when the gap grows.</strong> A growing gap needs the two-point sync, not a single offset.</li>
+    </ul>
+
+    <p>See also <a href="/guides/subtitles-out-of-sync/">subtitles out of sync</a>, which covers the general causes.</p>
+  </article>
+</Base>

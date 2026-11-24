@@ -25,6 +25,7 @@ const { h1, lede } = Astro.props;
     <button type="button" id="mkvStop">Stop</button>
   </div>
 
+  <p class="visually-hidden" id="mkvAnnounce" aria-live="polite"></p>
   <div id="mkvTracks"></div>
 
   <p class="mkv-next">Next, fix the timing with <a href="/shift-subtitle-timing/">shift subtitle timing</a> or the letters with <a href="/fix-subtitle-encoding/">fix subtitle encoding</a>.</p>
@@ -99,6 +100,8 @@ const { h1, lede } = Astro.props;
       ? `This file has ${result.tracks.length} subtitle ${result.tracks.length === 1 ? 'track' : 'tracks'}.`
       : 'No subtitle tracks were found in this file.';
     box.append(intro);
+    // #mkvStatus is hidden once the file is read, so announce here instead.
+    $('mkvAnnounce').textContent = result.tracks.length ? `Found ${result.tracks.length} ${result.tracks.length === 1 ? 'track' : 'tracks'}` : 'No subtitle tracks found';
 
     if (result.skipped > 0) {
       const note = document.createElement('p');

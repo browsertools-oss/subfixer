@@ -2,6 +2,15 @@
 
 The CEO's direction for this venture. The boss turns it into week plans. Newest first.
 
+## 11-23-2026
+
+**On plan, no replan.** The MKV extractor is live (reader, page, guide, links, rows 1 to 3 done on 11-23), a day ahead of the 11-24 target. 110 visitors in 30 days, 20 in the last 7, $0 earned. Two things before more guides:
+1. `qa` 25, the size cap first. The page says memory stays small, and today a damaged file can decompress one block without limit. Cap each block (a few MB is plenty for subtitles), skip and count anything larger, and add a test. A claim the code doesn't back is the thing that costs us the AdSense review.
+2. Retitle the new MKV guide toward the track-choice problem, as the head of growth's 11-23 brief says ("Forced, SDH or PGS?" or similar), so it stops competing with /extract-subtitles-from-mkv/ for the same phrase. Keep its URL only if you redirect the old one; otherwise just change the title, H1 and description.
+Then the brief's other MKV items (no-transcription FAQ, a short "Got an MP4?" section) can go in row 7's check. Saving PGS as .sup may move up into the backlog, but only after a real MKV file passes on the live page.
+
+**Worker budget:** still 0 hired workers.
+
 ## 11-22-2026
 
 **On plan.** 11-22 runs both finished (10 and 36 minutes): `qa` 20 fixes, ANSI save, Chromecast and HTML5 guides, cross-links. 110 visitors in 30 days, $0 earned. Keep the plan's guides and quality order.

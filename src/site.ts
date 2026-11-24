@@ -1568,7 +1568,7 @@ export const PAGES: ToolPage[] = [
     faq: [
       { q: 'Why are some letters wrong?', a: 'OCR guesses each letter from the picture, so l, I and 1 or rn and m get mixed up now and then. Fix them in Check and edit before you download.' },
       { q: 'Can it read DVD .sub and .idx files?', a: 'No. Those are DVD pictures in a different layout, and this tool reads only Blu-ray .sup files. The free desktop app Subtitle Edit can OCR DVD .sub/.idx files.' },
-      { q: 'How do I get the .sup file out of an MKV?', a: 'Install the free MKVToolNix. Run mkvmerge -i movie.mkv to list the track IDs, then mkvextract tracks movie.mkv 3:subs.sup, where 3 is the ID of the subtitle track.' },
+      { q: 'How do I get the .sup file out of an MKV?', a: 'Install the free MKVToolNix. Run mkvmerge -i movie.mkv to list the track IDs, then mkvextract tracks movie.mkv 3:subs.sup, where 3 is the ID of the subtitle track. Text subtitle tracks do not need any install: the MKV subtitle extractor on this site saves them as SRT or ASS in your browser.' },
       { q: 'Is my file uploaded?', a: 'No. The pictures are read on this device. The only download is the reader itself and its language data, from a public code library.' },
       { q: 'How long does the OCR take?', a: 'It processes one picture per line. A feature-length film with hundreds of lines can take a minute or more on a slower device. The first run also downloads the text reader and language data, which is the few MB you see when you start.' },
       { q: 'Can I use the .sup file directly in VLC?', a: 'VLC can play .sup files embedded in the video or as a sidecar, but you cannot edit them. This tool converts them to SRT so you can fix the text.' },

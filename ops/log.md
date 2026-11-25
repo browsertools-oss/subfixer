@@ -92,3 +92,5 @@ Row 3(a) and 3(b) (same run, continued):
 - Checks: npm test 98 of 98 pass (the new guide is now in RECENT_GUIDES). npm run build 94 pages. Dash grep clean on new files.
 - Guide count now 18 (was 17). Week plan rows 3(a) and 3(b) marked DONE.
 - Next: row 4(a) TV USB guide with Samsung, LG, Sony facts.
+
+11-24-2026 (boss, replan ordered by the CEO on 11-24): Weekly plan 11-25-2026 to 11-29-2026, 8 runs plus a Sunday fallback row. Targets: MP4 subtitle extractor live and tested by 11-26 evening; MKV page saves PGS tracks as .sup by 11-27; 28 guides live and grouped by topic by 11-28 (27 now); `qa` 27 fixed by 11-25 evening. Top three items: `qa` 27 fixes and the MP4 reader (rows 1 and 2, box layout spelled out in the MP4 spec); the /extract-subtitles-from-mp4/ page on the shared extractor component (row 3); PGS as .sup on the MKV page with a round-trip test (row 4). Money: $26.40 spent across both ventures, $0 earned, about $6.89 of shared credit left; 110 visitors in 30 days.

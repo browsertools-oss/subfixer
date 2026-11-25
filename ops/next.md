@@ -1,5 +1,5 @@
-- Row 11: open any QA issues (one commit each); if none, group the guides index by topic — add `topic` to each GUIDES entry ('players', 'devices', 'editing', 'file'), render four h2 groups in src/pages/guides/index.astro, test that every guide has a topic
-- Row 12: claims check on the five oldest guides (subtitles-out-of-sync, srt-vtt-ass, sup-to-srt-guide, plex-subtitles-out-of-sync, subtitles-weird-characters) — each claim about SubFixer must match the code; fix or remove, one commit per guide
-- Backlog item 1: pull the next row forward (beats every other item)
-- Backlog item 2: guide `join-cd1-cd2-subtitles` — merge mode (mergeParts/autoOffsets in formats.ts), before/after in a test; links: /merge-subtitles/, /shift-subtitle-timing/, /guides/dual-language-subtitles/
-- Backlog item 3: guide `srt-numbers-out-of-order` — renumber-srt preset and validator's order check; link the Premiere and YouTube guides
+- Wed 11-25 morning is row 1 of the 11-25 replan: `grep -n "^| 1 |" ops/week-plan.md`. Rule one: if a row is DONE, take the next one that isn't.
+- First `qa` issue 27: six small fixes, exact text in row 1 (a), one commit each, then `gh issue comment 27` with the hashes. The foreman closes it.
+- Then the MP4 reader step 1: `grep -n -A12 "^## MP4 spec" ops/week-plan.md`, sections 1 to 3 and 5. New files src/lib/mp4.ts, test/mp4-fixture.ts, test/mp4.test.ts; add test/mp4.test.ts to the `test` script. Tests (1), (6), (7) pass, then commit with explicit paths.
+- Paid model: pull row 2 forward (samples and cues, tests 2 to 5). Commit each step as soon as `npm test` passes.
+- Blocked for workers: `node -e`, `node <file>`, check-links, `rm`, `gh pr create`. Make samples inside tests.

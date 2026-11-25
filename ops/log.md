@@ -2,6 +2,28 @@
 
 One dated entry per agent run.
 
+2026-11-25 (morning): Checked `npm test` (113/113 pass at start) and `npm run build` (103 pages, clean) at 14:18 UTC. This run corresponds to row 1 in the week plan (Wed 11-25 morning, 11-25-2026 14:17 UTC). Items committed to main:
+
+1. `qa` issue 27 (six fixes, one commit each):
+   - Guide summaries for four new guides (burned-in-vs-soft-subtitles, mx-player-subtitle-sync, subtitles-overlapping-lines, remove-sdh-from-subtitles) and tidy SUMMARIES spacing. Commit 2a3717b.
+   - MX Player guide worked example: uses shift tool's real inputs ("Too early" + 2 seconds). Commit b240055.
+   - Kodi guide: delay stays in player, not one playback only; description 152 chars. Commit e2a193d.
+   - MKV guide: removed trailing space. Commit b58537f.
+   - Overlapping-lines guide: escaped `-->` to `-->` in code samples, added trailing newline. Commit 1ba688f.
+   - Remove-tags guide: description lost backslash, rewritten without brace code (150 chars). Commit a3b1068.
+
+2. MP4 reader step 1 (spec sections 1-3, 5): scanMp4 lists tracks from moov index (tx3g, text, wvtt, c608), rejects fragmented and non-MP4 files. Box fixture and tests 1, 6, 7. Commit afcee64.
+
+3. MP4 reader step 2 (spec section 4): reads subtitle cues from tx3g/text (UTF-16BE or UTF-8) and wvtt (vttc payl). Sample tables, 1 MB cap, skipped counter. Tests 2-5. 7 mp4 tests pass. Commit 7b31351.
+
+4. MP4 subtitle extractor page on shared MkvExtract component: /extract-subtitles-from-mp4/ (Convert group) with steps, FAQs. Component picks reader from file magic bytes; accepts .mp4/.m4v/.mov; shows (default)/(forced). MKV page FAQ now says MP4 works. Commit 226301d.
+
+5. PGS as .sup (spec all): scanMkv keeps PGS blocks with size caps (MAX_PAYLOAD, MAX_PICTURE_TOTAL). New trackSup export builds .sup with PG headers and PTS. Round-trip test (8) and 9 MB skip test (9). Component: PGS tracks show "Picture (PGS). Save it as .sup, then read it with SUP to SRT" with Save as .sup button; VobSub/DVB show "not saved here". MKV page FAQ, SUP to SRT FAQ, and SUP guide updated. Commits 8a363e0, e5254da.
+
+6. MKV guide update (row 5): title/description changed, Forced/SDH/default section added, picture tracks rewritten for .sup flow, "Got an MP4 instead?" section added. SUMMARIES updated. Commit d78ac45.
+
+All builds clean (103 pages). Tests pass 123/123 (was 113). Guide count now 22. Week-plan rows 1-4 marked DONE. Next: row 5 growth brief copy, row 6 MP4 guide, row 7 guides index by topic.
+
 2026-11-24 (evening): Checked `npm test` (106/106 pass at start) and `npm run build` (99 pages, clean) at 02:18 UTC. This run corresponds to row 6 in the week plan (Tue 11-24 evening, 11-24-2026 02:17 UTC). Items committed to main:
 
 1. Row 6(a) and (b): Added `guide` links from remove-duplicate-subtitles → subtitles-showing-twice and subtitle-cleaner → remove-tags-from-subtitles in src/site.ts. Both guide pages were already in the tree. Commit 5d12c36.

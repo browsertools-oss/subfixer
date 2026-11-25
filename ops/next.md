@@ -1,5 +1,5 @@
-- Wed 11-25 morning is row 1 of the 11-25 replan: `grep -n "^| 1 |" ops/week-plan.md`. Rule one: if a row is DONE, take the next one that isn't.
-- First `qa` issue 27: six small fixes, exact text in row 1 (a), one commit each, then `gh issue comment 27` with the hashes. The foreman closes it.
-- Then the MP4 reader step 1: `grep -n -A12 "^## MP4 spec" ops/week-plan.md`, sections 1 to 3 and 5. New files src/lib/mp4.ts, test/mp4-fixture.ts, test/mp4.test.ts; add test/mp4.test.ts to the `test` script. Tests (1), (6), (7) pass, then commit with explicit paths.
-- Paid model: pull row 2 forward (samples and cues, tests 2 to 5). Commit each step as soon as `npm test` passes.
-- Blocked for workers: `node -e`, `node <file>`, check-links, `rm`, `gh pr create`. Make samples inside tests.
+- Row 5(b): Growth brief copy — update MKV extractor description (144 chars) and add "Does it transcribe the audio?" FAQ to both MKV and MP4 extractor pages
+- Row 5(c): Add CSV Excel FAQ to /srt-to-csv/ about semicolon separators in some regions
+- Row 6: New guide `mp4-subtitles-not-showing-on-tv` (title 52 chars, description 147) — MP4 subtitles work in VLC but not TV; save track with MP4 extractor, name it, fix encoding, link TV USB and Chromecast guides
+- Row 7: Group guides index by topic — add `topic` to each GUIDES entry, render four h2 groups (Players, TVs/Chromecast, Editing/Extracting, Fixing the file)
+- Row 8: Claims check on subtitles-out-of-sync guide — verify every tool claim against code

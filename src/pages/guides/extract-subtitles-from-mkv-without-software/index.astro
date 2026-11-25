@@ -1,9 +1,9 @@
 ---
 import Base from '../../../layouts/Base.astro';
-const title = 'Extract subtitles from an MKV without installing anything';
+const title = 'Forced, SDH or PGS? Which MKV subtitle track to save';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Pull the subtitles out of an MKV file in your browser, with no install and no upload. How to tell a track from burned-in text, and how to save and name it." path="/guides/extract-subtitles-from-mkv-without-software/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Forced, SDH, default or PGS? What each MKV subtitle track holds, which one to save, and how to turn PGS into SRT in your browser with no install." path="/guides/extract-subtitles-from-mkv-without-software/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">Many MKV movies keep their subtitles as a separate track inside the file. You can save that track as a text file in your browser. This guide shows how to tell whether your subtitles are a track, how to save it with the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, and how to name the file so your player finds it.</p>
@@ -17,9 +17,12 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>The codec name of each track says what kind it is. Some kinds hold text, and some hold pictures.</p>
     <ul>
       <li>Text tracks hold plain SRT text, styled ASS or SSA text, or WebVTT. The extractor saves these as text.</li>
-      <li>Picture tracks hold one image per subtitle line. They are usually PGS from Blu-ray discs, or VobSub from DVDs. The extractor does not save these. They need the MKVToolNix step below, and then an OCR step before you can edit the text.</li>
+      <li>Picture tracks hold one image per subtitle line. They are usually PGS from Blu-ray discs, or VobSub from DVDs.</li>
     </ul>
     <p>The track list on the extractor page uses plain labels: "Text (SRT)", "Styled text (ASS)", "WebVTT" and "Picture (PGS or VobSub)". If you see a picture track, skip to the section on picture tracks below.</p>
+
+    <h2>Forced, SDH and default tracks</h2>
+    <p>MKV flags some tracks as <strong>default</strong> (the player turns it on automatically), <strong>forced</strong> (only lines for foreign language speech and on-screen signs), or <strong>SDH</strong> (subtitles for the deaf and hard of hearing, with speaker names and sounds like [door slams]). A forced track can look almost empty when you save it because it only holds the non-English lines. The extractor shows "(default)" and "(forced)" next to the track name. Pick the track that matches what you need: default or the language code for a full film, forced only if the film is mostly in one language with occasional foreign speech. For SDH tracks, see <a href="/remove-hearing-impaired-subtitles/">Remove sound notes and speaker names from subtitles</a> to strip the extra lines after you save the track.</p>
 
     <h2>Save a text track, step by step</h2>
     <ol>
@@ -44,14 +47,12 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
       <li>Structure. The <a href="/srt-validator/">SRT validator</a> reports lines that overlap, lines with no length, and numbers out of order. Fix those before you load the file into an editor or a video site.</li>
     </ul>
 
-    <h2>Picture tracks: the one case that needs a program</h2>
-    <p>If the track is a picture track, you need a small desktop tool once. The free MKVToolNix can list the tracks and save one of them. It is the only route in this guide that installs anything, and it is needed only for picture tracks.</p>
-    <ol>
-      <li>Run <code>mkvmerge -i movie.mkv</code> in a terminal, or use the track list in MKVToolNix. It shows each track's ID and its type.</li>
-      <li>Save the track you want. For a PGS track, the command is <code>mkvextract tracks movie.mkv 3:subs.sup</code>, where 3 is the ID of that track. The result is a .sup file.</li>
-      <li>Convert the .sup file to text with <a href="/sup-to-srt/">SUP to SRT</a>. The reader works from the pictures, so check the letters afterwards. It can mix up l and I, or rn and m.</li>
-    </ol>
+    <h2>Picture tracks: save as .sup, then read them</h2>
+    <p>PGS tracks are picture subtitles from Blu-ray. The extractor now saves them as a .sup file with the Save as .sup button. Open that .sup file in <a href="/sup-to-srt/">SUP to SRT</a>, which reads the words with OCR in your browser. Check the letters afterwards; it can mix up l and I, or rn and m. DVD (VobSub) tracks are still not saved here; use mkvextract from the free MKVToolNix for those, then convert with SUP to SRT.</p>
     <p>The <a href="/guides/sup-to-srt-guide/">SUP guide</a> goes through the conversion in more detail.</p>
+
+    <h2>Got an MP4 instead?</h2>
+    <p>MP4 files (also .m4v and .mov) store subtitle tracks in a similar way. Phone recordings and many downloads have none; the subtitles may be burned into the picture or came as a separate file. If your file is an MP4, use the <a href="/extract-subtitles-from-mp4/">MP4 subtitle extractor</a> to read the track list and save SRT or WebVTT. It reads the file's index, then only the subtitle lines, not the video.</p>
 
     <h2>When the subtitles are not in the file at all</h2>
     <p>Sometimes an MKV has no subtitle track, and the track list is empty. Check two other places before you give up. The subtitles may be in a separate file next to the movie, often with a name that ends in .srt or .sub. Or they may be burned in, which means the text is part of the picture and no tool can save it as a file.</p>
@@ -59,12 +60,12 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>Common mistakes</h2>
     <ul>
-      <li>Saving the wrong track. A movie often has a full track, a forced track for foreign words only, and a commentary track. Read the names in the list before you save.</li>
-      <li>Naming the file differently from the video. Players match on the name, so a small change stops the subtitle from loading.</li>
-      <li>Expecting picture tracks to save as text here. The extractor does not save them, and they need OCR before they become text.</li>
-      <li>Assuming the timing is right because the track came from the same MKV. A track can be tied to a different cut of the film, so play a few minutes to check.</li>
+      <li>Saving the wrong track (Commentary, Forced, or the wrong language). Check the track list first.</li>
+      <li>Forgetting to name the file with the language code. <code>Movie.eng.srt</code> works; <code>Movie.srt</code> may not.</li>
+      <li>Assuming a picture track is a text track. The extractor shows "Picture (PGS or VobSub)" for those.</li>
+      <li>Not checking timing after you save. A cut or re-encode can shift every line by the same amount.</li>
     </ul>
 
-    <p class="guide-link">See also: <a href="/guides/sup-to-srt-guide/">PGS subtitles won't show? Convert them to SRT</a> and <a href="/guides/plex-subtitles-not-showing/">Plex subtitles not showing</a>.</p>
+    <p>See also <a href="/guides/sup-to-srt-guide/">How to pull a .sup picture subtitle track off a Blu-ray and turn it into a text SRT file</a> and <a href="/guides/plex-subtitles-not-showing/">Why Plex skips subtitles on a USB stick</a>.</p>
   </article>
 </Base>

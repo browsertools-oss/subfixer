@@ -1,0 +1,83 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Subtitle lines overlap or flash? Find and fix them';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Overlapping and flashing subtitles are timing problems. The validator shows what is wrong, and the timing fixer closes gaps and enforces a minimum length." path="/guides/subtitles-overlapping-lines/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">When one subtitle line stays on screen after the next one has started, the two overlap and you see both at once. When a line is on screen for less than half a second, it flashes by before you can read it. Both are timing problems, and both are checked by the validator. This guide shows what the validator reports and how the timing fixer changes the file.</p>
+
+    <h2>What the validator reports</h2>
+    <p>Open <a href="/srt-validator/">the SRT validator</a> and drop in the file. Each problem gets a code and a short description. The ones that make lines overlap or flash are these.</p>
+    <ul>
+      <li>Zero length: the line starts and ends at the same moment, so it never appears.</li>
+      <li>Short: the line is on screen for less than half a second.</li>
+      <li>Overlap: the line ends after the next one starts, so both show together.</li>
+    </ul>
+    <p>Other codes the validator shows are order (a line starts before the one above it), negative (ends before it starts), and empty (no text). Those are not overlap or flash problems, but the timing fixer sorts the lines when it runs.</p>
+
+    <h2>A before and after</h2>
+    <p>Here is a short file with each kind of problem. The timing fixer runs with overlaps fixed, a 200 ms gap, and a minimum duration of 700 ms (the defaults on the tool).</p>
+    <p><strong>Before:</strong></p>
+    <pre><code>1
+00:00:01,000 --> 00:00:01,000
+Zero length
+
+2
+00:00:02,000 --> 00:00:02,300
+Too short
+
+3
+00:00:03,000 --> 00:00:05,000
+Overlaps the next one
+
+4
+00:00:04,500 --> 00:00:06,000
+Normal line
+</code></pre>
+    <p><strong>After:</strong></p>
+    <pre><code>1
+00:00:01,000 --> 00:00:01,700
+Zero length
+
+2
+00:00:02,000 --> 00:00:02,700
+Too short
+
+3
+00:00:03,000 --> 00:00:04,300
+Overlaps the next one
+
+4
+00:00:04,500 --> 00:00:06,000
+Normal line
+</code></pre>
+    <p>The zero-length line is extended to 700 ms. The short line is extended to 700 ms. The overlapping line ends 200 ms before the next one starts, so there is a small gap. The normal line is unchanged. The lines are sorted in time order and renumbered.</p>
+
+    <h2>How the timing fixer works</h2>
+    <p>The <a href="/fix-subtitle-timing/">fix subtitle timing</a> tool applies three rules, in this order.</p>
+    <ol>
+      <li>If a line is shorter than the minimum duration, it is extended to that duration, but it never runs past the next line minus the gap.</li>
+      <li>If a line would overlap the next one, it is cut off so it ends at the next line's start minus the gap.</li>
+      <li>If a gap between two lines is smaller than the gap setting, the earlier line is extended to leave exactly that gap.</li>
+    </ol>
+    <p>The defaults on the page are a 200 ms gap and a 700 ms minimum duration. You can change both. The reading speed limit is off by default; when it is on, lines that are read too fast are given more time, up to the next line or the maximum duration if one is set.</p>
+
+    <h2>Use the tool on the file</h2>
+    <p>Open <a href="/fix-subtitle-timing/">the timing fixer</a> and drop in the file. The three options for overlaps, minimum duration and gap are already ticked. Check the preview, looking at a line that was short and a line that overlapped. Then download the file.</p>
+    <p>The file is read and fixed in your browser. Nothing is uploaded.</p>
+
+    <h2>When the fix changes a line you did not want changed</h2>
+    <p>A short line that is meant to be short, such as a quick "No" in a fast scene, will be lengthened. If that happens, uncheck the minimum duration option and run the tool again, or open the file in <a href="/srt-editor/">the SRT editor</a> and set the time by hand.</p>
+    <p>An overlap that is deliberate, such as two speakers talking at once, will be split with a gap. If you want the overlap, uncheck the overlap option and the lines will keep their times.</p>
+
+    <h2>Check the whole file first</h2>
+    <p>Before you fix anything, run the validator. If it shows many overlaps or short lines, the whole file may have a systematic problem, such as a frame rate difference. The guide on <a href="/guides/23976-vs-25-fps-subtitles/">23.976 vs 25 fps subtitles</a> covers that case. If the validator shows only a few problems, the timing fixer will clean them in one step.</p>
+
+    <h2>After the fix, play the scene</h2>
+    <p>Play a few minutes of the film with the new file. Check that no two lines show at once and that every line stays on screen long enough to read. If the timing still feels off, the guide on <a href="/guides/subtitles-too-fast/">subtitles too fast</a> covers reading speed and how to extend lines without creating new overlaps.</p>
+
+    <p>See also <a href="/srt-validator/">the SRT validator</a>, <a href="/fix-subtitle-timing/">the timing fixer</a> and <a href="/guides/subtitles-too-fast/">subtitles too fast to read</a>.</p>
+  </article>
+</Base>

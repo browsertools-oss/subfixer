@@ -49,6 +49,7 @@ export const GUIDES = [
   { slug: 'remove-tags-from-subtitles', title: 'Subtitles show {\\an8} or font tags? Remove them' },
   { slug: 'remove-sdh-from-subtitles', title: 'Remove [music] and speaker names from subtitles' },
   { slug: 'burned-in-vs-soft-subtitles', title: 'Soft vs burned-in subtitles: which one you have' },
+  { slug: 'subtitles-overlapping-lines', title: 'Subtitle lines overlap or flash? Find and fix them' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.

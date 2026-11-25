@@ -681,7 +681,7 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
 });
 
 // Guides written since 11-20-2026: they carry a datePublished in their Article data.
-const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice', 'remove-tags-from-subtitles', 'remove-sdh-from-subtitles', 'burned-in-vs-soft-subtitles'];
+const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice', 'remove-tags-from-subtitles', 'remove-sdh-from-subtitles', 'burned-in-vs-soft-subtitles', 'subtitles-overlapping-lines'];
 
 test('every guide has a title of 60 characters or less and a 120 to 155 character description', () => {
   const problems: string[] = [];
@@ -759,6 +759,16 @@ test('guide sample: WARNING: loses its colon name, a mid-line music symbol and w
   const before = '1\n00:00:01,000 --> 00:00:02,000\nWARNING: The door is open\n\n2\n00:00:03,000 --> 00:00:04,000\nI love ♪ you\n\n3\n00:00:05,000 --> 00:00:06,000\nHello (softly) there\n';
   const { captions } = fixCommon(parse(before).captions, { removeBrackets: true, removeSpeakers: true, removeMusic: true });
   assert.deepEqual(captions.map((c) => c.text), ['The door is open', 'I love ♪ you', 'Hello there']);
+});
+
+// Before and after for guide subtitles-overlapping-lines (fixTiming: overlap, minDur, gap).
+test('guide sample: zero extended, short extended, overlap cut with gap', () => {
+  const before = '1\n00:00:01,000 --> 00:00:01,000\nZero length\n\n2\n00:00:02,000 --> 00:00:02,300\nToo short\n\n3\n00:00:03,000 --> 00:00:05,000\nOverlaps the next one\n\n4\n00:00:04,500 --> 00:00:06,000\nNormal line\n';
+  const { captions } = parse(before);
+  const { captions: fixed } = fixTiming(captions, { fixOverlaps: true, minGapMs: 200, minDurMs: 700, maxDurMs: 0, cps: 0 });
+  assert.deepEqual(fixed.map((c) => [c.start, c.end, c.text]), [[1000, 1700, 'Zero length'], [2000, 2700, 'Too short'], [3000, 4300, 'Overlaps the next one'], [4500, 6000, 'Normal line']]);
+  const after = build(fixed, 'srt').replace(/\r/g, '').trim();
+  assert.equal(after, '1\n00:00:01,000 --> 00:00:01,700\nZero length\n\n2\n00:00:02,000 --> 00:00:02,700\nToo short\n\n3\n00:00:03,000 --> 00:00:04,300\nOverlaps the next one\n\n4\n00:00:04,500 --> 00:00:06,000\nNormal line');
 });
 
 // Before and after for guide remove-tags-from-subtitles (removeTags).

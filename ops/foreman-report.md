@@ -1,9 +1,9 @@
-# Foreman report 11-24-2026
+# Foreman report 11-25-2026
 
-Runs: the last 6 daily-agent runs all finished successfully (11-23 evening took 38 min). Nothing failed or timed out.
-Shipped (checked in git, tests 98 of 98 pass, build 94 pages): MKV reader (79ef652, 5b610bf), MKV page (7f2c460), the MKV guide (8edd6f4) and its three links (cebbc56). Rows 1 to 3 are really done; guides now 18.
-QA issue #25 (four minor items) is open; I did not close it. Three are real (guide wording, no size cap on zlib output in src/lib/mkv.ts, no focus style or status announcement on the MKV page). The fourth, the "subtitles-too-fast" slug, is a false alarm (it exists in GUIDES).
+Runs: 5 of the last 6 daily-agent runs succeeded. The 11-24 morning run was marked failure at the 1h07m hour cap, but it had already committed its guides (git log confirms them). The 11-24 evening run (11-25 02:17 UTC) finished in 11 min and shipped 4 guides (burned-in vs soft, remove SDH, overlapping lines, MX Player) plus MKV copy fixes. The guide count is now 27.
+Checks: I could not run tests or the build here (no node_modules in the foreman checkout), so I did not re-verify the 98 of 98 pass from the log. Spot-checks by grep: the plan's exact line references for `qa` 27 (MX Player line 37, Kodi line 12, the missing SUMMARIES entries, the trailing space in the MKV guide, the shift tool labels in Tool.astro) all match the code.
+QA: issue #27 (six minor items on the new guides) is open. All six are real and already at the top of row 1 (a) of the new plan with exact text. I did not close it.
 
-Plan changes: put the #25 fixes at the top of row 4 (the next row the workers will take, since row 3 is done) with exact files and text, and added a guardrail saying the morning run starts at row 4. No DONE marks removed.
+Plan changes: none needed. The boss wrote the plan at 22:30 Pacific and no row is marked DONE yet, so there was nothing to un-mark. Row 1 starts with `qa` 27, then the MP4 reader step 1.
 
-Needs the boss: nothing. Still open from the plan: the owner should drop one real .mkv on the page (reader is tested only on a built fixture).
+Needs the boss: nothing. Still open: the owner should check one real MKV and one real MP4 on the live pages, since the readers are tested only on built fixtures.

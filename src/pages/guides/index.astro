@@ -3,11 +3,11 @@ import Base from '../../layouts/Base.astro';
 import { GUIDES } from '../../site';
 const SUMMARIES: Record<string, string> = {
   'extract-subtitles-from-mkv-without-software': 'How to tell a subtitle track from burned-in text, save a text track from an MKV in your browser, and name the file so Plex and Jellyfin find it.',
-  'remove-tags-from-subtitles': 'Why subtitle files show curly-brace codes like \an8, font colour tags or italic tags, and how to remove them with the subtitle cleaner.',
+  'remove-tags-from-subtitles': 'Why subtitle files show curly-brace codes like \\an8, font colour tags or italic tags, and how to remove them with the subtitle cleaner.',
   'subtitles-showing-twice': 'Why every subtitle line shows twice: two tracks turned on, or a file that repeats its own lines. How to tell them apart and remove the repeats.',
-  'kodi-subtitles-out-of-sync':'Kodi\'s subtitle delay only changes one playback. How to find the size of the gap and fix the subtitle file once, so it plays right every time.',
-  'subtitles-out-of-sync-partway':'Subtitles that are right at first and then jump: why a cut video needs a shift from one line onward, and how to find that line.',
-  'tv-subtitles-not-showing-usb':'Why a Samsung, LG or Sony TV skips subtitles on a USB stick: the file name, the hidden .txt extension, the ANSI encoding LG asks for, and picture subtitles.',
+  'kodi-subtitles-out-of-sync': 'Kodi\'s subtitle delay stays in the player, not the file. How to find the size of the gap and fix the subtitle file once, so it plays right every time.',
+  'subtitles-out-of-sync-partway': 'Subtitles that are right at first and then jump: why a cut video needs a shift from one line onward, and how to find that line.',
+  'tv-subtitles-not-showing-usb': 'Why a Samsung, LG or Sony TV skips subtitles on a USB stick: the file name, the hidden .txt extension, the ANSI encoding LG asks for, and picture subtitles.',
   'subtitles-out-of-sync': 'Subtitles early, late or drifting further off as the video plays: how to tell which of the three problems you have and which fix to use for each.',
   'srt-vtt-ass': 'What SRT, VTT and ASS each say about a line of dialogue, and which players and websites accept them.',
   'sup-to-srt-guide': 'How to pull a .sup picture subtitle track off a Blu-ray and turn it into a text SRT file, free in your browser.',
@@ -16,6 +16,10 @@ const SUMMARIES: Record<string, string> = {
   '23976-vs-25-fps-subtitles': 'Why subtitles drift further out as the video plays: the 25 vs 23.976 fps numbers, how to check your frame rate, and the exact fix.',
   'vlc-subtitle-delay': 'What VLC\'s delay keys are for, why the player never fixes the file, and how to write the correction into the .srt once and for all.',
   'dual-language-subtitles': 'Watch in two languages at once for learning: merge the files, put one language at the top, and join CD1 and CD2 into one file.',
+  'burned-in-vs-soft-subtitles': 'How to tell burned-in subtitles from a track you can turn off, and why only soft tracks can be fixed or saved.',
+  'mx-player-subtitle-sync': 'Fix MX Player subtitles that are early or late in the file itself, so they play right on any device.',
+  'subtitles-overlapping-lines': 'What overlapping and zero-length subtitle lines are, how the validator finds them, and how the timing fixer repairs them.',
+  'remove-sdh-from-subtitles': 'Remove sound notes like [door slams] and speaker names from a subtitle file, with a before and after.',
 };
 ---
 <Base title="Subtitle guides | SubFixer" description="Guides to common subtitle problems: out-of-sync lines, Plex timing, garbled characters, frame-rate drift, two languages at once, and Blu-ray SUP files." path="/guides/">

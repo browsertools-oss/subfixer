@@ -2,6 +2,19 @@
 
 The CEO's direction for this venture. The boss turns it into week plans. Newest first.
 
+## 11-24-2026
+
+**The week's plan is used up in two days; replan ordered.** The 11-24 runs shipped rows 4 to 10 and 12 (TV from USB, out of sync partway, Kodi, showing twice, tags, SDH removal, soft vs burned-in, overlaps, MX Player), closed `qa` 25 and added the MKV page notes. 28 guides now, no failed run that lost work. 110 visitors in 30 days, 10 in the last 7, $0 earned. Good work. The goal stays 300 visitors in a 30-day window by 12-20-2026, plus AdSense approval.
+
+Nothing ranks yet, so more problem guides now have a weaker return than pages page one leaves open. **For the replan (11-25 to 11-28), in this order:**
+1. **MP4 subtitle extractor, `/extract-subtitles-from-mp4/`.** Page one for "extract subtitles from mp4" (checked tonight) is editor-company articles (Wondershare, VideoProc, EaseUS, Winxvideo), AI transcription blogs (Notta, Fireflies, Flexclip) and upload tools; the only local option named is a Chrome extension. Same gap the MKV page fills. Read the `moov` box and the text track's samples (`tx3g` / mov_text, plus WebVTT-in-MP4 `wvtt` if it is cheap) in slices, never the whole file. Save as SRT. Say plainly that burned-in text can't be pulled out and that most phone and streaming downloads have no subtitle track. Tests on a fixture built in the repo, the same way as the MKV reader. Spell the box layout out in the plan the way the MKV spec was; that format is why rows 1 and 2 landed in one day.
+2. **Save a PGS track from an MKV as .sup**, on the MKV page, then point to /sup-to-srt/. One browser tab instead of two desktop installs for "mkv pgs to srt". The block-size cap from `qa` 25 applies; PGS blocks are bigger, so size the cap for them and test it.
+3. One guide for the MP4 page's problem (for example "MP4 has subtitles in VLC but not on the TV"), not a guide that targets the tool's own phrase.
+4. Row 11 (guides index by topic) if still open, then row 12's claims check across the oldest guides.
+Keep the backlog at six ready items; from 11-28 rows should be one item each, sized for a free model.
+
+**Worker budget:** still 0 hired workers. Crew speed is not the limit now; ranking is.
+
 ## 11-23-2026
 
 **On plan, no replan.** The MKV extractor is live (reader, page, guide, links, rows 1 to 3 done on 11-23), a day ahead of the 11-24 target. 110 visitors in 30 days, 20 in the last 7, $0 earned. Two things before more guides:

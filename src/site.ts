@@ -1543,12 +1543,12 @@ export const PAGES: ToolPage[] = [
     guide: 'extract-subtitles-from-mkv-without-software',
     title: 'Extract subtitles from MKV online: save SRT, no upload',
     h1: 'Extract subtitles from an MKV file',
-    lede: 'Pick an MKV and see its subtitle tracks. Save any text track as SRT or ASS. The movie is read on your computer and never uploaded.',
+    lede: 'Pick an MKV and see its subtitle tracks. Save a text track as SRT, WebVTT or ASS. The movie is read on your computer and never uploaded.',
     description: 'Extract subtitle tracks from an MKV file in your browser and save them as SRT or ASS. No upload and no install, so a 4 GB movie is fine.',
     steps: [
       'Pick the MKV file. It is read on your device, and nothing is uploaded.',
       'Wait while the file is read. A full film can take a minute or more.',
-      'Save the track you want. Text tracks can be saved as SRT, and ASS tracks as ASS or SRT.',
+      'Save the track you want. SRT and WebVTT tracks save in their own format. ASS tracks can be saved as ASS or as SRT.',
     ],
     faq: [
       { q: 'Is the movie uploaded?', a: 'No. The file is read in pieces of about 1 MB on your device. Only the subtitle text is kept in memory, so a large film needs no more memory than a small one.' },

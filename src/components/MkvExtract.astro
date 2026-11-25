@@ -132,11 +132,15 @@ const { h1, lede, kind = 'MKV' } = Astro.props;
       if (track.encrypted) {
         typeCell.textContent = "Encrypted, can't be read";
       } else if (track.kind === 'picture') {
-        typeCell.append(`${TYPE.picture}, see the `);
-        const link = document.createElement('a');
-        link.href = '/sup-to-srt/';
-        link.textContent = 'SUP guide';
-        typeCell.append(link);
+        if (track.codec === 'S_HDMV/PGS') {
+          typeCell.textContent = 'Picture (PGS). Save it as .sup, then read it with ';
+          const link = document.createElement('a');
+          link.href = '/sup-to-srt/';
+          link.textContent = 'SUP to SRT';
+          typeCell.append(link);
+        } else {
+          typeCell.textContent = 'Picture (VobSub or DVB), not saved here';
+        }
       } else {
         typeCell.textContent = TYPE[track.kind];
       }
@@ -145,6 +149,23 @@ const { h1, lede, kind = 'MKV' } = Astro.props;
       if (!track.encrypted && track.kind !== 'picture' && track.kind !== 'other') {
         saveCell.append(button('Save', () => save(track, false)));
         if (track.kind === 'ass') saveCell.append(' ', button('Save as SRT', () => save(track, true)));
+      } else if (!track.encrypted && track.kind === 'picture' && track.codec === 'S_HDMV/PGS') {
+        // Save as .sup button for PGS tracks
+        const supBtn = button('Save as .sup', () => {
+          if (!current) return;
+          const { result, lib } = current;
+          const cues = result.cues.get(track.number);
+          if (!cues || !cues.length) return;
+          const sup = lib.trackSup(cues);
+          const blob = new Blob([sup], { type: 'application/octet-stream' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = current.base + '.' + (track.language || 'eng') + '.sup';
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+        saveCell.append(supBtn);
       }
     }
     box.append(table);

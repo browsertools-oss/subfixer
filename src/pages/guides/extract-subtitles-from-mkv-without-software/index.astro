@@ -17,7 +17,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>The codec name of each track says what kind it is. Some kinds hold text, and some hold pictures.</p>
     <ul>
       <li>Text tracks hold plain SRT text, styled ASS or SSA text, or WebVTT. The extractor saves these as text.</li>
-      <li>Picture tracks hold one image per line. They are usually PGS from Blu-ray discs, or VobSub from DVDs. Saving them gives you images, not words, so they need an OCR step before you can edit the text.</li>
+      <li>Picture tracks hold one image per subtitle line. They are usually PGS from Blu-ray discs, or VobSub from DVDs. The extractor does not save these. They need the MKVToolNix step below, and then an OCR step before you can edit the text.</li>
     </ul>
     <p>The track list on the extractor page uses plain labels: "Text (SRT)", "Styled text (ASS)", "WebVTT" and "Picture (PGS or VobSub)". If you see a picture track, skip to the section on picture tracks below. </p>
 
@@ -61,7 +61,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <ul>
       <li>Saving the wrong track. A movie often has a full track, a forced track for foreign words only, and a commentary track. Read the names in the list before you save.</li>
       <li>Naming the file differently from the video. Players match on the name, so a small change stops the subtitle from loading.</li>
-      <li>Expecting the picture tracks to save as text. They save as images, and they need OCR.</li>
+      <li>Expecting picture tracks to save as text here. The extractor does not save them, and they need OCR before they become text.</li>
       <li>Assuming the timing is right because the track came from the same MKV. A track can be tied to a different cut of the film, so play a few minutes to check.</li>
     </ul>
 

@@ -3,13 +3,13 @@ import Base from '../../../layouts/Base.astro';
 const title = 'Kodi subtitles out of sync? Fix the file once';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Kodi's subtitle delay only changes one playback. Fix the subtitle file once with a shift or a sync, and save it next to the video so every play is right." path="/guides/kodi-subtitles-out-of-sync/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Kodi's subtitle delay stays in the player, not the file. Fix the file once with a shift or a sync, and save it next to the video so every play is right." path="/guides/kodi-subtitles-out-of-sync/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">Kodi lets you move subtitles earlier or later while a video plays. That is useful for one film, but the change is lost when the video ends. If the same subtitle file is out of sync every time you play it, the file is the problem, and the fix is to correct the file once.</p>
 
     <h2>Why the player offset is not a fix</h2>
-    <p>While a video is playing, Kodi's player has a subtitle delay control. It moves the subtitles by a set amount, and you can nudge it up and down until the words match the speech. It works, but the setting applies to that one playback only. Start the film again, or open it on another device that runs Kodi, and the subtitles are out of sync again.</p>
+    <p>While a video is playing, Kodi's player has a subtitle delay control. It moves the subtitles by a set amount, and you can nudge it up and down until the words match the speech. It works, but the delay lives in that Kodi player, not in the file. Kodi can keep it for one video or as a default, yet another device, another player or a new copy of the file still gets the wrong timing.</p>
     <p>That makes the player offset a good test and a poor cure. Use it to find out how far off the subtitles are. Then write the amount down, and correct the file with that number.</p>
 
     <h2>Find out how far off they are</h2>

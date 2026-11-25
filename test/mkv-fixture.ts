@@ -118,7 +118,7 @@ export function sampleMkv(): Uint8Array {
       isDefault: false,
       codecPrivate: ASS_HEADER,
     }),
-    trackEntry({ number: 4, type: 17, codec: 'S_HDMV/PGS', language: 'eng', isDefault: false }),
+    trackEntry({ number: 4, type: 17, codec: 'S_VOBSUB', language: 'eng', isDefault: false }),
     trackEntry({ number: 5, type: 17, codec: 'S_TEXT/UTF8', language: 'ger', isDefault: false, zlib: true }),
   );
   const video = simpleBlock(1, 0, new Uint8Array(3 * 1024 * 1024));
@@ -140,6 +140,28 @@ export function sampleMkv(): Uint8Array {
   const cues = el(0x1c53bb6b, uint(0xbb, 0));
   return cat(ebml, elUnknown(0x18538067, el(0xec, new Uint8Array(10)), info, tracks, cluster1, cluster2, cues));
 }
+
+// Builds a small MKV with two PGS display sets so trackSup can round-trip them.
+export function pgsMkv(sets: { start: number; end: number; segments: number[][] }[]): Uint8Array {
+  const ebml = cat(el(0x1a45dfa3, uint(0x4286, 1), uint(0x42f7, 1), uint(0x42f2, 2), uint(0x42f3, 2), str(0x4282, 'matroska'), uint(0x4287, 2), uint(0x4285, 2)));
+  const segment = elUnknown(0x18538067, cat(info, tracks, clusters(sets)));
+  return cat(ebml, segment);
+}
+
+function clusters(sets: { start: number; end: number; segments: number[][] }[]): Uint8Array {
+  const parts: Uint8Array[] = [];
+  for (const s of sets) {
+    const payload: number[] = [];
+    for (const seg of s.segments) {
+      for (const b of seg) payload.push(b);
+    }
+    parts.push(simpleBlock(1, s.start, new Uint8Array(payload)));
+  }
+  return el(0x1f43b675, cat(...parts));
+}
+
+const info = el(0x1549a966, uint(0x2ad7b1, 1000000));
+const tracks = el(0x1654ae6b, trackEntry({ number: 1, type: 17, codec: 'S_HDMV/PGS', language: 'eng', isDefault: false }));
 
 // A source over a byte array that records the length of every read.
 export function recordingSource(bytes: Uint8Array, reads: number[]) {

@@ -13,6 +13,7 @@ import {
   str,
   simpleBlock,
   trackEntry,
+  pgsMkv,
 } from './mkv-fixture.ts';
 
 const NOT_MKV = 'This is not an MKV or WebM file.';
@@ -105,4 +106,66 @@ test('mkv ASS track: header kept, two Dialogue lines with their times and overri
   const srt = assToSrt(file.text);
   assert.ok(srt.includes('00:00:01,000 --> 00:00:02,500'), srt);
   assert.ok(srt.includes('Bonjour.'), srt);
+});
+
+test('mkv PGS track: now has 1 cue and saves as .sup', async () => {
+  const { tracks, cues } = await scanMkv(recordingSource(pgsMkv([
+    { start: 1000, end: 2500, segments: [[0x15, 0, 3, 1, 2, 3]] },
+  ]), []));
+  const track = tracks.find((t) => t.number === 1);
+  assert.ok(track);
+  assert.equal(track.codec, 'S_HDMV/PGS');
+  assert.equal(track.kind, 'picture');
+  const list = cues.get(1) ?? [];
+  assert.equal(list.length, 1);
+  const { trackSup } = await import('../src/lib/mkv.ts');
+  const { isSup } = await import('../src/lib/sup.ts');
+  const sup = trackSup(list);
+  assert.ok(isSup(sup));
+  // Count PG headers in the output (one per display set)
+  const pgCount = countPGHeaders(sup);
+  assert.equal(pgCount, 1);
+});
+
+function countPGHeaders(buf: Uint8Array): number {
+  let n = 0;
+  for (let i = 0; i + 1 < buf.length; i++) {
+    if (buf[i] === 0x50 && buf[i + 1] === 0x47) n++;
+  }
+  return n;
+}
+
+test('mkv PGS track: trackSup round-trips display sets with correct PTS', async () => {
+  const sets = [
+    { start: 1000, end: 2500, segments: [[0x15, 0, 3, 1, 2, 3]] },
+    { start: 3000, end: 4200, segments: [[0x15, 0, 3, 4, 5, 6]] },
+  ];
+  const { cues } = await scanMkv(recordingSource(pgsMkv(sets), []));
+  const { trackSup } = await import('../src/lib/mkv.ts');
+  const { isSup } = await import('../src/lib/sup.ts');
+  const sup = trackSup(cues.get(1) ?? []);
+  assert.ok(isSup(sup));
+  const pgCount = countPGHeaders(sup);
+  assert.equal(pgCount, 2);
+  // Check PTS values are start * 90
+  const dv = new DataView(sup.buffer, sup.byteOffset, sup.byteLength);
+  let o = 0;
+  const ptsValues: number[] = [];
+  while (o + 13 <= sup.length) {
+    if (sup[o] === 0x50 && sup[o + 1] === 0x47) {
+      ptsValues.push(Math.round(dv.getUint32(o + 2) / 90));
+      o += 13 + dv.getUint16(o + 11);
+    } else o++;
+  }
+  assert.deepEqual(ptsValues, [1000, 3000]);
+});
+
+test('mkv 9 MB PGS block is skipped and counted', async () => {
+  const reads: number[] = [];
+  const large = new Uint8Array(9 << 20);
+  const { skipped } = await scanMkv(recordingSource(pgsMkv([
+    { start: 1000, end: 2500, segments: [Array.from(large)] },
+  ]), reads));
+  assert.equal(skipped, 1);
+  assert.ok(reads.every((n) => n <= (1 << 20)));
 });

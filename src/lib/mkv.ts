@@ -12,6 +12,14 @@ const CHUNK = 1 << 20;
 // A subtitle block that inflates to more than this is skipped and counted, so a
 // damaged or hostile file cannot fill memory with one huge cue.
 const MAX_PAYLOAD = 8 << 20;
+// Blu-ray (PGS) picture blocks are kept as .sup data. Across a whole file they stop at this total.
+const MAX_PICTURE_TOTAL = 256 << 20;
+
+// A track keeps its cues when it holds text, or when it is PGS pictures that save as .sup.
+function keeps(track: ParsedTrack): boolean {
+  const k = track.info.kind;
+  return (k === 'srt' || k === 'ass' || k === 'vtt' || k === 'picture') && !track.info.encrypted && (k !== 'picture' || track.info.codec === 'S_HDMV/PGS');
+}
 
 export interface MkvTrack {
   number: number;
@@ -244,6 +252,7 @@ export async function scanMkv(
   let scale = 1000000;
   let clusterTime = 0;
   let skipped = 0;
+  let pictureBytes = 0;
   let pos = 0;
   let lastReport = -CHUNK;
   const parsed = new Map<number, ParsedTrack>();
@@ -304,6 +313,13 @@ export async function scanMkv(
       skipped++;
       return;
     }
+    if (track.info.kind === 'picture') {
+      if (pictureBytes > MAX_PICTURE_TOTAL) {
+        skipped++;
+        return;
+      }
+      pictureBytes += data.length;
+    }
     const list = cues.get(tn.value) ?? [];
     list.push({ start, end, data });
     cues.set(tn.value, list);
@@ -347,8 +363,10 @@ export async function scanMkv(
       const first = await r.get(h.dataStart, 8);
       const tn = readVint(first, 0, false);
       const track = tn ? parsed.get(tn.value) : undefined;
-      if (track && track.info.kind !== 'picture' && track.info.kind !== 'other' && !track.info.encrypted) {
-        await addBlock(await r.get(h.dataStart, h.size), null);
+      if (track && keeps(track)) {
+        // A block larger than MAX_PAYLOAD is counted and never read.
+        if (h.size > MAX_PAYLOAD) skipped++;
+        else await addBlock(await r.get(h.dataStart, h.size), null);
       }
       pos = end;
       continue;
@@ -383,7 +401,12 @@ export async function scanMkv(
       }
       const blockTrack = blockAt >= 0 ? readVint(group, blockAt, false) : null;
       const track = blockTrack ? parsed.get(blockTrack.value) : undefined;
-      if (track && track.info.kind !== 'picture' && track.info.kind !== 'other' && !track.info.encrypted) {
+      if (track && keeps(track)) {
+        if (h.size > MAX_PAYLOAD) {
+          skipped++;
+          pos = end;
+          continue;
+        }
         const body = await r.get(h.dataStart, h.size);
         let block: Uint8Array | null = null;
         let dur: number | null = null;
@@ -418,7 +441,7 @@ export async function scanMkv(
   }
   for (const n of [...cues.keys()]) {
     const t = parsed.get(n);
-    if (!t || t.info.kind === 'picture' || t.info.kind === 'other') cues.delete(n);
+    if (!t || !keeps(t)) cues.delete(n);
   }
   return { tracks, cues, codecPrivate, skipped };
 }
@@ -466,6 +489,26 @@ export function trackFile(
   }));
   if (track.kind === 'vtt') return { name: `.${lang}.vtt`, text: build(captions, 'vtt') };
   return { name: `.${lang}.srt`, text: build(captions, 'srt') };
+}
+
+// PGS in MKV stores each display set as one block whose payload is the PGS segments without the PG header.
+// For each cue sorted by start, writes PG + PTS (ms * 90) as 4 BE bytes + 4 zero DTS + the segment.
+export function trackSup(cues: MkvCue[]): Uint8Array {
+  const sorted = [...cues].sort((a, b) => a.start - b.start);
+  const parts: number[] = [];
+  for (const c of sorted) {
+    const data = c.data;
+    for (let i = 0; i + 3 <= data.length; ) {
+      const type = data[i];
+      const len = (data[i + 1] << 8) | data[i + 2];
+      if (i + 3 + len > data.length) break;
+      const pts = Math.round(c.start * 90);
+      parts.push(0x50, 0x47, (pts >> 24) & 0xff, (pts >> 16) & 0xff, (pts >> 8) & 0xff, pts & 0xff, 0, 0, 0, 0);
+      for (let k = 0; k < 3 + len; k++) parts.push(data[i + k]);
+      i += 3 + len;
+    }
+  }
+  return new Uint8Array(parts);
 }
 
 // An ASS file as SRT, for a track that was saved as ASS.

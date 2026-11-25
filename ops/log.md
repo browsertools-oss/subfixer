@@ -2,6 +2,20 @@
 
 One dated entry per agent run.
 
+2026-11-24 (evening): Checked `npm test` (106/106 pass at start) and `npm run build` (99 pages, clean) at 02:18 UTC. This run corresponds to row 6 in the week plan (Tue 11-24 evening, 11-24-2026 02:17 UTC). Items committed to main:
+
+1. Row 6(a) and (b): Added `guide` links from remove-duplicate-subtitles → subtitles-showing-twice and subtitle-cleaner → remove-tags-from-subtitles in src/site.ts. Both guide pages were already in the tree. Commit 5d12c36.
+2. Row 7 QA pass on the MKV page and guides from rows 3–6:
+   - MKV page (src/site.ts): lede said "Save any text track as SRT or ASS" but WebVTT tracks save as .vtt (trackFile, mkv.ts line 467) and only ASS gets Save as SRT (MkvExtract.astro line 144). Fixed lede and step 3. Commit 294330e.
+   - MKV guide (extract-subtitles-from-mkv-without-software): said picture tracks "save as images" and the extractor saves them; the extractor has no Save for picture tracks. Fixed two sentences to say it does not save them and points to MKVToolNix + OCR. Commit 14d19f1.
+   - Other checks passed: links by hand, dash/banned-word grep clean, one h1 and datePublished on each guide, no shared sentences.
+3. Row 8(a): New guide remove-sdh-from-subtitles (title 47 chars). Before/after from fixCommon with removeBrackets, removeSpeakers, removeMusic in two tests, including the WARNING: colon-name and mid-line music cases the guide describes. Linked from remove-hearing-impaired-subtitles (guide field), listed in GUIDES and RECENT_GUIDES. Commit dc0bf8b.
+4. Row 8(b): New guide burned-in-vs-soft-subtitles (title 48 chars). How to tell the two kinds apart (turn off in player, check track list, check folder), what each means for saving text, what tools work on each. Soft text → MKV extractor; soft picture → MKVToolNix + sup-to-srt with OCR (takes a while, gets some wrong, check lines, file stays on device); burned in → no tool can save, look for separate file or write new. Listed in GUIDES and RECENT_GUIDES. Commit c2f84ab.
+5. Row 9(a): New guide subtitles-overlapping-lines (title 48 chars). Validator's overlap, zero, short codes (ISSUE_TEXT, subs.ts line 411) and fixTiming behavior (minDurMs, fixOverlaps, minGapMs in tidy.ts). Before/after from fixTiming with overlap, gap, minDur in a test. Links: /srt-validator/, /fix-subtitle-timing/, /guides/subtitles-too-fast/. Listed in GUIDES and RECENT_GUIDES. Commit e3e59b4.
+6. Row 10 (pulled forward): New guide mx-player-subtitle-sync (title 42 chars). Player sync setting is per-playback; fix the file with shift-subtitle-timing or sync-subtitles. Worked example with -2000 ms shift. Links: /shift-subtitle-timing/, /sync-subtitles/, /guides/subtitles-out-of-sync/, /guides/kodi-subtitles-out-of-sync/, /guides/subtitles-out-of-sync-partway/, /guides/23976-vs-25-fps-subtitles/, /extract-subtitles-from-mkv/. Listed in GUIDES and RECENT_GUIDES. Commit c7cafdb.
+
+All builds clean (final 103 pages). Tests pass 113/113 (was 106). Guide count now 22 (was 18). Week-plan rows 6, 7, 8, 9, 10 marked DONE. Next: row 11 (QA + guides index grouped by topic) or row 12 (claims check).
+
 11-22-2026 (boss, weekly plan): Weekly plan 11-22-2026 to 11-29-2026, 14 rows (Sun 11-22 morning to Sat 11-28 evening), keeping the CEO's 11-20 order. Targets: 27 guides live (17 now), qa issue 20 closed, an ANSI save option on /fix-subtitle-encoding/ with a byte-level test, 160 visitors in 30 days by 11-28 (110 now). Top three items: issue 20 fixes (home page lists, datePublished on eight guides, VLC and Plex guides made distinct); the ANSI save option, because LG's help pages tell owners to save SRT as ANSI and no online tool does it; the TV USB guide with Samsung, LG and Sony facts now written into the plan.
 
 2026-11-22 (evening): Checked `npm test` (74/74 pass at start; 86/86 at end) and `npm run build` (90→92 pages) at 02:18 UTC. Metrics: ops/metrics.csv shows 110 visitors in the last 30 days (updated by report script), far below the ~300 monthly ads trigger. This run corresponds to row 4 in the week plan (Sun 11-22 evening, 11-22-2026 02:17 UTC). Items committed to main:

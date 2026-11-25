@@ -1,5 +1,5 @@
-- Row 4(a): the TV USB guide (tv-subtitles-not-showing-usb) with Samsung, LG, Sony facts from the week plan. Only TV facts. Links: fix-subtitle-encoding (LG ANSI), vtt-to-srt, ass-to-srt, extract-subtitles-from-mkv, sup-to-srt, subtitles-weird-characters. Set guide on fix-subtitle-encoding if empty.
-- Row 4(b): set guide on fix-subtitle-encoding only if empty.
-- Row 5: two guides - subtitles fine at first then out of sync (subtitles-out-of-sync-partway), and Kodi subtitles out of sync (kodi-subtitles-out-of-sync).
-- Check after the end-of-run push that /extract-subtitles-from-mkv/ is live and that the Convert menu lists it.
-- Owner check still open: one real .mkv on the page in a browser, to see whether the track list and the saves work on a real file.
+- Row 11: open any QA issues (one commit each); if none, group the guides index by topic — add `topic` to each GUIDES entry ('players', 'devices', 'editing', 'file'), render four h2 groups in src/pages/guides/index.astro, test that every guide has a topic
+- Row 12: claims check on the five oldest guides (subtitles-out-of-sync, srt-vtt-ass, sup-to-srt-guide, plex-subtitles-out-of-sync, subtitles-weird-characters) — each claim about SubFixer must match the code; fix or remove, one commit per guide
+- Backlog item 1: pull the next row forward (beats every other item)
+- Backlog item 2: guide `join-cd1-cd2-subtitles` — merge mode (mergeParts/autoOffsets in formats.ts), before/after in a test; links: /merge-subtitles/, /shift-subtitle-timing/, /guides/dual-language-subtitles/
+- Backlog item 3: guide `srt-numbers-out-of-order` — renumber-srt preset and validator's order check; link the Premiere and YouTube guides

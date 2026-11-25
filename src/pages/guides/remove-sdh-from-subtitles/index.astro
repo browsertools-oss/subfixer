@@ -1,0 +1,95 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Remove [music] and speaker names from subtitles';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Strip sound descriptions, music lines and speaker names like JOHN: from a subtitle file. Shows what each rule removes and keeps. Runs in your browser." path="/guides/remove-sdh-from-subtitles/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Subtitles made for people who cannot hear the sound often carry extra text. Sound descriptions sit in brackets, music is marked with a symbol, and a speaker's name can come first on a line. This guide shows what the SDH options remove and what they leave alone, so you can decide what your file needs.</p>
+
+    <h2>What counts as extra text</h2>
+    <p>The clean-up tool treats three kinds of text as extra. Each kind has its own option, so you can keep one kind and remove the others.</p>
+    <ul>
+      <li>Sound descriptions in square or round brackets, such as [PHONE RINGS] or (sighs).</li>
+      <li>Music lines, which start or end with a music symbol such as ♪ or ♫.</li>
+      <li>Speaker names in capitals at the start of a line, followed by a colon, such as JOHN: or - JOHN (V.O.):.</li>
+    </ul>
+    <p>The options run in that order. A subtitle that is left with no words is deleted, and every subtitle that stays keeps its time.</p>
+
+    <h2>A before and after</h2>
+    <p>Here is a short file with each kind of extra text in it. The times are unchanged in the lines that stay.</p>
+    <p><strong>Before:</strong></p>
+    <pre><code>1
+00:00:01,000 --&gt; 00:00:02,000
+[PHONE RINGS]
+
+2
+00:00:02,500 --&gt; 00:00:04,000
+- JOHN (V.O.): Hello?
+- Mary: Hi.
+
+3
+00:00:05,000 --&gt; 00:00:06,500
+♪ la la la ♪
+
+4
+00:00:07,000 --&gt; 00:00:08,000
+(sighs) Fine.
+</code></pre>
+    <p><strong>After:</strong></p>
+    <pre><code>1
+00:00:02,500 --&gt; 00:00:04,000
+- Hello?
+- Mary: Hi.
+
+2
+00:00:07,000 --&gt; 00:00:08,000
+Fine.
+</code></pre>
+    <p>The phone line and the music line were only sound, so their subtitles are gone. The line with JOHN keeps its time and its words. The name is gone and the dash in front of it stays, so the line still reads as one speaker's turn. Mary's name stays, because it is not written in capitals. The brackets around "sighs" are removed and the word that follows them stays.</p>
+
+    <h2>How each rule works</h2>
+    <p><strong>Brackets.</strong> Anything inside square or round brackets is removed, even in the middle of a line. The words on either side stay. So "Hello (softly) there" becomes "Hello there".</p>
+    <p><strong>Music.</strong> A line is removed when it starts with ♪, ♫ or #, or when it ends with ♪ or ♫. A music symbol in the middle of a sentence does not count. "I love ♪ you" stays as it is.</p>
+    <p><strong>Speaker names.</strong> A name in capitals at the start of a line, followed by a colon, is removed. JOHN: and - JOHN (V.O.): both lose the name. A name in mixed case, such as Mary:, is kept, because the tool looks only for capital letters.</p>
+    <p>The speaker rule also catches any capitalized word that sits in front of a colon. WARNING: The door is open loses WARNING:, and the line reads The door is open. That is usually what you want for a plain transcript, but it can drop a word you need. Look through the result for lines that lost a word by mistake.</p>
+
+    <table>
+      <thead>
+        <tr><th scope="col">Line in the file</th><th scope="col">Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>[PHONE RINGS]</td><td>Deleted</td></tr>
+        <tr><td>(sighs) Fine.</td><td>Fine.</td></tr>
+        <tr><td>Hello (softly) there</td><td>Hello there</td></tr>
+        <tr><td>♪ la la la ♪</td><td>Deleted</td></tr>
+        <tr><td>I love ♪ you</td><td>Kept as it is</td></tr>
+        <tr><td>JOHN: Hello?</td><td>Hello?</td></tr>
+        <tr><td>Mary: Hi.</td><td>Kept as it is</td></tr>
+        <tr><td>WARNING: The door is open</td><td>The door is open</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Use the tool on the file</h2>
+    <p>Open <a href="/remove-hearing-impaired-subtitles/">the hearing-impaired text remover</a> and drop in the file. The three kinds of extra text are ticked already. Check which ones are ticked against the list above, and untick any kind you want to keep. Then look at the result before you download it.</p>
+    <p>The file is read and changed in your browser. Nothing is uploaded, so you can use it on a private file.</p>
+
+    <h2>When to keep the sound descriptions</h2>
+    <p>Some viewers need the sound descriptions to follow the scene. A subtitle file for them should keep the brackets, so untick that option. Removing the descriptions is the right choice for a plain transcript, or when you want only the spoken words. The guide on <a href="/guides/subtitles-to-transcript/">turning a subtitle file into a transcript</a> covers that route.</p>
+
+    <h2>Brackets that hold real words</h2>
+    <p>Sometimes brackets hold dialogue, such as a character reading a note aloud, or a sign with words that matter to the plot. The brackets option cannot tell those apart from a sound description. If the file has many of them, untick the brackets option and remove the rest by hand in <a href="/srt-editor/">the SRT editor</a>. Check each change against the picture before you download the file.</p>
+
+    <h2>Other clean-up in the same step</h2>
+    <p>The <a href="/subtitle-cleaner/">subtitle cleaner</a> has the same sound, music and speaker options. It also removes formatting tags and repeated lines. Use it when the file needs more than one kind of clean-up. The guide on <a href="/guides/remove-tags-from-subtitles/">removing tags such as &#123;\an8&#125; from subtitles</a> explains the tag side.</p>
+
+    <h2>What stays the same</h2>
+    <p>The timing of each subtitle that stays does not change. Only the text changes. If you also need to move the times, do that with <a href="/shift-subtitle-timing/">the shift tool</a> after the clean-up, so you can check the sync on its own.</p>
+
+    <h2>Check the result in a player</h2>
+    <p>After you download the file, play a scene with a lot of dialogue. Check that the words people say are still there, and that each subtitle appears at the right moment. Then play a scene with music and a scene with a sound effect, to see the extra text go.</p>
+
+    <p>See also <a href="/guides/subtitles-to-transcript/">turn a subtitle file into a transcript</a> and <a href="/remove-hearing-impaired-subtitles/">the hearing-impaired text remover</a>, which is the tool this guide uses.</p>
+  </article>
+</Base>

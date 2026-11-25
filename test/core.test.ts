@@ -681,7 +681,7 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
 });
 
 // Guides written since 11-20-2026: they carry a datePublished in their Article data.
-const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice', 'remove-tags-from-subtitles'];
+const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice', 'remove-tags-from-subtitles', 'remove-sdh-from-subtitles'];
 
 test('every guide has a title of 60 characters or less and a 120 to 155 character description', () => {
   const problems: string[] = [];
@@ -744,6 +744,21 @@ test('VTT output starts with WEBVTT and is saved as UTF-8 bytes (accents survive
   assert.ok(out.includes('ça va'));
   const bytes = new Uint8Array(await new Blob([out]).arrayBuffer());
   assert.deepEqual(bytes, new TextEncoder().encode(out));
+});
+
+// Before and after for guide remove-sdh-from-subtitles (brackets, music, speaker names).
+test('guide sample: brackets, music and speaker names go; mixed case stays', () => {
+  const before = '1\n00:00:01,000 --> 00:00:02,000\n[PHONE RINGS]\n\n2\n00:00:02,500 --> 00:00:04,000\n- JOHN (V.O.): Hello?\n- Mary: Hi.\n\n3\n00:00:05,000 --> 00:00:06,500\n♪ la la la ♪\n\n4\n00:00:07,000 --> 00:00:08,000\n(sighs) Fine.\n';
+  const { captions } = fixCommon(parse(before).captions, { removeBrackets: true, removeSpeakers: true, removeMusic: true });
+  assert.deepEqual(captions.map((c) => [c.start, c.end, c.text]), [[2500, 4000, '- Hello?\n- Mary: Hi.'], [7000, 8000, 'Fine.']]);
+  const after = build(captions, 'srt').replace(/\r/g, '').trim();
+  assert.equal(after, '1\n00:00:02,500 --> 00:00:04,000\n- Hello?\n- Mary: Hi.\n\n2\n00:00:07,000 --> 00:00:08,000\nFine.');
+});
+
+test('guide sample: WARNING: loses its colon name, a mid-line music symbol and words in brackets stay as the guide says', () => {
+  const before = '1\n00:00:01,000 --> 00:00:02,000\nWARNING: The door is open\n\n2\n00:00:03,000 --> 00:00:04,000\nI love ♪ you\n\n3\n00:00:05,000 --> 00:00:06,000\nHello (softly) there\n';
+  const { captions } = fixCommon(parse(before).captions, { removeBrackets: true, removeSpeakers: true, removeMusic: true });
+  assert.deepEqual(captions.map((c) => c.text), ['The door is open', 'I love ♪ you', 'Hello there']);
 });
 
 // Before and after for guide remove-tags-from-subtitles (removeTags).

@@ -47,6 +47,7 @@ export const GUIDES = [
   { slug: 'kodi-subtitles-out-of-sync', title: 'Kodi subtitles out of sync? Fix the file once' },
   { slug: 'subtitles-showing-twice', title: 'Subtitles showing twice? Two tracks or repeated lines' },
   { slug: 'remove-tags-from-subtitles', title: 'Subtitles show {\\an8} or font tags? Remove them' },
+  { slug: 'remove-sdh-from-subtitles', title: 'Remove [music] and speaker names from subtitles' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
@@ -331,6 +332,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'remove-hearing-impaired-subtitles',
+    guide: 'remove-sdh-from-subtitles',
     mode: 'clean',
     group: 'Text',
     title: 'Remove SDH / hearing impaired text from subtitles online',

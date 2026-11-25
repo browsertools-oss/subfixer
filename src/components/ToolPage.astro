@@ -27,7 +27,7 @@ const jsonld = [
 ---
 <Base title={page.title} description={page.description} path={path} jsonld={jsonld} noindex={NOINDEX.includes(page.slug)}>
   {page.mode === 'extract'
-    ? <MkvExtract h1={page.h1} lede={page.lede} />
+    ? <MkvExtract h1={page.h1} lede={page.lede} kind={page.slug === 'extract-subtitles-from-mp4' ? 'MP4' : 'MKV'} />
     : <Tool mode={page.mode} preset={page.preset} home={home} h1={page.h1} lede={page.lede} />}
   <div class="adslot" aria-hidden="true"></div>
   {home && (

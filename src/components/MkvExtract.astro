@@ -1,15 +1,15 @@
 ---
-interface Props { h1: string; lede: string }
-const { h1, lede } = Astro.props;
+interface Props { h1: string; lede: string; kind?: 'MKV' | 'MP4' }
+const { h1, lede, kind = 'MKV' } = Astro.props;
 ---
 <section class="tool mkv" id="mkv">
   <h1>{h1}</h1>
   <p class="lede">{lede}</p>
 
   <label class="drop" id="mkvDrop">
-    <input type="file" id="mkvFile" class="visually-hidden" accept=".mkv,.mks,.webm" />
+    <input type="file" id="mkvFile" class="visually-hidden" accept=".mkv,.mks,.webm,.mp4,.m4v,.mov" />
     <span class="drop-body">
-      <span class="drop-main">Drop an MKV file here</span>
+      <span class="drop-main">Drop an {kind} file here</span>
       <span class="drop-sub">A movie can be several gigabytes. Nothing leaves your device.</span>
       <span class="drop-row">
         <span class="drop-btn" aria-hidden="true">Choose a file</span>
@@ -123,7 +123,10 @@ const { h1, lede } = Astro.props;
       const row = body.insertRow();
       row.insertCell().textContent = String(track.number);
       row.insertCell().textContent = track.language;
-      row.insertCell().textContent = track.name || '-';
+      let name = track.name || '-';
+      if (track.isDefault) name += ' (default)';
+      if (track.forced) name += ' (forced)';
+      row.insertCell().textContent = name;
 
       const typeCell = row.insertCell();
       if (track.encrypted) {
@@ -152,25 +155,31 @@ const { h1, lede } = Astro.props;
     $('mkvTracks').replaceChildren();
     current = null;
     $('mkvStatus').hidden = false;
-    $('mkvText').textContent = `Reading ${file.name}. A full film can take a minute or more.`;
     const progress = $('mkvProgress') as HTMLProgressElement;
     progress.value = 0;
     stopCtl = new AbortController();
     try {
+      // The first four bytes say which format it is: EBML (MKV and WebM) or an MP4 box.
+      const head = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+      const isMkv = head[0] === 0x1a && head[1] === 0x45 && head[2] === 0xdf && head[3] === 0xa3;
+      $('mkvText').textContent = isMkv
+        ? `Reading ${file.name}. A full film can take a minute or more.`
+        : `Reading ${file.name}: the index, then the subtitle lines.`;
       const lib = await import('../lib/mkv');
+      const scan = isMkv ? lib.scanMkv : (await import('../lib/mp4')).scanMp4;
       const source = {
         size: file.size,
         read: (offset: number, length: number) =>
           file.slice(offset, offset + length).arrayBuffer().then((b) => new Uint8Array(b)),
       };
-      const result = (await lib.scanMkv(
+      const result = (await scan(
         source,
         (done, total) => {
           progress.value = total ? done / total : 0;
         },
         stopCtl.signal,
       )) as Result;
-      current = { base: file.name.replace(/\.(mkv|mks|webm)$/i, ''), lib, result };
+      current = { base: file.name.replace(/\.(mkv|mks|webm|mp4|m4v|mov)$/i, ''), lib, result };
       renderTracks();
     } catch (err) {
       const aborted = err instanceof DOMException && err.name === 'AbortError';

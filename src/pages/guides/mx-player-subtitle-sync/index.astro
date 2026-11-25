@@ -1,0 +1,49 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'MX Player subtitles out of sync? Fix the file';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="MX Player has a subtitle sync setting, but it only works for one file. Fix the file itself so it plays in sync on the phone, the TV and the laptop." path="/guides/mx-player-subtitle-sync/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">MX Player has a subtitle sync setting in its subtitle menu. It lets you shift the subtitles forward or backward while the video plays. That helps for one file, but the setting is per file and does not carry over to other players. If you watch the same movie on a TV or a laptop, the sync is off again. The fix is to change the subtitle file itself, once, so it plays right everywhere.</p>
+
+    <h2>Why the player setting is not enough</h2>
+    <p>The sync setting in MX Player adds an offset to the subtitle track while that file is playing. It does not rewrite the file. Close the app, open the same file on a TV, and the offset is gone. The same happens if you move the file to another device. The subtitle file still has the original timing.</p>
+
+    <h2>Fix the file instead</h2>
+    <p>Two tools on this site change the subtitle file so the timing is correct in the file itself.</p>
+    <ul>
+      <li><a href="/shift-subtitle-timing/">Shift subtitle timing</a> adds or subtracts the same amount from every line. Use it when the whole file is off by a constant amount.</li>
+      <li><a href="/sync-subtitles/">Sync subtitles</a> pins two points in the film and stretches the rest to fit. Use it when the offset changes through the file, such as a frame rate difference.</li>
+    </ul>
+    <p>Both tools read the file in your browser, show a preview, and download the fixed file. Nothing is uploaded.</p>
+
+    <h2>Which tool to use</h2>
+    <p>Play a scene near the start and one near the end. If the offset is the same at both points, use the shift tool. Enter the offset you measured in MX Player, check the preview, and download. If the offset grows or shrinks, use the sync tool. Pick two points you can match, and the tool calculates the stretch.</p>
+
+    <h2>Check the file before you fix it</h2>
+    <p>Run <a href="/srt-validator/">the SRT validator</a> first. If the file has overlaps, zero-length lines or short lines, those will look like a sync problem. Fix the file with the validator's issues in mind, then check the timing again.</p>
+
+    <h2>After the fix, play it everywhere</h2>
+    <p>Download the fixed file and put it next to the video with the same name, for example Movie.eng.srt. MX Player will pick it up. The same file will now play in sync on a TV, a laptop, Plex, Jellyfin or VLC, because the timing is in the file.</p>
+
+    <h2>If the sync drifts partway through</h2>
+    <p>A sudden jump in the offset usually means a different cut of the film, such as ad breaks removed or an extra scene. The guide on <a href="/guides/subtitles-out-of-sync-partway/">subtitles fine at first then out of sync</a> covers that case and shows how to shift from one line onward.</p>
+    <p>A steady drift usually means a frame rate difference between the subtitle file and the video. The guide on <a href="/guides/23976-vs-25-fps-subtitles/">23.976 vs 25 fps subtitles</a> explains why it happens and how the sync tool fixes it.</p>
+
+    <h2>A worked example</h2>
+<p>You open a movie in MX Player and the subtitles appear about two seconds before the speech. In the subtitle menu you tap Sync and set it to -2.0 seconds. The film plays fine now. But when you send the same file to your TV, the subtitles are early again. The TV does not know about the -2.0 offset you set in MX Player.</p>
+<p>Open <a href="/shift-subtitle-timing/">the shift tool</a> and drop in the subtitle file. Under Shift timing enter -2000 (milliseconds). The preview shows every line moved two seconds earlier. Download the file, name it Movie.eng.srt next to the video, and play it on the TV. The subtitles are now in sync without any player setting.</p>
+
+<h2>What to check after the fix</h2>
+<p>Play the first scene with dialogue. Check that the first line appears when the character starts speaking. Play a scene near the end. Check that the last line still matches. If the offset is not constant, the sync tool is the right one instead.</p>
+
+<h2>When the file has multiple subtitle tracks</h2>
+<p>Some MKV files have several subtitle tracks. If you extracted the wrong one, the timing will not match even after you shift it. Use <a href="/extract-subtitles-from-mkv/">the MKV subtitle extractor</a> to see which track is which, then extract the right one and shift that file.</p>
+
+<p>The same fix works for any player that reads an external subtitle file. If the TV, the laptop, or Plex all read the same .srt file, they all get the corrected timing without you doing anything extra on each device.</p>
+
+<p>See also <a href="/guides/subtitles-out-of-sync/">subtitles out of sync</a> and <a href="/guides/kodi-subtitles-out-of-sync/">Kodi subtitles out of sync</a> for the same fix applied to other players.</p>
+  </article>
+</Base>

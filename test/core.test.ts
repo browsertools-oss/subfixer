@@ -681,7 +681,7 @@ test('find-and-replace-subtitles example: word-for-word swaps', () => {
 });
 
 // Guides written since 11-20-2026: they carry a datePublished in their Article data.
-const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice', 'remove-tags-from-subtitles', 'remove-sdh-from-subtitles', 'burned-in-vs-soft-subtitles', 'subtitles-overlapping-lines'];
+const RECENT_GUIDES = ['chromecast-subtitles-not-showing', 'add-subtitles-to-html5-video', 'vlc-subtitles-not-showing', 'plex-subtitles-not-showing', 'premiere-pro-srt-import-error', 'youtube-subtitle-upload-error', 'jellyfin-subtitles-fix', 'subtitles-too-fast', 'subtitles-to-transcript', 'extract-subtitles-from-mkv-without-software', 'tv-subtitles-not-showing-usb', 'subtitles-out-of-sync-partway', 'kodi-subtitles-out-of-sync', 'subtitles-showing-twice', 'remove-tags-from-subtitles', 'remove-sdh-from-subtitles', 'burned-in-vs-soft-subtitles', 'subtitles-overlapping-lines', 'mx-player-subtitle-sync'];
 
 test('every guide has a title of 60 characters or less and a 120 to 155 character description', () => {
   const problems: string[] = [];

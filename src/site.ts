@@ -489,6 +489,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'subtitle-cleaner',
+    guide: 'remove-tags-from-subtitles',
     mode: 'clean',
     group: 'Text',
     title: 'Subtitle cleaner: remove SDH tags, names and music',
@@ -803,6 +804,7 @@ export const PAGES: ToolPage[] = [
   },
   {
     slug: 'remove-duplicate-subtitles',
+    guide: 'subtitles-showing-twice',
     mode: 'clean',
     group: 'Text',
     preset: { clean: 'dupes' },

@@ -21,36 +21,36 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>Here is a short file with each kind of problem. The timing fixer runs with overlaps fixed, a 200 ms gap, and a minimum duration of 700 ms (the defaults on the tool).</p>
     <p><strong>Before:</strong></p>
     <pre><code>1
-00:00:01,000 --> 00:00:01,000
+00:00:01,000 --&gt; 00:00:01,000
 Zero length
 
 2
-00:00:02,000 --> 00:00:02,300
+00:00:02,000 --&gt; 00:00:02,300
 Too short
 
 3
-00:00:03,000 --> 00:00:05,000
+00:00:03,000 --&gt; 00:00:05,000
 Overlaps the next one
 
 4
-00:00:04,500 --> 00:00:06,000
+00:00:04,500 --&gt; 00:00:06,000
 Normal line
 </code></pre>
     <p><strong>After:</strong></p>
     <pre><code>1
-00:00:01,000 --> 00:00:01,700
+00:00:01,000 --&gt; 00:00:01,700
 Zero length
 
 2
-00:00:02,000 --> 00:00:02,700
+00:00:02,000 --&gt; 00:00:02,700
 Too short
 
 3
-00:00:03,000 --> 00:00:04,300
+00:00:03,000 --&gt; 00:00:04,300
 Overlaps the next one
 
 4
-00:00:04,500 --> 00:00:06,000
+00:00:04,500 --&gt; 00:00:06,000
 Normal line
 </code></pre>
     <p>The zero-length line is extended to 700 ms. The short line is extended to 700 ms. The overlapping line ends 200 ms before the next one starts, so there is a small gap. The normal line is unchanged. The lines are sorted in time order and renumbered.</p>

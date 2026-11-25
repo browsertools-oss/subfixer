@@ -3,7 +3,7 @@ import Base from '../../../layouts/Base.astro';
 const title = 'Subtitles show {\\an8} or font tags? Remove them';
 const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
-<Base title={`${title} | SubFixer`} description="Subtitle files with codes like &#123;\an8&#125;, font colour tags or italic tags can show them as text. Find them, remove them, and what you lose." path="/guides/remove-tags-from-subtitles/" jsonld={jsonld} ogType="article">
+<Base title={`${title} | SubFixer`} description="Subtitle files can carry codes like position tags and font colour tags. Some players show them as text. Find them, remove them, and see what you lose." path="/guides/remove-tags-from-subtitles/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
     <p class="lede">Some subtitle files are full of codes. You may see a line that starts with <code>&#123;\an8&#125;</code>, or text wrapped in <code>&lt;font color="#ffff00"&gt;</code>, or a word between <code>&lt;i&gt;</code> tags. Some players and devices show those codes on screen as plain text. Others read them and move or colour the line. Either way, removing them gives a clean file that plays the same everywhere.</p>

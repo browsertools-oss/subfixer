@@ -48,6 +48,7 @@ export const GUIDES = [
   { slug: 'subtitles-showing-twice', title: 'Subtitles showing twice? Two tracks or repeated lines' },
   { slug: 'remove-tags-from-subtitles', title: 'Subtitles show {\\an8} or font tags? Remove them' },
   { slug: 'remove-sdh-from-subtitles', title: 'Remove [music] and speaker names from subtitles' },
+  { slug: 'burned-in-vs-soft-subtitles', title: 'Soft vs burned-in subtitles: which one you have' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.

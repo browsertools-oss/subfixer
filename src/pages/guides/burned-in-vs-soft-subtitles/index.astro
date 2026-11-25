@@ -1,0 +1,52 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Soft vs burned-in subtitles: which one you have';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-24', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Soft subtitles can be turned off and burned-in ones cannot. Learn how to tell which you have, and what you can save or fix in each case." path="/guides/burned-in-vs-soft-subtitles/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Some subtitles can be switched off, and some cannot. That one difference decides what you can do with them. Soft subtitles are stored apart from the picture, so they can be turned off or saved as text. Burned-in subtitles are part of the picture itself. This guide shows how to tell which kind you have before you try to fix anything.</p>
+
+    <h2>Two kinds of subtitle</h2>
+    <p>A soft subtitle is text or images kept separately from the video. A .srt file sitting next to a movie is soft. So is a subtitle track inside an MKV file. Your player reads it and shows it on top of the picture, and you can turn it off in the subtitle menu.</p>
+    <p>A burned-in subtitle is drawn onto each frame of the video. The words are no longer stored as text anywhere. The player has nothing to switch off, because the words are simply part of the image.</p>
+
+    <h2>How to tell which one you have</h2>
+    <p>Start with the player. Turn the subtitles off in its subtitle menu, then play a scene where someone speaks.</p>
+    <ul>
+      <li>If the words disappear, the subtitles are soft. They are either a track inside the file or a separate file that the player loaded.</li>
+      <li>If the words stay on screen with every option turned off, they are most likely burned in.</li>
+    </ul>
+    <p>A second check is the track list. Open the subtitle menu and look at the entries. Any subtitle track inside the file is listed there, by language or by name. VLC shows these under Subtitle and then Sub Track. A list with entries means the file carries soft subtitles. An empty list, with the words still on screen, means they are part of the picture.</p>
+    <p>Last, look in the folder next to the video. A file with the same name as the video and a subtitle ending, such as .srt or .sub, is a soft subtitle that the player may not have picked up. Renaming it so it matches the video is often enough.</p>
+
+    <h2>Soft text tracks</h2>
+    <p>A soft text track holds plain text, styled text, or WebVTT. The text is stored in the file, so it can be read and saved. For a track inside an MKV, the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a> lists each track and saves the text ones. It can save an SRT, a WebVTT or an ASS file, depending on the track. Everything is read on your device, and the movie is not uploaded.</p>
+    <p>A separate .srt or .vtt file needs no extraction. It is already text, so you can open it in a text editor or fix its timing with one of the tools on this site.</p>
+
+    <h2>Soft picture tracks</h2>
+    <p>Some soft tracks are pictures. Blu-ray discs use PGS, and DVDs use VobSub. Each subtitle line is an image of the words, not the words themselves. The extractor lists these as "Picture (PGS or VobSub)" and does not save them as text.</p>
+    <p>To get text from a picture track, first save it as a .sup file. The free MKVToolNix can do that from the command line, and the guide on <a href="/guides/extract-subtitles-from-mkv-without-software/">extracting subtitles from an MKV</a> gives the command. Then open the file in <a href="/sup-to-srt/">the SUP to SRT tool</a>.</p>
+    <p>That tool reads the words from the pictures with OCR, which is a reader that recognizes letters. It takes a while, and it gets some letters wrong. Check the lines against the picture before you download the file. The file stays on your device, and only the reader itself is downloaded. The guide on <a href="/guides/sup-to-srt-guide/">PGS subtitles that won't show</a> covers the steps in more detail.</p>
+
+    <h2>Burned-in subtitles</h2>
+    <p>No tool can take burned-in words out as a file. The text is in the picture, not in the data, so there is no track to save. It also means you cannot edit the words, change the font, or move the timing of the text. The player shows whatever is in the frame.</p>
+    <p>If you need text for a burned-in film, there are two ways to get it. The first is to check whether the same film came with a separate subtitle file from the same source. That file would be soft, and you could use it instead. The second is to make a new subtitle file. You can type it by hand in <a href="/srt-editor/">the SRT editor</a>, or use a transcription tool that reads the sound. A transcript made that way still needs its timing checked against the picture, because it will not line up on its own.</p>
+
+    <h2>A few cases that look burned in</h2>
+    <p>Some subtitles are part of the picture on purpose. Open captions are always on, and the viewer cannot turn them off. Those are burned in, and the same rule applies. If the words are part of the frame, no tool can save them as text.</p>
+    <p>Some players show a subtitle track that you did not pick. If you can switch off the subtitle in one player but not another, open the same file in a second player, such as VLC, and look at its track list. That tells you whether the file carries a track at all.</p>
+    <p>A subtitle that looks doubled or ghosted may be two sources on screen at once: a soft track and a separate file. Turning off one of them will show which. The guide on <a href="/guides/subtitles-showing-twice/">subtitles showing twice</a> covers that case.</p>
+
+    <h2>What to do with each kind</h2>
+    <ul>
+      <li>Soft text: open or save the text, then fix the timing.</li>
+      <li>Soft picture: save the .sup file, then read the words with the SUP tool and check them.</li>
+      <li>Burned in: look for a separate file from the same source, or write a new subtitle file.</li>
+    </ul>
+    <p>Once you have text, the format you need depends on the player. The guide on <a href="/guides/srt-vtt-ass/">SRT, VTT and ASS</a> explains which formats each one reads, and when to convert between them.</p>
+
+    <p>See also <a href="/guides/extract-subtitles-from-mkv-without-software/">extract subtitles from an MKV without installing anything</a>, which walks through the track list in more detail.</p>
+  </article>
+</Base>

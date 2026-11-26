@@ -8,7 +8,7 @@ export interface MkvSource {
   read(offset: number, length: number): Promise<Uint8Array>;
 }
 
-const CHUNK = 1 << 20;
+export const CHUNK = 1 << 20;
 // A subtitle block that inflates to more than this is skipped and counted, so a
 // damaged or hostile file cannot fill memory with one huge cue.
 const MAX_PAYLOAD = 8 << 20;
@@ -39,7 +39,7 @@ export interface MkvCue {
 }
 
 // IDs (Matroska and EBML). Each is the element ID with its length marker bit kept.
-const ID = {
+export const ID = {
   EBML: 0x1a45dfa3,
   SEGMENT: 0x18538067,
   INFO: 0x1549a966,
@@ -77,7 +77,7 @@ interface Vint {
 }
 
 // Element IDs keep the marker bit; sizes and track numbers drop it.
-function readVint(b: Uint8Array, at: number, keepMarker: boolean): Vint | null {
+export function readVint(b: Uint8Array, at: number, keepMarker: boolean): Vint | null {
   const first = b[at];
   if (first === undefined || first === 0) return null;
   let length = 1;
@@ -102,7 +102,7 @@ interface Element {
 }
 
 // Reads one element header at `at` in `b`, where `base` is the file offset of b[0].
-function headerAt(b: Uint8Array, at: number, base: number): Element | null {
+export function headerAt(b: Uint8Array, at: number, base: number): Element | null {
   const id = readVint(b, at, true);
   if (!id || id.length > 4) return null;
   const size = readVint(b, at + id.length, false);
@@ -117,7 +117,7 @@ function headerAt(b: Uint8Array, at: number, base: number): Element | null {
 }
 
 // Lists the child elements of a byte range. An element of unknown size runs to the end of the range.
-function children(b: Uint8Array): { id: number; data: Uint8Array }[] {
+export function children(b: Uint8Array): { id: number; data: Uint8Array }[] {
   const out: { id: number; data: Uint8Array }[] = [];
   let at = 0;
   while (at < b.length) {
@@ -131,7 +131,7 @@ function children(b: Uint8Array): { id: number; data: Uint8Array }[] {
   return out;
 }
 
-function uintOf(b: Uint8Array): number {
+export function uintOf(b: Uint8Array): number {
   let v = 0;
   for (const x of b) v = v * 256 + x;
   return v;
@@ -206,7 +206,7 @@ function parseTracks(b: Uint8Array): ParsedTrack[] {
   return out;
 }
 
-class Reader {
+export class Reader {
   private src: MkvSource;
   private win: { start: number; bytes: Uint8Array } = { start: 0, bytes: new Uint8Array(0) };
 

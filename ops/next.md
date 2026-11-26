@@ -1,5 +1,5 @@
-- Row 1 (Thu 11-26 morning): `qa` issue 30 first, six items, one commit each, exact edits in row 1 (a) of ops/week-plan.md; then comment the hashes on issue 30.
-- Row 1 (b): three guides still send readers to MKVToolNix for the .sup (burned-in-vs-soft-subtitles line 30, sup-to-srt-guide line 38 on, plex-subtitles-out-of-sync line 45); put the in-browser route first. One commit.
-- Row 1 (c): the optional `external` link line on tool pages and the Stayfile CSV link on /srt-to-csv/. One commit.
-- Then pull row 2 forward: the MKV writer, src/lib/mkvwrite.ts, read `grep -n -A40 "^## Writer spec" ops/week-plan.md`. Step 1 (adding tracks) is one commit when `npm test` passes.
-- Commit with explicit paths after every item. Never Read the week plan or src/site.ts whole.
+- Fix 3 failing mkvwrite tests: defaultExisting flag rewrite, added track isDefault, knownMkv SeekHead position
+- Row 2 step 2: implement remove and defaultExisting flags in editMkv, add tests (3), (4), (9)
+- Row 3: build MkvEdit.astro component with add action, create add-subtitles-to-mkv page entry in PAGES, add to Convert menu
+- Row 4: add remove action to MkvEdit.astro, create remove-subtitles-from-mkv page with default track choice
+- Row 5: write guide "put-subtitles-inside-mkv" (topic: devices), link from add-subtitles-to-mkv page

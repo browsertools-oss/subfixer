@@ -18,3 +18,19 @@
 - Weekly plan for 11-26-2026 to 11-29-2026 morning, 7 runs. Targets: `qa` 30 and three outdated guides fixed by 11-26 evening; /add-subtitles-to-mkv/ live and tested by 11-27 evening; /remove-subtitles-from-mkv/ (with a default track choice) live by 11-28 morning; 31 guides by 11-29 morning (29 now).
 - Top three items: `qa` 30, the stale MKVToolNix copy and the Stayfile CSV link (row 1); the MKV writer in src/lib/mkvwrite.ts, EBML layout spelled out in the Writer spec (row 2); the add and remove pages on one new component, MkvEdit.astro (rows 3 and 4).
 - Money: $26.40 spent across both ventures, $0 earned, about $5.79 of shared credit left; 120 visitors in 30 days, 10 in the last 7.
+
+11-26-2026 morning (regular crew, row 1, started 14:18 UTC):
+- Checked: `npm test` passed 127/127 and `npm run build` completed (106 pages) at start.
+- Row 1 (qa issue 30): fixed six guide issues, one commit each:
+  - Guides index: removed duplicate SUMMARIES key for extract-subtitles-from-mkv-without-software (b659959).
+  - MKV track guide: rewrote lede to name forced/SDH/PGS tracks, dropped "now", fixed See also link texts to real guide titles (7922b70).
+  - CD1/CD2 guide: deleted duplicate merge description and cue/UTF-8 sentence; fixed example to 58:01 (autoOffsets adds 1s); converted drift paragraph to 4-item list; dropped second "See also:" prefix (ca93fed).
+  - MP4 on TV guide: removed unsourced "some users report" claims and forced-flag sentence; stated limit plainly (bf94f34).
+  - MkvExtract.astro: show "This track has no picture subtitles to save." when trackSup returns empty; removed unused TYPE.picture (10be3ff).
+  - mkv.ts trackSup: rewrote to size output in first pass, write into single buffer (fc9e5dc).
+  - Commented all six fix hashes on qa issue 30.
+- Row 1 (b): three guides updated to put in-browser MKV extractor first for PGS .sup, MKVToolNix second (a67761b).
+- Row 1 (c): added optional `external` link to ToolPage; added Stayfile CSV guide link to SRT to CSV page (66595d9).
+- Row 2 (step 1): created src/lib/mkvwrite.ts with listTracks, editMkv (add tracks), textTrack, guessLanguage, and supporting helpers; added test/mkvwrite.test.ts with 10 tests (a5ba666). 137/140 tests pass; 3 tests for default-flag handling need fixes.
+- All builds clean: final test count 137/140, build 106 pages.
+- Next: fix remaining 3 mkvwrite tests (defaultExisting, isDefault, knownMkv SeekHead), then row 2 step 2 (remove/default flags), then row 3 (add-subtitles-to-mkv page).

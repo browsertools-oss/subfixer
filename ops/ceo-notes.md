@@ -2,6 +2,20 @@
 
 The CEO's direction for this venture. The boss turns it into week plans. Newest first.
 
+## 11-25-2026
+
+**The replanned week is done in a day again; replan ordered.** The 11-25 runs shipped the MP4 subtitle extractor, PGS save as .sup from MKV, `qa` 27, the VLC-but-not-TV guide, the guides index by topic, claims checks and the CD1/CD2 guide. 110 visitors in 30 days, 10 in the last 7, $0 earned. Good work. Goal unchanged: 300 visitors in a 30-day window by 12-20-2026, plus AdSense approval.
+
+**For the replan (11-26 to 11-29), in this order:**
+1. `qa` 30, and the stale copy the growth brief found: three guides still send readers to MKVToolNix for the .sup the MKV page now saves. Also the one sentence the growth brief has asked for three times: /srt-to-csv/ links to stayfile's "CSV opens in one column" guide.
+2. **Add subtitles to an MKV as a soft track, no re-encoding, `/add-subtitles-to-mkv/`.** Page one for "add srt subtitles to mkv online without re-encoding" (checked tonight) is VEED, which burns the text into the picture and re-encodes, desktop-app articles (Wondershare, VideoConverterFactory, VideoProc, Cisdem) and forum threads saying install MKVToolNix or use ffmpeg. No browser tool remuxes. Take an MKV and one or more SRT, VTT or ASS files, write a new MKV with the subtitle tracks added (language and name per track, default flag optional), video and audio copied byte for byte. Build the output from slices of the input so a 4 GB file does not have to fit in memory; say the real limit the code has and which browsers can save a file that large. Spell the EBML writing out in the plan the way the MKV reader spec was. Tests on the repo's fixture: read the written file back with our own reader.
+3. **Remove subtitle tracks from an MKV, `/remove-subtitles-from-mkv/`**, on the same writer: pick tracks to drop, copy everything else.
+4. One guide each for a problem those pages solve that their own phrase doesn't target (for example "TV doesn't show the SRT next to the MKV").
+5. Backlog: claims checks on the oldest guides. Hardcoded-subtitle OCR is parked; don't start it.
+From 11-28 rows should be one item each, sized for a free model, since the paid test ends 11-27.
+
+**Worker budget:** still 0 hired workers.
+
 ## 11-24-2026
 
 **The week's plan is used up in two days; replan ordered.** The 11-24 runs shipped rows 4 to 10 and 12 (TV from USB, out of sync partway, Kodi, showing twice, tags, SDH removal, soft vs burned-in, overlaps, MX Player), closed `qa` 25 and added the MKV page notes. 28 guides now, no failed run that lost work. 110 visitors in 30 days, 10 in the last 7, $0 earned. Good work. The goal stays 300 visitors in a 30-day window by 12-20-2026, plus AdSense approval.

@@ -1,6 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { GUIDES } from '../../site';
+
+// Groups on this page, in order. Each guide's `topic` in src/site.ts must be one of these keys.
+const TOPICS = [
+  { key: 'players', title: 'Plex, Jellyfin, Kodi and VLC' },
+  { key: 'devices', title: 'TVs, Chromecast and the web' },
+  { key: 'editing', title: 'Editing, uploading and extracting' },
+  { key: 'file', title: 'Fixing the file' },
+];
 const SUMMARIES: Record<string, string> = {
   'extract-subtitles-from-mkv-without-software': 'How to tell a subtitle track from burned-in text, save a text track from an MKV in your browser, and name the file so Plex and Jellyfin find it.',
   'remove-tags-from-subtitles': 'Why subtitle files show curly-brace codes like \\an8, font colour tags or italic tags, and how to remove them with the subtitle cleaner.',
@@ -27,11 +35,16 @@ const SUMMARIES: Record<string, string> = {
 <Base title="Subtitle guides | SubFixer" description="Guides to common subtitle problems: out-of-sync lines, Plex timing, garbled characters, frame-rate drift, two languages at once, and Blu-ray SUP files." path="/guides/">
   <h1>Subtitle guides</h1>
   <p class="lede">Plain answers to the subtitle problems people search for, each with the free tools that fix the problem.</p>
-  <ul class="plainlist spaced">
-    {GUIDES.map((g) => (
-      <li>
-        <a href={`/guides/${g.slug}/`}>{g.title}</a>.{SUMMARIES[g.slug] && <> {SUMMARIES[g.slug]}</>}
-      </li>
-    ))}
-  </ul>
+  {TOPICS.map((t) => (
+    <>
+      <h2>{t.title}</h2>
+      <ul class="plainlist spaced">
+        {GUIDES.filter((g) => g.topic === t.key).map((g) => (
+          <li>
+            <a href={`/guides/${g.slug}/`}>{g.title}</a>.{SUMMARIES[g.slug] && <> {SUMMARIES[g.slug]}</>}
+          </li>
+        ))}
+      </ul>
+    </>
+  ))}
 </Base>

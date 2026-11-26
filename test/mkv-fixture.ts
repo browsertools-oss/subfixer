@@ -141,6 +141,58 @@ export function sampleMkv(): Uint8Array {
   return cat(ebml, elUnknown(0x18538067, el(0xec, new Uint8Array(10)), info, tracks, cluster1, cluster2, cues));
 }
 
+// Same content, but the Segment has a known size, a SeekHead first, and a Cues with two CuePoints.
+// CueClusterPosition is the cluster's offset from the segment data start, plus a CueRelativePosition (0xf0) value 3.
+export function knownMkv(): Uint8Array {
+  const ebml = el(0x1a45dfa3, uint(0x4287, 4), str(0x4282, 'matroska'));
+  const info = el(0x1549a966, uint(0x2ad7b1, 1000000), str(0x4d80, 'fixture'));
+  const tracks = el(
+    0x1654ae6b,
+    el(0xae, uint(0xd7, 1), uint(0x83, 1), str(0x86, 'V_MPEG4/ISO/AVC')),
+    trackEntry({ number: 2, type: 17, codec: 'S_TEXT/UTF8', language: 'eng', isDefault: true }),
+    trackEntry({
+      number: 3,
+      type: 17,
+      codec: 'S_TEXT/ASS',
+      language: 'fre',
+      name: 'French',
+      isDefault: false,
+      codecPrivate: ASS_HEADER,
+    }),
+    trackEntry({ number: 4, type: 17, codec: 'S_VOBSUB', language: 'eng', isDefault: false }),
+    trackEntry({ number: 5, type: 17, codec: 'S_TEXT/UTF8', language: 'ger', isDefault: false, zlib: true }),
+  );
+  const video = simpleBlock(1, 0, new Uint8Array(3 * 1024 * 1024));
+  const cluster1 = el(
+    0x1f43b675,
+    uint(0xe7, 0),
+    video,
+    blockGroup(2, 1000, 1500, enc('Hello there.')),
+    blockGroup(3, 1000, 1500, enc('0,0,Default,,0,0,0,,Bonjour.')),
+    simpleBlock(4, 1000, new Uint8Array([1, 2, 3, 4])),
+    simpleBlock(5, 1000, zlibSync(enc('Hallo.'))),
+  );
+  const cluster2 = el(
+    0x1f43b675,
+    uint(0xe7, 3000),
+    blockGroup(2, 0, 1200, enc('<i>Café</i>\nsecond line')),
+    blockGroup(3, 0, 1200, enc('1,0,Default,,0,0,0,,{\\an8}En haut')),
+  );
+  const cues = el(
+    0x1c53bb6b,
+    el(0xbb, uint(0xb3, 0), el(0xb7, uint(0xf7, 2), uint(0xf1, 0), uint(0xf0, 3))),
+    el(0xbb, uint(0xb3, 3000), el(0xb7, uint(0xf7, 2), uint(0xf1, 0x1000), uint(0xf0, 3))),
+  );
+  const segData = cat(info, tracks, cluster1, cluster2, cues);
+  const seg = el(0x18538067, segData);
+  const seekHead = el(
+    0x114d9b74,
+    el(0x4dbb, el(0x53ab, [0x15, 0x49, 0xa9, 0x66]), el(0x53ac, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c])),
+    el(0x4dbb, el(0x53ab, [0x16, 0x54, 0xae, 0x6b]), el(0x53ac, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4e])),
+  );
+  return cat(ebml, seekHead, seg);
+}
+
 // Builds a small MKV with two PGS display sets so trackSup can round-trip them.
 export function pgsMkv(sets: { start: number; end: number; segments: number[][] }[]): Uint8Array {
   const ebml = cat(el(0x1a45dfa3, uint(0x4286, 1), uint(0x42f7, 1), uint(0x42f2, 2), uint(0x42f3, 2), str(0x4282, 'matroska'), uint(0x4287, 2), uint(0x4285, 2)));

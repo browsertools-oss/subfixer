@@ -41,7 +41,7 @@ export const GUIDES = [
   { slug: 'subtitles-to-transcript', title: 'Turn a subtitle file into a clean transcript' },
   { slug: 'chromecast-subtitles-not-showing', title: 'Chromecast not showing subtitles? Use WebVTT' },
   { slug: 'add-subtitles-to-html5-video', title: 'Add subtitles to an HTML5 video: SRT to track' },
-  { slug: 'extract-subtitles-from-mkv-without-software', title: 'Extract subtitles from an MKV without installing anything' },
+  { slug: 'extract-subtitles-from-mkv-without-software', title: 'Forced, SDH or PGS? Which MKV subtitle track to save' },
   { slug: 'tv-subtitles-not-showing-usb', title: "TV won't show subtitles from USB? Samsung, LG, Sony" },
   { slug: 'subtitles-out-of-sync-partway', title: 'Subtitles fine at first, then out of sync? The fix' },
   { slug: 'kodi-subtitles-out-of-sync', title: 'Kodi subtitles out of sync? Fix the file once' },
@@ -711,6 +711,7 @@ export const PAGES: ToolPage[] = [
     steps: ['Drop in your subtitle file.', 'Output is preset to CSV.', 'Download the .csv file.'],
     faq: [
       { q: 'Why do accented letters look wrong in Excel?', a: 'Older Excel versions guess the wrong encoding for CSV. This file starts with a UTF-8 marker that tells Excel how to read it, so accents should show correctly.' },
+      { q: 'Why does the CSV open in one column in Excel?', a: 'The file separates columns with commas. Excel in some regions expects semicolons instead, so every row lands in column A. In Excel, use Data, then Text to Columns, pick Delimited and tick Comma.' },
       PRIVACY_FAQ,
     ],
   },
@@ -1549,7 +1550,7 @@ export const PAGES: ToolPage[] = [
     title: 'Extract subtitles from MKV online: save SRT, no upload',
     h1: 'Extract subtitles from an MKV file',
     lede: 'Pick an MKV and see its subtitle tracks. Save a text track as SRT, WebVTT or ASS. The movie is read on your computer and never uploaded.',
-    description: 'Extract subtitle tracks from an MKV file in your browser and save them as SRT or ASS. No upload and no install, so a 4 GB movie is fine.',
+    description: 'Extract subtitle tracks from an MKV or WebM file in your browser and save them as SRT or ASS. No upload and no install, so a 4 GB movie is fine.',
     steps: [
       'Pick the MKV file. It is read on your device, and nothing is uploaded.',
       'Wait while the file is read. A full film can take a minute or more.',
@@ -1561,6 +1562,7 @@ export const PAGES: ToolPage[] = [
       { q: 'Why does the file show no subtitles?', a: 'The subtitles may be burned into the picture. No tool can pull burned-in text out as a track. They may also be in a separate file next to the movie.' },
       { q: 'Which file name should I use?', a: 'Use the video name with the language code, for example Movie.eng.srt, and keep it in the same folder as the video. The page builds that name for each track.' },
       { q: 'Does it work with MP4 files?', a: 'Yes. Drop the MP4 here, or use the MP4 subtitle extractor. It reads MP4, M4V and MOV files as well as MKV and WebM.' },
+      { q: 'Does it transcribe the audio?', a: 'No. It copies the subtitle text already stored in the file, so the words and timing match the release exactly. If the file has no text track, nothing is invented.' },
     ],
   },
   {

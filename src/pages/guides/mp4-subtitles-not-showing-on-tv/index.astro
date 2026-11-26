@@ -9,8 +9,8 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p class="lede">Subtitles inside an MP4 file play in VLC on your laptop, but the TV shows nothing. VLC reads almost every subtitle format a video can carry, and a TV reads fewer of them. The fix is to save the track as a separate subtitle file that sits next to the video. The TV can load that file even when it ignores the track inside the MP4.</p>
 
     <h2>Why VLC shows them and the TV does not</h2>
-    <p>VLC plays a wide range of subtitle tracks, and it finds the one inside the MP4 without any help from you. A TV works differently. Each TV decides which subtitle formats inside an MP4 it will show, and the list differs from one brand and model to the next. Some users report that embedded MP4 subtitles never appear on the TV, while an external .srt file with the same name as the video shows fine.</p>
-    <p>Casting makes it worse. When a laptop sends the picture to a TV through a casting or streaming connection, the subtitle track is often dropped on the way. Some users report that the subtitles show on the laptop and never reach the TV. Some Roku and Jellyfin users report the same thing with embedded tracks, while a separate SRT works.</p>
+    <p>VLC plays a wide range of subtitle tracks, and it finds the one inside the MP4 without any help from you. A TV works differently. TVs support fewer subtitle formats inside an MP4 than VLC does, and the list differs from one brand and model to the next. An external .srt file with the same name as the video is the format most TVs handle, so that is the one to aim for.</p>
+    <p>Casting makes it worse. When a laptop sends the picture to a TV through a casting connection, the subtitle track is often dropped on the way, even when the subtitles show on the laptop.</p>
 
     <h2>Check that the track is really there</h2>
     <p>Start on the laptop. Open the video in VLC and turn the subtitles on. If the lines show, the track exists in the file. Then turn the subtitles off in VLC and look at the picture again.</p>
@@ -18,7 +18,6 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
       <li>If the words disappear when the subtitles are off, they are a track in the file, and you can save them.</li>
       <li>If the words stay on screen, they are burned into the picture. No tool can pull burned-in text out as a track, and the TV will show the same words whatever its settings. The guide on <a href="/guides/burned-in-vs-soft-subtitles/">telling burned-in subtitles from a track</a> explains how to be sure.</li>
     </ul>
-    <p>Some users find that the track is flagged as forced. A forced track holds only the foreign speech and on-screen signs, so it can look almost empty on the TV. That is normal, and the rest of the file is not missing.</p>
 
     <h2>Save the track as an SRT file</h2>
     <p>The <a href="/extract-subtitles-from-mp4/">MP4 subtitle extractor</a> on this site reads the file's index first, then only the subtitle lines. It does not read the video, and nothing is uploaded. Here is how to use it.</p>

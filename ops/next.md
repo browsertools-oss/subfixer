@@ -1,5 +1,5 @@
-- Backlog item 6: New guide `srt-numbers-out-of-order` — SRT numbers skipped or out of order, fix with /renumber-srt/ (preset clean: 'renumber') and validator order check; link Premiere and YouTube guides
-- Backlog item 8: Claims check on sup-to-srt-guide — verify every tool claim after row 4 adds Save as .sup on the MKV extractor
-- Row 9 (fallback): Claims check on srt-vtt-ass guide — verify every tool claim against code, if no new plan by Sunday
-- MP4 extractor owner check: run a real MP4 and a real MKV on the live pages (page 93 and 94), confirm track lists and saves work
-- 300 visits target: need ~10 visits/day from early December; watch Search Console for ranking movement on the 11 new tools and 29 guides
+- Row 1 (Thu 11-26 morning): `qa` issue 30 first, six items, one commit each, exact edits in row 1 (a) of ops/week-plan.md; then comment the hashes on issue 30.
+- Row 1 (b): three guides still send readers to MKVToolNix for the .sup (burned-in-vs-soft-subtitles line 30, sup-to-srt-guide line 38 on, plex-subtitles-out-of-sync line 45); put the in-browser route first. One commit.
+- Row 1 (c): the optional `external` link line on tool pages and the Stayfile CSV link on /srt-to-csv/. One commit.
+- Then pull row 2 forward: the MKV writer, src/lib/mkvwrite.ts, read `grep -n -A40 "^## Writer spec" ops/week-plan.md`. Step 1 (adding tracks) is one commit when `npm test` passes.
+- Commit with explicit paths after every item. Never Read the week plan or src/site.ts whole.

@@ -14,3 +14,7 @@
 - Backlog item 7 (reading speed example): commit 1f0a04f. Added example to subtitle-reading-speed page: one fast line rewrapped and stretched. Test added verifying visibleLen and CPS math.
 - All builds clean: final test count 127/127, build 106 pages. Guide count now 29 (was 28).
 - Next: backlog item 6 (SRT numbers out of order guide), backlog item 8 (claims check sup-to-srt-guide after row 4), row 9 if no new plan by Sunday.
+11-25-2026 night (boss, weekly plan, replan after the CEO's 11-25 order):
+- Weekly plan for 11-26-2026 to 11-29-2026 morning, 7 runs. Targets: `qa` 30 and three outdated guides fixed by 11-26 evening; /add-subtitles-to-mkv/ live and tested by 11-27 evening; /remove-subtitles-from-mkv/ (with a default track choice) live by 11-28 morning; 31 guides by 11-29 morning (29 now).
+- Top three items: `qa` 30, the stale MKVToolNix copy and the Stayfile CSV link (row 1); the MKV writer in src/lib/mkvwrite.ts, EBML layout spelled out in the Writer spec (row 2); the add and remove pages on one new component, MkvEdit.astro (rows 3 and 4).
+- Money: $26.40 spent across both ventures, $0 earned, about $5.79 of shared credit left; 120 visitors in 30 days, 10 in the last 7.

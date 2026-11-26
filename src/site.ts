@@ -52,6 +52,7 @@ export const GUIDES = [
   { slug: 'subtitles-overlapping-lines', topic: 'file', title: 'Subtitle lines overlap or flash? Find and fix them' },
   { slug: 'mx-player-subtitle-sync', topic: 'players', title: 'MX Player subtitles out of sync? Fix the file' },
   { slug: 'mp4-subtitles-not-showing-on-tv', topic: 'devices', title: 'MP4 subtitles work in VLC but not on the TV? The fix' },
+  { slug: 'join-cd1-cd2-subtitles', topic: 'file', title: 'Join CD1 and CD2 subtitles into one file' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
@@ -1737,6 +1738,7 @@ export const PAGES: ToolPage[] = [
     h1: 'Merge two subtitle files into one',
     lede: 'Show two languages at once for learning or watching together, or join CD1 and CD2 subtitles into one file for a single video.',
     description: 'Merge two SRT files into dual-language subtitles, or join split CD1 and CD2 subtitles with the right offset. Free, and it runs in your browser.',
+    guide: 'join-cd1-cd2-subtitles',
     steps: [
       'Drop in both files at once, or add the second with "Add files".',
       'Pick two languages on screen together, or parts one after another.',

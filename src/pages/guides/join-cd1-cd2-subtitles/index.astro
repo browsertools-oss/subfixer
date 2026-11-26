@@ -1,0 +1,40 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'Join CD1 and CD2 subtitles into one file';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-25', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Two subtitle files for a split movie? Merge them into one file with the right timing. The parts mode auto-computes the offset." path="/guides/join-cd1-cd2-subtitles/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Some releases come in two parts, each with its own subtitle file. You want one subtitle file that covers the whole film, with CD2's lines shifted to start where CD1 ends.</p>
+
+    <h2>How the merge works</h2>
+    <p>On <a href="/merge-subtitles/">Merge subtitles</a>, pick "Parts one after another, like CD1 and CD2" under the merge mode. Drop in the files in the order they play: CD1 first, then CD2. The tool reads the first timestamp of each file after the first one. If a part starts near zero, it assumes that part was timed from its own beginning and shifts it to follow the previous part. If the first timestamp is already past the end of the previous part, the tool leaves it alone, because the timing already accounts for the join.</p>
+    <p>Each part gets its own offset box in the preview. The offset column shows how many seconds will be added to every line in that part. You can change any offset by hand if the automatic choice does not match your video. The preview updates immediately, so you can watch the first line of CD2 move as you type.</p>
+    <p>The merged file keeps the cue numbers in sequence from 1 to the end. It is saved as UTF-8, which Plex, Emby, Jellyfin and all modern players read reliably.</p>
+
+    <h2>Before you merge</h2>
+    <p>Check that both files are for the same video release. A file made for a different cut of CD2 will never line up, no matter what offset you use. The file names usually name the release and the source group; they should match. If the names differ, look for a subtitle file that names the exact release you have.</p>
+    <p>Open each file in the preview and verify the first and last lines. If CD1 ends at 58:00 and CD2 starts at 00:00, the auto offset will put CD2 at 58:00. If CD2 already starts at 58:00, the auto offset is zero. If CD2 starts at 00:00 but CD1 ends at 1:15:00, the auto offset will be 1:15:00 plus one second, so there is a small gap between the parts.</p>
+
+    <h2>Step by step</h2>
+    <ol>
+      <li>Open <a href="/merge-subtitles/">Merge subtitles</a>.</li>
+      <li>Select "Parts one after another, like CD1 and CD2".</li>
+      <li>Drop in the CD1 subtitle file, then the CD2 file. You can also click Add files to add more parts if the film is split into three or more pieces.</li>
+      <li>Review the preview. The offset column shows what will be added to each part in seconds.</li>
+      <li>If an offset is wrong, type the correct number of seconds in the box for that part. The preview updates as you type.</li>
+      <li>Download the merged .srt file. The file is ready to use with any player or media server.</li>
+    </ol>
+    <p>The merged file keeps the cue numbers in order from 1 to the end, and it is saved as UTF-8 so accents and special characters display correctly. If you need WebVTT for a web player, the <a href="/srt-to-vtt/">SRT to VTT</a> page converts the merged file in one step.</p>
+
+    <h2>If the timing still drifts</h2>
+    <p>Sometimes the two parts were made against videos with slightly different frame rates. After merging, play the film and watch for a growing gap. If the error grows steadily, the <a href="/shift-subtitle-timing/">shift tool</a> can apply a frame-rate change to the whole file. Use <a href="/convert-25-fps-to-23976/">Convert 25 to 23.976 fps</a> for the common case where one part is 25 fps and the other is 23.976 fps. If you do not know the frame rates, the <a href="/sync-subtitles/">sync two points</a> tool stretches the file to match two known times. If the error jumps at one point, use <a href="/shift-subtitles-from-a-line/">Shift from a line</a> to fix from that line onward. If the drift is small and steady from the start, it may be a constant offset that the merge did not catch; a simple <a href="/shift-subtitle-timing/">shift</a> of the whole merged file can fix it.</p>
+
+    <h2>Two languages, not two parts</h2>
+    <p>If you have two subtitle tracks for the same video in different languages and you want them on screen together, pick "Two languages on screen together" instead. That mode stacks the lines without moving them in time. Where both files have a line at the same moment, the tool slices the overlapping times and puts both texts into one subtitle, with the first language on top. The <a href="/guides/dual-language-subtitles/">dual language guide</a> covers that case in detail.</p>
+
+    <h2>See also</h2>
+    <p>See also: <a href="/guides/dual-language-subtitles/">How to show two subtitle languages at once</a>, <a href="/guides/subtitles-out-of-sync-partway/">Subtitles fine at first, then out of sync? The fix</a>, <a href="/guides/subtitles-out-of-sync/">Why subtitles go out of sync, and which fix to use</a></p>
+  </article>
+</Base>

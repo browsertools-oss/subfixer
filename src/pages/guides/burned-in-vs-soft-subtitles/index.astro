@@ -27,7 +27,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>Soft picture tracks</h2>
     <p>Some soft tracks are pictures. Blu-ray discs use PGS, and DVDs use VobSub. Each subtitle line is an image of the words, not the words themselves. The extractor lists these as "Picture (PGS or VobSub)" and does not save them as text.</p>
-    <p>To get text from a picture track, first save it as a .sup file. The free MKVToolNix can do that from the command line, and the guide on <a href="/guides/extract-subtitles-from-mkv-without-software/">extracting subtitles from an MKV</a> gives the command. Then open the file in <a href="/sup-to-srt/">the SUP to SRT tool</a>.</p>
+    <p>To get text from a picture track, first save it as a .sup file. Save the PGS track with Save as .sup on the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, then open it in <a href="/sup-to-srt/">SUP to SRT</a>. MKVToolNix is only needed for DVD (VobSub) tracks, The <a href="/guides/extract-subtitles-from-mkv-without-software/">MKV track guide</a> explains which track is which.</p>
     <p>That tool reads the words from the pictures with OCR, which is a reader that recognizes letters. It takes a while, and it gets some letters wrong. Check the lines against the picture before you download the file. The file stays on your device, and only the reader itself is downloaded. The guide on <a href="/guides/sup-to-srt-guide/">PGS subtitles that won't show</a> covers the steps in more detail.</p>
 
     <h2>Burned-in subtitles</h2>

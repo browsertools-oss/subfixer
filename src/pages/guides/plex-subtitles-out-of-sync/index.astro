@@ -42,7 +42,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>If the subtitles are embedded in the video</h2>
     <p>The offset setting does nothing for embedded subtitles, and neither does renaming anything. You need the track as a file first.</p>
-    <p>For an MKV, MKVToolNix is a free set of tools that can list the tracks (<code>mkvmerge -i movie.mkv</code>) and pull one out (<code>mkvextract tracks movie.mkv 3:subs.srt</code>, using the subtitle track's ID in place of 3). Once you have the .srt, fix it as above and place it next to the video with the language-code name.</p>
+    <p>For an MKV, you can save the track in your browser with the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>. On the command line, MKVToolNix is a free set of tools that can list the tracks (<code>mkvmerge -i movie.mkv</code>) and pull one out (<code>mkvextract tracks movie.mkv 3:subs.srt</code>, using the subtitle track's ID in place of 3). Once you have the .srt, fix it as above and place it next to the video with the language-code name.</p>
     <p>If the embedded track is picture-based, there is no text to fix. Picture subtitles need OCR to become SRT. The <a href="/guides/sup-to-srt-guide/">SUP to SRT guide</a> covers reading those tracks with a free in-browser tool, and what to do when the file is a DVD .sub and .idx pair instead.</p>
 
     <h2>Why fixing the file is the better fix</h2>

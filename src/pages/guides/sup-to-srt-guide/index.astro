@@ -36,12 +36,17 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>If the track is in a language with accented characters and those come out wrong, the track may be in a different language than you picked. Re-run with the right one selected rather than patching hundreds of letters by hand.</p>
 
     <h2>Getting the .sup out of an MKV</h2>
-    <p>Most SUP files arrive inside an MKV rip rather than on their own. MKVToolNix is a free set of tools that handles this. Install it, then in a terminal:</p>
+    <p>Most SUP files arrive inside an MKV rip rather than on their own. You can pull the track out in your browser, with nothing to install:</p>
+    <ol>
+      <li>Open the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a> and pick the file. Find the PGS track in the list.</li>
+      <li>Click Save as .sup. The file downloads, and nothing is uploaded.</li>
+    </ol>
+    <p>If you prefer the command line, MKVToolNix is a free set of tools that does the same job. Install it, then in a terminal:</p>
     <ol>
       <li>Run <code>mkvmerge -i movie.mkv</code> to list the tracks. Each line gets an ID number, and subtitle tracks are listed as subtitles. Note the ID of the PGS track you want.</li>
       <li>Run <code>mkvextract tracks movie.mkv 3:subs.sup</code>, using your track's ID in place of 3. This writes the track to subs.sup.</li>
     </ol>
-    <p>That .sup file is what you drop into the converter. If the MKV also carries an SRT or ASS track, grab that instead and skip OCR entirely; text tracks are always worth preferring. Text subtitle tracks do not need any install: the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a> saves them as SRT or ASS in your browser. For PGS tracks, the same extractor has a Save as .sup button that writes the .sup file in your browser with no install.</p>
+    <p>That .sup file is what you drop into the converter. If the MKV also carries an SRT or ASS track, grab that instead and skip OCR entirely; text tracks are always worth preferring. Text subtitle tracks are saved as SRT or ASS by the same <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, in your browser.</p>
 
     <h2>Which file is yours</h2>
     <p>Three formats get called "sub", and picking the wrong page wastes your time. A Blu-ray .sup is picture subtitles and needs OCR, which is what this guide covers. A MicroDVD .sub is plain text with frame numbers instead of times, and SubFixer reads it directly as text; see <a href="/microdvd-sub-to-srt/">MicroDVD SUB to SRT</a>. A VobSub .sub paired with an .idx is the DVD format described above, and this tool does not read it. If you are not sure, open the file in a text editor. Readable numbers and sentences mean MicroDVD. Garbage bytes mean PGS or VobSub, and the folder the file came from usually tells you which disc it was.</p>

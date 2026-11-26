@@ -21,6 +21,7 @@ export interface ToolPage {
   faq: { q: string; a: string }[];
   example?: { before: string; after: string; note: string };
   guide?: string; // slug of a guide in GUIDES
+  external?: { lead: string; href: string; text: string }; // a link to a guide on another site, shown after the questions
 }
 
 export const GUIDES = [
@@ -706,6 +707,7 @@ export const PAGES: ToolPage[] = [
     mode: 'convert',
     group: 'Convert',
     preset: { out: 'csv' },
+    external: { lead: 'Other fixes for a CSV in one column:', href: 'https://stayfile.app/guides/csv-opens-in-one-column-in-excel/', text: "Stayfile's guide, CSV opens in one column in Excel" },
     title: 'SRT to CSV: export subtitles with timestamps to CSV',
     h1: 'Convert subtitles to CSV',
     lede: 'Export each subtitle line as a CSV row with its number, start and end time, length and text. It opens in Excel, Numbers and Google Sheets.',

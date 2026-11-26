@@ -61,6 +61,11 @@ const jsonld = [
     <h2>Questions</h2>
     <div class="faq">{page.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
   </section>
+  {page.external && (
+    <section class="block">
+      <p class="guide-link">{page.external.lead} <a href={page.external.href}>{page.external.text}</a>.</p>
+    </section>
+  )}
   {page.guide && GUIDES.some((g) => g.slug === page.guide) && (
     <section class="block">
       <p class="guide-link">Read the guide: <a href={`/guides/${page.guide}/`}>{GUIDES.find((g) => g.slug === page.guide)!.title}</a></p>

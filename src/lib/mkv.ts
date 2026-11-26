@@ -495,20 +495,34 @@ export function trackFile(
 // For each cue sorted by start, writes PG + PTS (ms * 90) as 4 BE bytes + 4 zero DTS + the segment.
 export function trackSup(cues: MkvCue[]): Uint8Array {
   const sorted = [...cues].sort((a, b) => a.start - b.start);
-  const parts: number[] = [];
+  // First pass: add up the output size, so the bytes go into one buffer with no growing array.
+  let size = 0;
   for (const c of sorted) {
     const data = c.data;
     for (let i = 0; i + 3 <= data.length; ) {
-      const type = data[i];
       const len = (data[i + 1] << 8) | data[i + 2];
       if (i + 3 + len > data.length) break;
-      const pts = Math.round(c.start * 90);
-      parts.push(0x50, 0x47, (pts >> 24) & 0xff, (pts >> 16) & 0xff, (pts >> 8) & 0xff, pts & 0xff, 0, 0, 0, 0);
-      for (let k = 0; k < 3 + len; k++) parts.push(data[i + k]);
+      size += 10 + 3 + len;
       i += 3 + len;
     }
   }
-  return new Uint8Array(parts);
+  // Second pass: write each segment after its 10-byte PG header.
+  const out = new Uint8Array(size);
+  let pos = 0;
+  for (const c of sorted) {
+    const data = c.data;
+    const pts = Math.round(c.start * 90);
+    for (let i = 0; i + 3 <= data.length; ) {
+      const len = (data[i + 1] << 8) | data[i + 2];
+      if (i + 3 + len > data.length) break;
+      out.set([0x50, 0x47, (pts >> 24) & 0xff, (pts >> 16) & 0xff, (pts >> 8) & 0xff, pts & 0xff, 0, 0, 0, 0], pos);
+      pos += 10;
+      out.set(data.subarray(i, i + 3 + len), pos);
+      pos += 3 + len;
+      i += 3 + len;
+    }
+  }
+  return out;
 }
 
 // An ASS file as SRT, for a track that was saved as ASS.

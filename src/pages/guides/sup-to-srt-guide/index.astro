@@ -23,16 +23,16 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <h2>Converting SUP to SRT, step by step</h2>
     <p>On <a href="/sup-to-srt/">the SUP to SRT converter</a>:</p>
     <ol>
-      <li>Drop in your .sup file. The first time you do this, the text reader downloads a few MB of language data. It is a public code library, not an upload of your file.</li>
+      <li>Drop in your .sup file. The first time you use a language, the text reader loads its engine and that language's data from a public CDN. That is code, not your file.</li>
       <li>Wait while the reader works through each picture. This takes longer than a normal conversion because every line is imaged one at a time.</li>
       <li>If the words look off, pick the language of the track from the list. The reader supports 24 languages, including English, Spanish, French, German, Russian, Japanese, Korean and Chinese (simplified).</li>
       <li>Open Check and edit and look over the lines before you download. Fix anything the OCR got wrong, then download the .srt file.</li>
     </ol>
-    <p>Everything runs on your own computer. The pictures are read on this device, and no subtitle content is sent anywhere. The only network traffic is the reader and its language data, fetched once from the library that provides them.</p>
+    <p>Everything runs on your own computer. The pictures are read on this device, and no subtitle content is sent anywhere. The only network traffic is the reader and its language data, which come from that public CDN.</p>
 
     <h2>Fixing the mistakes OCR makes</h2>
     <p>Two habits make this quick. First, read the output with fresh eyes in Check and edit, top to bottom. OCR damage is sparse, so a fast skim catches most of it.</p>
-    <p>Second, if the same error shows up over and over, fix it once for the whole file with <a href="/find-and-replace-subtitles/">Find and replace</a> instead of one line at a time. A common case is the pronoun "I" coming out as a lowercase "l". Set Find to "l", set Replace with to "I", and tick Whole words only, so the swap only touches a standalone letter and leaves words like "loving" alone. Match case keeps a capital letter in its place. For anything rarer, replace the misread word pair directly, for example "rn" mistaken for "m" in a name that repeats.</p>
+    <p>Second, if the same error shows up over and over, fix it once for the whole file with <a href="/find-and-replace-subtitles/">Find and replace</a> instead of one line at a time. A common case is the pronoun "I" coming out as a lowercase "l". Set Find to "l" and Replace with to "I". Keep Whole words only ticked, which it is by default, so the swap only touches a standalone letter and leaves words like "loving" alone. Turn on Match case so that only the lowercase l changes. For anything rarer, replace the misread word pair directly, for example "rn" mistaken for "m" in a name that repeats.</p>
     <p>If the track is in a language with accented characters and those come out wrong, the track may be in a different language than you picked. Re-run with the right one selected rather than patching hundreds of letters by hand.</p>
 
     <h2>Getting the .sup out of an MKV</h2>

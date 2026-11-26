@@ -45,11 +45,10 @@ const { h1, lede, kind = 'MKV' } = Astro.props;
   let stopCtl: AbortController | null = null;
   let current: { base: string; lib: typeof import('../lib/mkv'); result: Result } | null = null;
 
-  const TYPE: Record<MkvTrack['kind'], string> = {
+  const TYPE: Record<Exclude<MkvTrack['kind'], 'picture'>, string> = {
     srt: 'Text (SRT)',
     ass: 'Styled text (ASS)',
     vtt: 'WebVTT',
-    picture: 'Picture (PGS or VobSub)',
     other: 'Not supported',
   };
 
@@ -157,6 +156,10 @@ const { h1, lede, kind = 'MKV' } = Astro.props;
           const cues = result.cues.get(track.number);
           if (!cues || !cues.length) return;
           const sup = lib.trackSup(cues);
+          if (!sup.length) {
+            showError('This track has no picture subtitles to save.');
+            return;
+          }
           const blob = new Blob([sup], { type: 'application/octet-stream' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');

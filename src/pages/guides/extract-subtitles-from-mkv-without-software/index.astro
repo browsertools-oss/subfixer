@@ -6,7 +6,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 <Base title={`${title} | SubFixer`} description="Forced, SDH, default or PGS? What each MKV subtitle track holds, which one to save, and how to turn PGS into SRT in your browser with no install." path="/guides/extract-subtitles-from-mkv-without-software/" jsonld={jsonld} ogType="article">
   <article class="guide">
     <h1>{title}</h1>
-    <p class="lede">Many MKV movies keep their subtitles as a separate track inside the file. You can save that track as a text file in your browser. This guide shows how to tell whether your subtitles are a track, how to save it with the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, and how to name the file so your player finds it.</p>
+    <p class="lede">An MKV can hold several subtitle tracks: full, forced, SDH and Blu-ray picture (PGS). Here is what each holds, which one to save, and how to save it in your browser.</p>
 
     <h2>Is the subtitle a track, or part of the picture?</h2>
     <p>There are two cases, and only one of them can be saved. A subtitle track is a separate stream of text stored inside the MKV, next to the video and the sound. Burned-in subtitles are different: the words are drawn onto every frame of the picture. No tool can take burned-in words out as a file, because the words are no longer stored as text anywhere.</p>
@@ -48,7 +48,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     </ul>
 
     <h2>Picture tracks: save as .sup, then read them</h2>
-    <p>PGS tracks are picture subtitles from Blu-ray. The extractor now saves them as a .sup file with the Save as .sup button. Open that .sup file in <a href="/sup-to-srt/">SUP to SRT</a>, which reads the words with OCR in your browser. Check the letters afterwards; it can mix up l and I, or rn and m. DVD (VobSub) tracks are still not saved here; use mkvextract from the free MKVToolNix for those, then convert with SUP to SRT.</p>
+    <p>PGS tracks are picture subtitles from Blu-ray. The extractor saves them as a .sup file with the Save as .sup button. Open that .sup file in <a href="/sup-to-srt/">SUP to SRT</a>, which reads the words with OCR in your browser. Check the letters afterwards; it can mix up l and I, or rn and m. DVD (VobSub) tracks are still not saved here; use mkvextract from the free MKVToolNix for those, then convert with SUP to SRT.</p>
     <p>The <a href="/guides/sup-to-srt-guide/">SUP guide</a> goes through the conversion in more detail.</p>
 
     <h2>Got an MP4 instead?</h2>
@@ -66,6 +66,6 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
       <li>Not checking timing after you save. A cut or re-encode can shift every line by the same amount.</li>
     </ul>
 
-    <p>See also <a href="/guides/sup-to-srt-guide/">How to pull a .sup picture subtitle track off a Blu-ray and turn it into a text SRT file</a> and <a href="/guides/plex-subtitles-not-showing/">Why Plex skips subtitles on a USB stick</a>.</p>
+    <p>See also <a href="/guides/sup-to-srt-guide/">PGS subtitles won't show? Convert them to SRT</a> and <a href="/guides/plex-subtitles-not-showing/">Plex not finding your SRT? Fix the name and the file</a>.</p>
   </article>
 </Base>

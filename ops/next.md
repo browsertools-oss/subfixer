@@ -1,5 +1,5 @@
-- Row 5(b): Growth brief copy — update MKV extractor description (144 chars) and add "Does it transcribe the audio?" FAQ to both MKV and MP4 extractor pages
-- Row 5(c): Add CSV Excel FAQ to /srt-to-csv/ about semicolon separators in some regions
-- Row 6: New guide `mp4-subtitles-not-showing-on-tv` (title 52 chars, description 147) — MP4 subtitles work in VLC but not TV; save track with MP4 extractor, name it, fix encoding, link TV USB and Chromecast guides
-- Row 7: Group guides index by topic — add `topic` to each GUIDES entry, render four h2 groups (Players, TVs/Chromecast, Editing/Extracting, Fixing the file)
-- Row 8: Claims check on subtitles-out-of-sync guide — verify every tool claim against code
+- Backlog item 6: New guide `srt-numbers-out-of-order` — SRT numbers skipped or out of order, fix with /renumber-srt/ (preset clean: 'renumber') and validator order check; link Premiere and YouTube guides
+- Backlog item 8: Claims check on sup-to-srt-guide — verify every tool claim after row 4 adds Save as .sup on the MKV extractor
+- Row 9 (fallback): Claims check on srt-vtt-ass guide — verify every tool claim against code, if no new plan by Sunday
+- MP4 extractor owner check: run a real MP4 and a real MKV on the live pages (page 93 and 94), confirm track lists and saves work
+- 300 visits target: need ~10 visits/day from early December; watch Search Console for ranking movement on the 11 new tools and 29 guides

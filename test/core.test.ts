@@ -491,6 +491,20 @@ test('tidy: timing, reading speed, reflow, find and replace, numbering, duplicat
   assert.equal(dup.report.merged, 1);
 });
 
+test('reading speed example: one fast line rewrapped and stretched', async () => {
+  const { visibleLen, cps } = await import('../src/lib/tidy.ts');
+  const before = 'This line is long and fast and has too many characters per second for comfort.';
+  const visible = visibleLen(before);
+  assert.equal(visible, 78);
+  const cpsBefore = visible / 2;
+  assert.equal(cpsBefore, 39);
+  const after = 'This line is long and fast\nand has too many characters per second\nfor comfort.';
+  const afterVisible = visibleLen(after);
+  assert.equal(afterVisible, 78);
+  const cpsAfter = afterVisible / 2.5;
+  assert.equal(cpsAfter, 31.2);
+});
+
 test('ass rebuild keeps styles, layers and positions', () => {
   const raw = readFileSync(new URL('./fixtures/layers.ass', import.meta.url), 'utf8');
   const d = parse(raw);

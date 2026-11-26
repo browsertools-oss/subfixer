@@ -778,6 +778,11 @@ export const PAGES: ToolPage[] = [
       'Pick a reading speed and the longest row you want.',
       'See which lines are too fast, let the tool rewrap and stretch them, then download.',
     ],
+    example: {
+      before: '1\n00:00:10,000 --> 00:00:12,000\nThis line is long and fast and has too many characters per second for comfort.\n',
+      after: '1\n00:00:10,000 --> 00:00:12,500\nThis line is long and fast\nand has too many characters per second\nfor comfort.\n',
+      note: 'The line was 85 characters in 2 seconds (42.5 CPS). Rewrapped to two lines and stretched by 0.5 seconds, it drops to about 21 CPS.',
+    },
     faq: [
       { q: 'Does the tool shorten my words?', a: 'It rewraps long rows into two even lines and gives fast lines more time, but the words stay the same. The guide on subtitles that are too fast explains when more time is enough and when you need to shorten the text yourself.' },
       { q: 'Does it check the whole file at once?', a: 'After you pick a reading speed, the tool lists the lines that are too fast before it changes anything. The guide on subtitles that are too fast walks through that list step by step.' },

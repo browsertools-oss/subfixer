@@ -1,0 +1,46 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'MP4 subtitles work in VLC but not on the TV? The fix';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-25', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Subtitles inside an MP4 play in VLC but the TV shows nothing? Save the track as an SRT with the same name, fix the letters, and the TV can load it." path="/guides/mp4-subtitles-not-showing-on-tv/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">Subtitles inside an MP4 file play in VLC on your laptop, but the TV shows nothing. VLC reads almost every subtitle format a video can carry, and a TV reads fewer of them. The fix is to save the track as a separate subtitle file that sits next to the video. The TV can load that file even when it ignores the track inside the MP4.</p>
+
+    <h2>Why VLC shows them and the TV does not</h2>
+    <p>VLC plays a wide range of subtitle tracks, and it finds the one inside the MP4 without any help from you. A TV works differently. Each TV decides which subtitle formats inside an MP4 it will show, and the list differs from one brand and model to the next. Some users report that embedded MP4 subtitles never appear on the TV, while an external .srt file with the same name as the video shows fine.</p>
+    <p>Casting makes it worse. When a laptop sends the picture to a TV through a casting or streaming connection, the subtitle track is often dropped on the way. Some users report that the subtitles show on the laptop and never reach the TV. Some Roku and Jellyfin users report the same thing with embedded tracks, while a separate SRT works.</p>
+
+    <h2>Check that the track is really there</h2>
+    <p>Start on the laptop. Open the video in VLC and turn the subtitles on. If the lines show, the track exists in the file. Then turn the subtitles off in VLC and look at the picture again.</p>
+    <ul>
+      <li>If the words disappear when the subtitles are off, they are a track in the file, and you can save them.</li>
+      <li>If the words stay on screen, they are burned into the picture. No tool can pull burned-in text out as a track, and the TV will show the same words whatever its settings. The guide on <a href="/guides/burned-in-vs-soft-subtitles/">telling burned-in subtitles from a track</a> explains how to be sure.</li>
+    </ul>
+    <p>Some users find that the track is flagged as forced. A forced track holds only the foreign speech and on-screen signs, so it can look almost empty on the TV. That is normal, and the rest of the file is not missing.</p>
+
+    <h2>Save the track as an SRT file</h2>
+    <p>The <a href="/extract-subtitles-from-mp4/">MP4 subtitle extractor</a> on this site reads the file's index first, then only the subtitle lines. It does not read the video, and nothing is uploaded. Here is how to use it.</p>
+    <ol>
+      <li>Open the extractor and pick the MP4 file. The file is read on your device.</li>
+      <li>Read the track list. Each row shows the track's language and its format. Timed text saves as SRT, and WebVTT saves as VTT.</li>
+      <li>Press Save on the track with the language you want. The browser downloads the file.</li>
+    </ol>
+    <p>If you would rather use a program, the free ffmpeg tool can save the first subtitle track with one command: <code>ffmpeg -i movie.mp4 -map 0:s:0 subs.srt</code>. Replace the file names with your own.</p>
+
+    <h2>Name the file and put it next to the video</h2>
+    <p>The TV looks for the subtitle file by its name, so the name has to match the video. Use the video's name with a language code before the extension, for example <code>Movie.eng.srt</code> for a video called <code>Movie.mp4</code>. The extractor builds that name for each track. Keep the two files in the same folder, then copy the folder to the USB drive or the server the TV reads from. The <a href="/guides/tv-subtitles-not-showing-usb/">TV USB guide</a> sets out the folder and name rules for the big TV brands.</p>
+    <p>Before you copy the file, open it in a text editor and check that the first line is a number. An SRT file starts with its cue number, then a timing line, then the text.</p>
+
+    <h2>Still nothing? Check the letters and the structure</h2>
+    <p>If the subtitles appear on the TV but the letters look wrong, the file is probably not saved as UTF-8. The <a href="/fix-subtitle-encoding/">encoding fixer</a> converts it. Then run the file through the <a href="/srt-validator/">SRT validator</a>, which lists problems in the file's structure, such as bad timing lines, so you can fix them before you copy the file to the TV.</p>
+    <p>Casting from a laptop to a Chromecast is a separate case with its own rules. The <a href="/guides/chromecast-subtitles-not-showing/">Chromecast guide</a> covers the WebVTT format that Chromecast uses.</p>
+
+    <h2>No subtitle track at all</h2>
+    <p>Phone recordings and many downloads have no subtitle track. If the extractor finds none, the subtitles were either burned into the picture or came as a separate file. A separate file works on the TV as long as it has the same name as the video, as described above. Burned-in words cannot be turned off or copied out, so for those you need a copy of the video that carries the subtitles as a track.</p>
+
+    <h2>See also</h2>
+    <p>If your file is an MKV rather than an MP4, the same steps apply to its tracks. See <a href="/guides/extract-subtitles-from-mkv-without-software/">the guide to extracting subtitles from an MKV</a>.</p>
+  </article>
+</Base>

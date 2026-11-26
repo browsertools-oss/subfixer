@@ -51,6 +51,7 @@ export const GUIDES = [
   { slug: 'burned-in-vs-soft-subtitles', title: 'Soft vs burned-in subtitles: which one you have' },
   { slug: 'subtitles-overlapping-lines', title: 'Subtitle lines overlap or flash? Find and fix them' },
   { slug: 'mx-player-subtitle-sync', title: 'MX Player subtitles out of sync? Fix the file' },
+  { slug: 'mp4-subtitles-not-showing-on-tv', title: 'MP4 subtitles work in VLC but not on the TV? The fix' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
@@ -1569,6 +1570,7 @@ export const PAGES: ToolPage[] = [
     slug: 'extract-subtitles-from-mp4',
     mode: 'extract',
     group: 'Convert',
+    guide: 'mp4-subtitles-not-showing-on-tv',
     title: 'Extract subtitles from MP4 online: save SRT, no upload',
     h1: 'Extract subtitles from an MP4 file',
     lede: 'Pick an MP4 and see its subtitle tracks. Save a text track as SRT or WebVTT. Only the file\'s index and the subtitle lines are read, and nothing is uploaded.',

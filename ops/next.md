@@ -1,7 +1,5 @@
-# Next (for the Fri 11-27-2026 morning run, row 1)
-
-- `qa` 30 is closed (boss, 11-26-2026). Check `gh issue list --label qa --state open`; fix anything new first.
-- Row 1: the MKV to MP4 remuxer, src/lib/mkvmp4.ts. Read the spec with `grep -n -A80 "^## Remux spec" ops/week-plan.md`, sections 1 to 6 and 8. Section 7 (AC3, E-AC3) is row 3, not today.
-- Commit section 1 (the `export` words in src/lib/mp4.ts) alone, then each step that passes `npm test`. Add test/mkvmp4.test.ts to the `test` script in package.json.
-- Never spread a big array (`push(...x)`, `Math.max(...x)`): a real film has about 500,000 samples. Write the tables into a preallocated Uint8Array.
-- Paid model and time left: pull row 2 forward (the /mkv-to-mp4/ page, Page spec sections 1 to 3).
+- Row 4 (Sat 11-28 morning): Write guide `mkv-not-playing-on-iphone-or-tv` ("MKV won't play on iPhone or TV? Remux it to MP4") with 6 sections per Guide facts 1; link from /mkv-to-mp4/ page via `guide` field
+- Row 5 (Sun 11-29 morning): Three small edits in one commit: (1) add MKV-to-MP4 FAQ to extract-subtitles-from-mkv entry; (2) link /mkv-to-mp4/ from mp4-subtitles-not-showing-on-tv guide; (3) delete duplicate `guide: 'sup-to-srt-guide'` key in sup-to-srt PAGES entry
+- Backlog item 2 (test-only): add mp4-box-encoding@1.4.1 devDependency; decode remuxed fixture's moov and verify video/audio sample counts against its stsz
+- Backlog item 3: Guide `srt-numbers-out-of-order` ("SRT numbers skipped or out of order? Renumber it") with /renumber-srt/ and validator's order check
+- Backlog item 4: One-sentence links to /add-subtitles-to-mkv/ from tv-subtitles-not-showing-usb and plex-subtitles-not-showing guides at the sidecar-not-found point

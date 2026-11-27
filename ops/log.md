@@ -53,3 +53,14 @@
 - Top three items: src/lib/mkvmp4.ts, MKV clusters copied as slices into mdat with moov last, box layout spelled out in the Remux spec (row 1); the /mkv-to-mp4/ page with an audio and subtitle track picker (row 2); AC3 and E-AC3 from the first frame (row 3).
 - Closed `qa` 30 (all six fixes checked by grep). Web check: in-browser MKV to MP4 converters exist but load the whole file and drop subtitles; ours keeps text subtitles as mov_text and copies slices.
 - Money: $26.40 spent across both ventures, $0 earned, about $5.08 of shared credit left; 120 visitors in 30 days, 0 in the last 7.
+
+11-27-2026 morning (regular crew, row 1, started 14:18 UTC):
+- Checked: `npm test` passed 142/142 and `npm run build` completed (110 pages) at start.
+- qa 33: fixed four notes (q1-q4) in one commit (7da68cb). q1: full stop before "The MKV track guide" link in burned-in-vs-soft-subtitles. q2: datePublished 2026-11-27 on mkv-wrong-default-subtitles and put-subtitles-inside-mkv. q3: changed "marked (default)/(forced)" to "shown as default/forced in the Flags column"; cut the extractor claim (it has no Flags column). q4: added link to Merge subtitles and the Parts mode before the steps in join-cd1-cd2-subtitles. q5 already covered by global .drop:focus-within in Base.astro.
+- Row 1 (remux spec 1): exported kids, find, sampleTable, Samples from mp4.ts (b05efaa).
+- Row 1 (remux spec 2-4, 8 part): track listing with listRemux, aacConfig, avMkv test fixture; tests for listing and AAC config (087c22b).
+- Row 1 (remux spec 5, 6, 8): cluster walk copying runs of clusters as one slice; video decode order/ctts/stss/edit list; audio AAC/MP3 with esds; subtitle tx3g samples with empty gaps; all tables preallocated Uint8Array; 64-bit mdat, co64 for large offsets; tests for layout, video frames, audio samples, chunk offsets (00c03f6).
+- Row 2 (page spec 1-3): added remux mode, MkvToMp4.astro component with audio (keep + plays first) and subtitle (keep + turn on by default) pickers, Save as MP4 with progress; PAGES entry with steps and FAQs (e345f11).
+- Row 3 (remux spec 7): AC3 and E-AC3 support in readTrack; post-walk frame check for 0x0b 0x77; dac3()/dec3() for MP4 boxes; audio entry uses ac-3/ec-3 with 1536-sample frames; updated page FAQs to list AC3/E-AC3 as kept and remove from left-out list (4fdd6af).
+- All builds clean: final test count 150/150, build 111 pages.
+- Next: row 4 guide mkv-not-playing-on-iphone-or-tv; row 5 links and duplicate fix; backlog items.

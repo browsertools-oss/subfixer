@@ -1572,6 +1572,7 @@ export const PAGES: ToolPage[] = [
       { q: 'Which file name should I use?', a: 'Use the video name with the language code, for example Movie.eng.srt, and keep it in the same folder as the video. The page builds that name for each track.' },
       { q: 'Does it work with MP4 files?', a: 'Yes. Drop the MP4 here, or use the MP4 subtitle extractor. It reads MP4, M4V and MOV files as well as MKV and WebM.' },
       { q: 'Does it transcribe the audio?', a: 'No. It copies the subtitle text already stored in the file, so the words and timing match the release exactly. If the file has no text track, nothing is invented.' },
+      { q: 'Can I put a fixed track back into the MKV?', a: 'Yes. After you fix the SRT, add it back with the add subtitles to MKV page on this site. The video is not re-encoded.' },
     ],
   },
   {
@@ -1619,6 +1620,29 @@ export const PAGES: ToolPage[] = [
       { q: 'Which subtitle files work?', a: 'SRT and WebVTT go in as SRT text, which most players and many TVs read. ASS and SSA keep their styles, but some TVs skip styled tracks, so add an SRT for a TV. If the letters look wrong, fix the encoding first with the encoding fixer on this site.' },
       { q: 'Which files can it not edit?', a: 'Files saved while they were being recorded, which have no stated sizes, and MP4 files. The page shows the reason as a message when it cannot edit a file.' },
       { q: 'Can I take a subtitle track out again?', a: 'Yes, with the remove subtitles from MKV page on this site. To keep a copy first, save it with the MKV subtitle extractor.' },
+    ],
+  },
+  {
+    slug: 'remove-subtitles-from-mkv',
+    mode: 'mkvedit',
+    group: 'Convert',
+    title: 'Remove subtitles from MKV online, no re-encoding',
+    h1: 'Remove subtitle tracks from an MKV file',
+    lede: 'Pick the subtitle tracks you don\'t want, or change which one turns on by default. The video and audio are copied as they are, and nothing is uploaded.',
+    description: 'Remove subtitle tracks from an MKV file in your browser, or change which one turns on by default. No re-encoding, no upload and no install.',
+    steps: [
+      'Pick the MKV file. It stays on your device.',
+      'Tick the subtitle tracks to remove, or pick the track that should turn on by default.',
+      'Save the new MKV. The video, the audio and the other tracks are copied as they are.',
+    ],
+    faq: [
+      { q: 'Is the video re-encoded?', a: 'No. The video and audio are copied exactly as they are. Only the track list and the subtitle lines change, so saving takes about as long as copying the file.' },
+      { q: 'Is the movie uploaded?', a: 'No. The file is read in pieces on your device, and the new file is put together from pieces of the original.' },
+      { q: 'How large a file can it handle?', a: 'In Chrome and Edge on a computer, the new file is written straight to disk piece by piece, so a full film is fine. Other browsers save it as one download, which can fail for very large files. Use Chrome or Edge on a computer for those.' },
+      { q: 'Can it remove burned-in subtitles?', a: 'No. Burned-in text is part of the picture. This page removes soft tracks, the ones you can turn off in the player.' },
+      { q: 'Can I keep a track as a file first?', a: 'Yes. Save it with the MKV subtitle extractor on this site, then remove it here.' },
+      { q: 'Can it remove audio tracks?', a: 'No. It removes and changes subtitle tracks only.' },
+      { q: 'My player still turns on the wrong track.', a: 'Players that have their own subtitle language setting, such as VLC, Plex and Jellyfin, can ignore the default flag. Set the language there too.' },
     ],
   },
   {

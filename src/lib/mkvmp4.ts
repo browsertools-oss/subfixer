@@ -194,6 +194,10 @@ function readTrack(entry: Uint8Array): Parsed {
       out.ok = true;
       out.label = 'MP3';
       out.mp4 = 'mp3';
+    } else if ((codec === 'A_AC3' || codec === 'A_EAC3') && !encoded) {
+      out.ok = true;
+      out.label = codec === 'A_AC3' ? 'AC3' : 'E-AC3';
+      out.mp4 = 'mp4a';
     } else if (encoded || out.rate > 65535) {
       out.reason = 'This audio track is stored in a way MP4 cannot hold, so it is left out.';
     } else {
@@ -381,6 +385,47 @@ export function decodeOrder(p: number[]): { dts: number[]; ctts: number[]; shift
   return { dts, ctts, shift };
 }
 
+// AC3 (dac3) box: 3 bytes from the first frame.
+export function dac3(f: Uint8Array): Uint8Array {
+  const fscod = f[4] >> 6;
+  const frmsizecod = f[4] & 0x3f;
+  const bsid = f[5] >> 3;
+  const bsmod = f[5] & 7;
+  const acmod = f[6] >> 5;
+  const x = (f[6] << 8) | f[7];
+  let pos = 3;
+  if ((acmod & 1) && acmod !== 1) pos += 2;
+  if (acmod & 4) pos += 2;
+  if (acmod === 2) pos += 2;
+  const lfeon = (x >> (15 - pos)) & 1;
+  const v = (fscod << 22) | (bsid << 17) | (bsmod << 14) | (acmod << 11) | (lfeon << 10) | ((frmsizecod >> 1) << 5);
+  return new Uint8Array([v >> 16 & 0xff, v >> 8 & 0xff, v & 0xff]);
+}
+
+// E-AC3 (dec3) box: 5 bytes from the first frame.
+export function dec3(f: Uint8Array): { body: Uint8Array; samples: number } {
+  const frmsiz = ((f[2] & 7) << 8) | f[3];
+  const fscod = f[4] >> 6;
+  const numblkscod = (f[4] >> 4) & 3;
+  const acmod = (f[4] >> 1) & 7;
+  const lfeon = f[4] & 1;
+  const bsid = f[5] >> 3;
+  let rate: number;
+  let blocks: number;
+  if (fscod === 3) {
+    rate = [24000, 22050, 16000][numblkscod];
+    blocks = 6;
+  } else {
+    rate = [48000, 44100, 32000][fscod];
+    blocks = [1, 2, 3, 6][numblkscod];
+  }
+  const samples = blocks * 256;
+  const dataRate = Math.round((frmsiz + 1) * 2 * 8 * rate / samples / 1000);
+  const v = (fscod << 22) | (bsid << 17) | (acmod << 9) | (lfeon << 8);
+  const body = new Uint8Array([dataRate >> 5, (dataRate << 3) & 0xff, v >> 16 & 0xff, v >> 8 & 0xff, v & 0xff]);
+  return { body, samples };
+}
+
 function gcd(a: number, b: number): number {
   return b === 0 ? a : gcd(b, a % b);
 }
@@ -397,6 +442,7 @@ interface Frames {
   size: number[];
   pts: number[];
   key: boolean[];
+  sourceOffset?: number;
 }
 
 interface Edit {
@@ -626,6 +672,7 @@ export async function remuxMkv(
       f.size.push(sizes[i]);
       f.pts.push(pts);
       f.key.push(isKey);
+      if (f.sourceOffset === undefined) f.sourceOffset = starts[i];
     }
   }
 
@@ -687,6 +734,19 @@ export async function remuxMkv(
       await readCluster(h.dataStart, end);
     }
     p = end;
+  }
+
+  // Post-walk: read the first frame of each kept AC3 or E-AC3 track to verify it.
+  for (const a of audioKept) {
+    const af = keep.get(a.number)!;
+    if ((a.codec === 'A_AC3' || a.codec === 'A_EAC3') && af.sourceOffset !== undefined) {
+      const frame = await r.get(af.sourceOffset, 8);
+      if (frame.length < 2 || frame[0] !== 0x0b || frame[1] !== 0x77) {
+        a.ok = false;
+        a.reason = 'This Dolby track could not be read, so it was left out.';
+        notes.push(`Audio track ${a.number} (${a.label}): ${a.reason}`);
+      }
+    }
   }
 
   const vf = keep.get(video.number)!;
@@ -777,7 +837,10 @@ export async function remuxMkv(
   for (const a of audioKept) {
     const af = keep.get(a.number)!;
     if (af.offset.length === 0) continue;
-    const delta = a.mp4 === 'mp3' ? (a.rate < 32000 ? 576 : 1152) : 1024;
+    const isAc3 = a.codec === 'A_AC3';
+    const isEc3 = a.codec === 'A_EAC3';
+    const isMp3 = a.mp4 === 'mp3';
+    const delta = isMp3 ? (a.rate < 32000 ? 576 : 1152) : isAc3 || isEc3 ? 1536 : 1024;
     const n = af.offset.length;
     const first = Math.round(af.pts[0] - t0);
     const durMs = Math.round((n * delta * 1000) / a.rate);
@@ -786,23 +849,56 @@ export async function remuxMkv(
     edits.push({ duration: durMs, mediaTime: 0 });
     const timescale = Math.round(a.rate);
     const id = out.length + 1;
-    const isMp3 = a.mp4 === 'mp3';
-    const decoder = isMp3
-      ? desc(4, u8(0x6b), u8(0x15), u24(0), u32(0), u32(0))
-      : desc(4, u8(0x40), u8(0x15), u24(0), u32(0), u32(0), desc(5, a.priv));
-    const esds = full('esds', 0, 0, desc(3, u16(id), u8(0), decoder, desc(6, u8(2))));
-    const samplesEntry = box(
-      'mp4a',
-      zeros(6),
-      u16(1),
-      zeros(8),
-      u16(a.channels),
-      u16(16),
-      u16(0),
-      u16(0),
-      u32(timescale * 65536),
-      esds,
-    );
+    let samplesEntry: Bytes;
+    if (isAc3) {
+      const f = await r.get(af.sourceOffset!, 8);
+      const dac3box = box('dac3', dac3(f));
+      samplesEntry = box(
+        'ac-3',
+        zeros(6),
+        u16(1),
+        zeros(8),
+        u16(a.channels),
+        u16(16),
+        u16(0),
+        u16(0),
+        u32(timescale * 65536),
+        dac3box,
+      );
+    } else if (isEc3) {
+      const f = await r.get(af.sourceOffset!, 8);
+      const { body, samples } = dec3(f);
+      const dec3box = box('dec3', body);
+      samplesEntry = box(
+        'ec-3',
+        zeros(6),
+        u16(1),
+        zeros(8),
+        u16(a.channels),
+        u16(16),
+        u16(0),
+        u16(0),
+        u32(timescale * 65536),
+        dec3box,
+      );
+    } else {
+      const decoder = isMp3
+        ? desc(4, u8(0x6b), u8(0x15), u24(0), u32(0), u32(0))
+        : desc(4, u8(0x40), u8(0x15), u24(0), u32(0), u32(0), desc(5, a.priv));
+      const esds = full('esds', 0, 0, desc(3, u16(id), u8(0), decoder, desc(6, u8(2))));
+      samplesEntry = box(
+        'mp4a',
+        zeros(6),
+        u16(1),
+        zeros(8),
+        u16(a.channels),
+        u16(16),
+        u16(0),
+        u16(0),
+        u32(timescale * 65536),
+        esds,
+      );
+    }
     // Only the first kept audio track is marked on by default unless the options name another one.
     const on = opts.defaultAudio !== undefined ? opts.defaultAudio === a.number : firstAudio;
     out.push({

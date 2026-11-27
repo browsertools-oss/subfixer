@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { listRemux, aacConfig, remuxMkv, decodeOrder, mdatHeader, chunkOffsetBox } from '../src/lib/mkvmp4.ts';
+import { listRemux, aacConfig, remuxMkv, decodeOrder, mdatHeader, chunkOffsetBox, dac3, dec3 } from '../src/lib/mkvmp4.ts';
 import { kids, find } from '../src/lib/mp4.ts';
 import { avMkv, recordingSource } from './mkv-fixture.ts';
 
@@ -142,4 +142,28 @@ test('chunk offset boxes switch to co64 above 32 bits, and mdat takes 16 bytes w
   assert.equal(u32At(header, 0), 1);
   // No spread: a long list of offsets goes through.
   assert.equal(chunkOffsetBox(Array.from({ length: 300000 }, (_, i) => i * 10)).length > 0, true);
+});
+
+test('dac3 and dec3 read the first frame and give the MP4 box bytes', () => {
+  const ac3frame = new Uint8Array([0x0b, 0x77, 0, 0, 0x50, 0x40, 0xe1, 0]);
+  assert.deepEqual([...dac3(ac3frame)], [0x50, 0x3d, 0x00]);
+  const ec3frame = new Uint8Array([0x0b, 0x77, 0x02, 0xff, 0x3f, 0x80, 0, 0]);
+  const { body, samples } = dec3(ec3frame);
+  assert.deepEqual([...body], [0x0c, 0x00, 0x20, 0x0f, 0x00]);
+  assert.equal(samples, 1536);
+});
+
+test('an AC3 track in avMkv gets an ac-3 entry with 1536-sample stts', async () => {
+  const ac3frame = new Uint8Array([0x0b, 0x77, 0, 0, 0x50, 0x40, 0xe1, 0]);
+  const { out } = await remux(avMkv({ ac3Frame: ac3frame }), { audio: [5], subs: [] });
+  const moov = find(out, 'moov')!;
+  const trak = trackOf(moov, 'soun');
+  const stbl = find(trak, 'mdia', 'minf', 'stbl')!;
+  const stsd = find(stbl, 'stsd')!;
+  // stsd data: version(1)+flags(3) at 0, entry_count at 4, first entry size at 8, type at 12
+  const entryType = new TextDecoder().decode(stsd.subarray(12, 16));
+  assert.equal(entryType, 'ac-3');
+  const stts = find(stbl, 'stts')!;
+  assert.equal(u32At(stts, 8), 1);
+  assert.equal(u32At(stts, 12), 1536);
 });

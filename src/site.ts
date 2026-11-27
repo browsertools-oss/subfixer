@@ -1663,10 +1663,10 @@ export const PAGES: ToolPage[] = [
       'Save the MP4. The video and audio are copied byte for byte, so the picture and sound do not change.',
     ],
     faq: [
-      { q: 'Is the video re-encoded?', a: "No. H.264 and H.265 video and AAC and MP3 audio are copied into the MP4 as they are. Saving takes about as long as copying the file." },
+      { q: 'Is the video re-encoded?', a: "No. H.264 and H.265 video and AAC, MP3, AC3 and E-AC3 audio are copied into the MP4 as they are. Saving takes about as long as copying the file." },
       { q: 'Are the subtitles kept?', a: 'Text tracks (SRT, ASS, SSA and WebVTT) become MP4 text subtitles, which iPhones, Apple TV, VLC and many TVs can turn on. ASS styles, colors and positions are dropped; the words and times stay.' },
       { q: 'What about Blu-ray (PGS) subtitles?', a: 'Picture subtitles cannot go into an MP4. Save the track as .sup with the MKV subtitle extractor, read it into text with SUP to SRT, add the SRT back with add subtitles to MKV, then convert here.' },
-      { q: 'Which tracks are left out?', a: 'DTS, Dolby TrueHD, AC3, E-AC3, FLAC, Opus and Vorbis audio, picture subtitles, chapters and attached fonts. The page lists each track it leaves out before you save.' },
+      { q: 'Which tracks are left out?', a: 'DTS, Dolby TrueHD, FLAC, Opus and Vorbis audio, picture subtitles, chapters and attached fonts. The page lists each track it leaves out before you save.' },
       { q: 'Which files can it not convert?', a: "Video in VP9, AV1, MPEG-2, DivX or Xvid has to be re-encoded for MP4, which this page does not do. It names the format when you pick the file. Files saved while they were being recorded have no stated sizes and are refused too." },
       { q: 'Is the movie uploaded?', a: 'No. The file is read in pieces on your device, and the new file is put together from pieces of the original.' },
       { q: 'How large a file can it handle?', a: 'In Chrome and Edge on a computer, the new file is written straight to disk piece by piece, so a full film is fine. Other browsers save it as one download, which can fail for very large files. Use Chrome or Edge on a computer for those.' },

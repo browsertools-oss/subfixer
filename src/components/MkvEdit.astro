@@ -1,0 +1,298 @@
+---
+interface Props { h1: string; lede: string; action: 'add' | 'remove' }
+const { h1, lede, action } = Astro.props;
+---
+<section class="tool mkv" id="mkv">
+  <h1>{h1}</h1>
+  <p class="lede">{lede}</p>
+
+  <label class="drop" id="mkvDrop">
+    <input type="file" id="mkvFile" class="visually-hidden" accept=".mkv,.mks,.webm" />
+    <span class="drop-body">
+      <span class="drop-main">Drop an MKV file here</span>
+      <span class="drop-sub">A movie can be several gigabytes. Nothing leaves your device.</span>
+      <span class="drop-row">
+        <span class="drop-btn" aria-hidden="true">Choose a file</span>
+      </span>
+    </span>
+  </label>
+  <ul class="trust" aria-label="The deal"><li>Free</li><li>No upload</li><li>No sign-up</li></ul>
+  <p class="error" id="mkvError" hidden></p>
+
+  <div class="mkv-status" id="mkvStatus" aria-live="polite" hidden>
+    <p id="mkvText"></p>
+    <progress id="mkvProgress" max="1" value="0"></progress>
+  </div>
+
+  <p class="visually-hidden" id="mkvAnnounce" aria-live="polite"></p>
+  <div id="mkvTracks"></div>
+
+  {action === 'add' && (
+    <div id="mkvAdd" hidden>
+      <h2>Add subtitle files</h2>
+      <p>
+        <label for="subFiles">Pick one or more SRT, VTT, ASS or SSA files.</label>
+      </p>
+      <input type="file" id="subFiles" multiple accept=".srt,.vtt,.ass,.ssa" />
+      <div id="subRows"></div>
+      <fieldset id="defaultPick" class="mkv-default">
+        <legend>Turn on by default</legend>
+      </fieldset>
+      <p>
+        <button type="button" id="saveBtn" disabled>Save the new MKV</button>
+      </p>
+      <p id="saveText" aria-live="polite"></p>
+    </div>
+  )}
+</section>
+
+<script>
+  import type { AddTrack } from '../lib/mkvwrite';
+
+  type Lib = typeof import('../lib/mkvwrite');
+  type Source = { size: number; read: (offset: number, length: number) => Promise<Uint8Array> };
+  type Listed = Awaited<ReturnType<Lib['listTracks']>>[number];
+  type Row = {
+    file: File;
+    track: Pick<AddTrack, 'codec' | 'codecPrivate' | 'cues'>;
+    lang: HTMLSelectElement;
+    name: HTMLInputElement;
+    forced: HTMLInputElement;
+  };
+
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+  let current: { file: File; base: string; lib: Lib; src: Source; tracks: Listed[] } | null = null;
+  let rows: Row[] = [];
+
+  function showError(msg: string) {
+    const e = $('mkvError');
+    e.textContent = msg;
+    e.hidden = false;
+  }
+
+  function clearError() {
+    $('mkvError').hidden = true;
+  }
+
+  function englishName(lib: Lib, code: string): string {
+    return lib.LANGS.find((l) => l[0] === code)?.[2] ?? 'Undetermined';
+  }
+
+  function renderDefaults() {
+    const box = document.getElementById('defaultPick');
+    if (!current || !box) return;
+    box.querySelectorAll('label').forEach((l) => l.remove());
+    const options: [string, string][] = [['keep', "Keep the file's current default"]];
+    for (const t of current.tracks) {
+      if (t.type !== 17) continue;
+      const label = `Track ${t.number}${t.language ? ` (${t.language})` : ''}${t.name ? `, ${t.name}` : ''}`;
+      options.push([`existing:${t.number}`, label]);
+    }
+    rows.forEach((r, i) => options.push([`new:${i}`, `New: ${r.file.name}`]));
+    options.forEach(([value, label], i) => {
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'defaultPick';
+      input.value = value;
+      input.checked = i === 0;
+      const wrap = document.createElement('label');
+      wrap.append(input, ' ', label);
+      box.append(wrap);
+    });
+  }
+
+  function updateSave() {
+    const btn = document.getElementById('saveBtn') as HTMLButtonElement | null;
+    if (btn) btn.disabled = rows.length === 0;
+  }
+
+  function addRow(lib: Lib, file: File, track: Row['track']) {
+    const box = $('subRows');
+    const row = document.createElement('div');
+    row.className = 'mkv-row';
+
+    const title = document.createElement('p');
+    title.textContent = `${file.name}: ${track.cues.length} ${track.cues.length === 1 ? 'line' : 'lines'}`;
+    row.append(title);
+
+    const lang = document.createElement('select');
+    lang.setAttribute('aria-label', `Language for ${file.name}`);
+    for (const [code, , name] of lib.LANGS) {
+      const o = document.createElement('option');
+      o.value = code;
+      o.textContent = name;
+      lang.append(o);
+    }
+    const guessed = lib.guessLanguage(file.name);
+    lang.value = guessed;
+
+    const name = document.createElement('input');
+    name.type = 'text';
+    name.value = englishName(lib, guessed);
+    name.setAttribute('aria-label', `Track name for ${file.name}`);
+    lang.addEventListener('change', () => {
+      name.value = englishName(lib, lang.value);
+    });
+
+    const forcedLabel = document.createElement('label');
+    const forced = document.createElement('input');
+    forced.type = 'checkbox';
+    forced.checked = file.name.toLowerCase().includes('.forced.');
+    forcedLabel.append(forced, ' Forced');
+
+    row.append(' Language ', lang, ' Name ', name, ' ', forcedLabel);
+    box.append(row);
+    rows.push({ file, track, lang, name, forced });
+  }
+
+  async function addFiles(files: FileList | null) {
+    if (!current || !files) return;
+    const { lib } = current;
+    const { decode } = await import('../lib/subs');
+    $('subRows').replaceChildren();
+    rows = [];
+    for (const file of Array.from(files)) {
+      try {
+        const { text } = await decode(await file.arrayBuffer());
+        const track = lib.textTrack(text, file.name);
+        addRow(lib, file, track);
+      } catch (err) {
+        const p = document.createElement('p');
+        p.className = 'error';
+        p.textContent = `${file.name}: ${(err as Error).message || 'This file could not be read.'}`;
+        $('subRows').append(p);
+      }
+    }
+    renderDefaults();
+    updateSave();
+  }
+
+  async function listed(file: File) {
+    clearError();
+    $('mkvTracks').replaceChildren();
+    const addBox = document.getElementById('mkvAdd');
+    if (addBox) addBox.hidden = true;
+    $('saveText').textContent = '';
+    current = null;
+    rows = [];
+    document.getElementById('subRows')?.replaceChildren();
+    $('mkvStatus').hidden = false;
+    ($('mkvProgress') as HTMLProgressElement).value = 0;
+    $('mkvText').textContent = `Reading ${file.name}.`;
+    try {
+      const lib = await import('../lib/mkvwrite');
+      const src: Source = {
+        size: file.size,
+        read: (offset, length) => file.slice(offset, offset + length).arrayBuffer().then((b) => new Uint8Array(b)),
+      };
+      const tracks = await lib.listTracks(src);
+      current = { file, base: file.name.replace(/\.(mkv|mks|webm)$/i, ''), lib, src, tracks };
+      const subs = tracks.filter((t) => t.type === 17);
+      const videos = tracks.filter((t) => t.type === 1).length;
+      const audios = tracks.filter((t) => t.type === 2).length;
+      const intro = document.createElement('p');
+      intro.textContent = `This file has ${videos} video and ${audios} audio ${audios === 1 ? 'track' : 'tracks'}, and ${subs.length} subtitle ${subs.length === 1 ? 'track' : 'tracks'}.`;
+      $('mkvTracks').append(intro);
+      if (subs.length) {
+        const table = document.createElement('table');
+        const head = table.createTHead().insertRow();
+        for (const h of ['Track', 'Language', 'Name', 'Flags']) {
+          const th = document.createElement('th');
+          th.scope = 'col';
+          th.textContent = h;
+          head.append(th);
+        }
+        const body = table.createTBody();
+        for (const t of subs) {
+          const r = body.insertRow();
+          r.insertCell().textContent = String(t.number);
+          r.insertCell().textContent = t.language;
+          r.insertCell().textContent = t.name || '-';
+          const flags = [t.isDefault ? 'default' : '', t.forced ? 'forced' : ''].filter(Boolean).join(', ');
+          r.insertCell().textContent = flags || '-';
+        }
+        $('mkvTracks').append(table);
+      }
+      const addBox = document.getElementById('mkvAdd');
+      if (addBox) addBox.hidden = false;
+      renderDefaults();
+      $('mkvAnnounce').textContent = `Found ${subs.length} subtitle ${subs.length === 1 ? 'track' : 'tracks'}`;
+    } catch (err) {
+      showError((err as Error).message || 'This file could not be read.');
+    } finally {
+      $('mkvStatus').hidden = true;
+    }
+  }
+
+  async function save() {
+    if (!current || !rows.length) return;
+    const { lib, src, file, base } = current;
+    const add: AddTrack[] = rows.map((r) => ({
+      codec: r.track.codec,
+      codecPrivate: r.track.codecPrivate,
+      cues: r.track.cues,
+      language: r.lang.value,
+      name: r.name.value.trim(),
+      forced: r.forced.checked,
+      isDefault: false,
+    }));
+    const pick = (document.querySelector('input[name=defaultPick]:checked') as HTMLInputElement | null)?.value ?? 'keep';
+    let defaultExisting: number | undefined;
+    if (pick.startsWith('new:')) add[Number(pick.slice(4))].isDefault = true;
+    else if (pick.startsWith('existing:')) defaultExisting = Number(pick.slice(9));
+
+    const saveText = $('saveText');
+    saveText.textContent = 'Copying the video and audio as they are: 0%';
+    try {
+      const { parts } = await lib.editMkv(src, { add, remove: [], defaultExisting }, (done, total) => {
+        saveText.textContent = `Copying the video and audio as they are: ${total ? Math.round((done / total) * 100) : 0}%`;
+      });
+      const suggestedName = `${base}.subs.mkv`;
+      const picker = (window as unknown as { showSaveFilePicker?: (o: unknown) => Promise<FileSystemFileHandle> }).showSaveFilePicker;
+      if (picker) {
+        const handle = await picker({
+          suggestedName,
+          types: [{ description: 'MKV video', accept: { 'video/x-matroska': ['.mkv'] } }],
+        });
+        const writable = await handle.createWritable();
+        for (const part of parts) {
+          await writable.write(part instanceof Uint8Array ? part : file.slice(part.start, part.end));
+        }
+        await writable.close();
+      } else {
+        const blob = new Blob(
+          parts.map((part) => (part instanceof Uint8Array ? part : file.slice(part.start, part.end))),
+          { type: 'video/x-matroska' },
+        );
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = suggestedName;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      }
+      saveText.textContent = 'Saved. The video and audio were copied as they are; only the subtitle tracks changed.';
+    } catch (err) {
+      const aborted = err instanceof DOMException && err.name === 'AbortError';
+      saveText.textContent = aborted ? 'Save cancelled.' : (err as Error).message || 'The new file could not be saved.';
+    }
+  }
+
+  const input = $('mkvFile') as HTMLInputElement;
+  input.addEventListener('change', () => {
+    const file = input.files?.[0];
+    if (file) listed(file);
+  });
+
+  const drop = $('mkvDrop');
+  drop.addEventListener('dragover', (e) => e.preventDefault());
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    if (file) listed(file);
+  });
+
+  const subFiles = document.getElementById('subFiles') as HTMLInputElement | null;
+  subFiles?.addEventListener('change', () => addFiles(subFiles.files));
+  document.getElementById('saveBtn')?.addEventListener('click', () => save());
+</script>

@@ -4,7 +4,7 @@ export const SITE = {
   url: 'https://subfixer.app',
 };
 
-export type Mode = 'shift' | 'fps' | 'sync' | 'timing' | 'encoding' | 'clean' | 'reading' | 'replace' | 'edit' | 'convert' | 'merge' | 'extract';
+export type Mode = 'shift' | 'fps' | 'sync' | 'timing' | 'encoding' | 'clean' | 'reading' | 'replace' | 'edit' | 'convert' | 'merge' | 'extract' | 'mkvedit';
 export type Group = 'Timing' | 'Text' | 'Convert';
 export const GROUPS: Group[] = ['Timing', 'Text', 'Convert'];
 
@@ -1596,6 +1596,29 @@ export const PAGES: ToolPage[] = [
       { q: 'What about closed captions?', a: 'CEA-608 caption tracks and TTML tracks are listed as not supported. Captions carried inside the video stream are not listed.' },
       { q: 'Which file name should I use?', a: 'Use the video name with the language code, for example Movie.eng.srt, and keep it in the same folder as the video. The page builds that name for each track.' },
       { q: 'Does it read MKV files too?', a: 'Yes. Drop an MKV here, or use the MKV subtitle extractor.' },
+    ],
+  },
+  {
+    slug: 'add-subtitles-to-mkv',
+    mode: 'mkvedit',
+    group: 'Convert',
+    title: 'Add subtitles to MKV online, no re-encoding or upload',
+    h1: 'Add subtitles to an MKV file',
+    lede: 'Put SRT, VTT or ASS subtitles inside an MKV as a track you can turn on and off. The video and audio are copied as they are, and nothing is uploaded.',
+    description: 'Add SRT, ASS or VTT subtitles to an MKV as a soft track in your browser. No re-encoding, no upload, no install. Set the language and the default.',
+    steps: [
+      'Pick the MKV file. It stays on your device.',
+      'Add one or more SRT, VTT or ASS files. Set the language, the track name and which track turns on by default.',
+      'Save the new MKV. The video and audio are copied byte for byte, so the picture and sound do not change.',
+    ],
+    faq: [
+      { q: 'Is the video re-encoded?', a: 'No. The video and audio are copied exactly as they are. Only the track list and the subtitle lines are new, so saving takes about as long as copying the file.' },
+      { q: 'Is the movie uploaded?', a: 'No. The file is read in pieces on your device, and the new file is put together from pieces of the original.' },
+      { q: 'How large a file can it handle?', a: 'In Chrome and Edge on a computer, the new file is written straight to disk piece by piece, so a full film is fine. Other browsers save it as one download, which can fail for very large files. Use Chrome or Edge on a computer for those.' },
+      { q: 'Are the subtitles burned into the picture?', a: 'No. They go in as a soft track that the player can turn on and off, and you can remove it again later.' },
+      { q: 'Which subtitle files work?', a: 'SRT and WebVTT go in as SRT text, which most players and many TVs read. ASS and SSA keep their styles, but some TVs skip styled tracks, so add an SRT for a TV. If the letters look wrong, fix the encoding first with the encoding fixer on this site.' },
+      { q: 'Which files can it not edit?', a: 'Files saved while they were being recorded, which have no stated sizes, and MP4 files. The page shows the reason as a message when it cannot edit a file.' },
+      { q: 'Can I take a subtitle track out again?', a: 'Yes, with the remove subtitles from MKV page on this site. To keep a copy first, save it with the MKV subtitle extractor.' },
     ],
   },
   {

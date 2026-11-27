@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 const title = 'MKV starts with the wrong subtitles? Change the default';
-const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-29', author: { '@type': 'Organization', name: 'SubFixer' } }];
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-27', author: { '@type': 'Organization', name: 'SubFixer' } }];
 ---
 <Base title={`${title} | SubFixer`} description="MKV opens with foreign, forced or SDH subtitles on? Change the default subtitle track or remove the ones you never use, without re-encoding." path="/guides/mkv-wrong-default-subtitles/" jsonld={jsonld} ogType="article">
   <article class="guide">
@@ -13,7 +13,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <p>That order explains a lot of surprises. A player with a preferred subtitle language can ignore the default flag altogether, so changing the flag does nothing there. A forced track is a different case. Forced tracks are meant for foreign-language lines and signs only, and many players show them even when subtitles are off.</p>
 
     <h2>Find out which track is the default</h2>
-    <p>Open the MKV on the <a href="/remove-subtitles-from-mkv/">remove subtitles from MKV page</a> or on the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>. Both pages list every subtitle track with its language and name. A track marked "(default)" is the one the file asks the player to turn on. A track marked "(forced)" holds only the lines that the picture needs.</p>
+    <p>Open the MKV on the <a href="/remove-subtitles-from-mkv/">remove subtitles from MKV page</a>. It lists every subtitle track with its language and name. A track shown as "default" in the Flags column is the one the file asks the player to turn on. A track shown as "forced" holds only the lines that the picture needs.</p>
     <p>The remove page reads only the track list, not the film, so a long file opens quickly. Nothing is uploaded.</p>
 
     <h2>Change the default track</h2>

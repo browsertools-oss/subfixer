@@ -1,5 +1,3 @@
-- Fix 3 failing mkvwrite tests: defaultExisting flag rewrite, added track isDefault, knownMkv SeekHead position
-- Row 2 step 2: implement remove and defaultExisting flags in editMkv, add tests (3), (4), (9)
-- Row 3: build MkvEdit.astro component with add action, create add-subtitles-to-mkv page entry in PAGES, add to Convert menu
-- Row 4: add remove action to MkvEdit.astro, create remove-subtitles-from-mkv page with default track choice
-- Row 5: write guide "put-subtitles-inside-mkv" (topic: devices), link from add-subtitles-to-mkv page
+- Claims check (row 7 method) on the add-subtitles-to-mkv and remove-subtitles-from-mkv pages: for each sentence, find the code in mkvwrite.ts or MkvEdit.astro that backs it; fix or cut the ones it doesn't
+- Guide `srt-numbers-out-of-order`, topic 'file', title "SRT numbers skipped or out of order? Renumber it": /renumber-srt/ (preset `clean: 'renumber'`) and the validator's `order` check; link the Premiere and YouTube guides
+- One sentence each linking /add-subtitles-to-mkv/ from /guides/tv-subtitles-not-showing-usb/ and /guides/plex-subtitles-not-showing/, at the point where they say the sidecar file is not found (only once the page is live)

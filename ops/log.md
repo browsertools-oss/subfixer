@@ -34,3 +34,17 @@
 - Row 2 (step 1): created src/lib/mkvwrite.ts with listTracks, editMkv (add tracks), textTrack, guessLanguage, and supporting helpers; added test/mkvwrite.test.ts with 10 tests (a5ba666). 137/140 tests pass; 3 tests for default-flag handling need fixes.
 - All builds clean: final test count 137/140, build 106 pages.
 - Next: fix remaining 3 mkvwrite tests (defaultExisting, isDefault, knownMkv SeekHead), then row 2 step 2 (remove/default flags), then row 3 (add-subtitles-to-mkv page).
+
+11-26-2026 evening (regular crew, row 2, started 02:18 UTC on 11-27):
+- Checked: `npm test` failed at start, 137 of 140 (the three mkvwrite default and SeekHead tests from a5ba666 on main). `npm run build` completed (106 pages).
+- Row 2 (a): fixed the three tests (16be690). The default-flag tests read track type and name from `scanMkv`, which has no type field, so they now read `listTracks`. The SeekHead test called `headerAt(out, p, p)` with the wrong base, now `headerAt(out, p, 0)`. 140 of 140.
+- Row 2 (b): the remove and default code and tests (3), (4), (9) were already in a5ba666. Checked, no new commit (marked DONE a5ba666).
+- Row 3: `MkvEdit.astro` add action, `mkvedit` mode in `ToolPage.astro` and `site.ts`, `add-subtitles-to-mkv` PAGES entry (d02122a). Build 108 pages.
+- Row 4: remove action in `MkvEdit.astro` (51f6d05) and the `remove-subtitles-from-mkv` PAGES entry, plus the one FAQ on the MKV extractor page (ae93b5a).
+- Row 5: guide `put-subtitles-inside-mkv` (0585907), registered in GUIDES, SUMMARIES and RECENT_GUIDES; `guide` set on the add page.
+- Row 6: guide `mkv-wrong-default-subtitles` (ece2bbe), same registration; `guide` set on the remove page. Build 110 pages, tests 142 of 142.
+- Choices: one "Turn on by default" radio group for the remove page instead of one radio per track (same choices, shorter table). The MKV extractor FAQ is the one the spec asked for.
+- Claims check on the add and remove pages (row 7 method), read against `mkvwrite.ts` and `MkvEdit.astro`: no sentence needed a change. Not committed.
+- Not checked: nothing has been run in a browser or on a real MKV. The build warns "Duplicate key guide" in site.ts; I did not check whether it was there before this run (my new entries don't repeat it).
+- Owed: the owner runs one real MKV through add and then remove, and plays the result in VLC, before the pages are promoted (week plan, "Not done").
+- Next: row 7 claims check if the plan stands on Sunday (already read through tonight), then backlog item 2, the `srt-numbers-out-of-order` guide.

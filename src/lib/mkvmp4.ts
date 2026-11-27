@@ -2,7 +2,9 @@
 // frames are copied byte for byte (a remux), so the picture and sound do not change. Text subtitles
 // are read with the MKV reader and written as mov_text (tx3g) samples.
 
-import { Reader, children, headerAt, uintOf, ID, type MkvSource } from './mkv.ts';
+import { CHUNK, Reader, assToSrt, children, headerAt, readVint, scanMkv, trackFile, uintOf, ID, type MkvSource } from './mkv.ts';
+import { parse } from './subs.ts';
+import type { Part } from './mkvwrite.ts';
 
 const VIDEO = 0xe0;
 const PIXEL_WIDTH = 0xb0;
@@ -267,4 +269,672 @@ async function readTracks(src: MkvSource): Promise<Parsed[]> {
 // Lists the tracks of an MKV and what MP4 can do with each one.
 export async function listRemux(src: MkvSource): Promise<RemuxTrack[]> {
   return readTracks(src);
+}
+
+// ---- Writing the MP4 ----
+
+type Bytes = Uint8Array;
+
+function cat(...parts: Bytes[]): Bytes {
+  const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+  let at = 0;
+  for (const p of parts) {
+    out.set(p, at);
+    at += p.length;
+  }
+  return out;
+}
+
+function u8(n: number): Bytes {
+  return new Uint8Array([n & 0xff]);
+}
+
+function u16(n: number): Bytes {
+  return new Uint8Array([(n >> 8) & 0xff, n & 0xff]);
+}
+
+function u24(n: number): Bytes {
+  return new Uint8Array([(n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff]);
+}
+
+function u32(n: number): Bytes {
+  const b = new Uint8Array(4);
+  new DataView(b.buffer).setUint32(0, n >>> 0);
+  return b;
+}
+
+function u64(n: number): Bytes {
+  return cat(u32(Math.floor(n / 2 ** 32)), u32(n % 2 ** 32));
+}
+
+function ascii(s: string): Bytes {
+  return new TextEncoder().encode(s);
+}
+
+function zeros(n: number): Bytes {
+  return new Uint8Array(n);
+}
+
+function box(type: string, ...parts: Bytes[]): Bytes {
+  const body = cat(...parts);
+  return cat(u32(8 + body.length), ascii(type), body);
+}
+
+// A full box: version and flags come before the body.
+function full(type: string, version: number, flags: number, ...parts: Bytes[]): Bytes {
+  return box(type, u8(version), u24(flags), ...parts);
+}
+
+// The 64-bit mdat header, so a body of 4 GB and up works too.
+export function mdatHeader(bodySize: number): Bytes {
+  return cat(u32(1), ascii('mdat'), u64(16 + bodySize));
+}
+
+// An MPEG-4 descriptor: tag, a 4-byte length (written as 0x80 0x80 0x80 n), then the body.
+function desc(tag: number, ...body: Bytes[]): Bytes {
+  const b = cat(...body);
+  return cat(u8(tag), new Uint8Array([0x80, 0x80, 0x80, b.length]), b);
+}
+
+// A table box whose entries are written into one preallocated buffer. Large tables never go
+// through spread or push(...list).
+function table(type: string, head: Bytes, n: number, stride: number, put: (dv: DataView, at: number, i: number) => void): Bytes {
+  const body = new Uint8Array(head.length + stride * n);
+  body.set(head, 0);
+  const dv = new DataView(body.buffer);
+  for (let i = 0; i < n; i++) put(dv, head.length + stride * i, i);
+  return full(type, 0, 0, body);
+}
+
+// Chunk offsets: stco with 32-bit entries, or co64 when an offset does not fit in 32 bits.
+export function chunkOffsetBox(offsets: number[]): Bytes {
+  const big = offsets.some((o) => o >= 2 ** 32);
+  if (!big) {
+    return table('stco', u32(offsets.length), offsets.length, 4, (dv, at, i) => dv.setUint32(at, offsets[i]));
+  }
+  return table('co64', u32(offsets.length), offsets.length, 8, (dv, at, i) => {
+    dv.setUint32(at, Math.floor(offsets[i] / 2 ** 32));
+    dv.setUint32(at + 4, offsets[i] % 2 ** 32);
+  });
+}
+
+// Run-length encodes values as [count, value] pairs.
+function runs(values: number[]): [number, number][] {
+  const out: [number, number][] = [];
+  for (const v of values) {
+    const last = out[out.length - 1];
+    if (last && last[1] === v) last[0]++;
+    else out.push([1, v]);
+  }
+  return out;
+}
+
+// Presentation times (in 90 kHz ticks) in file order. Decode times are the sorted list; each
+// frame's offset ctts[i] puts its picture at p[i] once the shift is taken off.
+export function decodeOrder(p: number[]): { dts: number[]; ctts: number[]; shift: number } {
+  const sorted = Float64Array.from(p);
+  sorted.sort();
+  const dts = Array.from(sorted);
+  let shift = 0;
+  for (let i = 0; i < dts.length; i++) shift = Math.max(shift, dts[i] - p[i]);
+  const ctts = p.map((v, i) => v - dts[i] + shift);
+  return { dts, ctts, shift };
+}
+
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+function packLanguage(code: string): number {
+  const c = /^[a-z]{3}$/.test(code) ? code : 'und';
+  return ((c.charCodeAt(0) - 0x60) << 10) | ((c.charCodeAt(1) - 0x60) << 5) | (c.charCodeAt(2) - 0x60);
+}
+
+const MATRIX = cat(u32(0x10000), u32(0), u32(0), u32(0), u32(0x10000), u32(0), u32(0), u32(0), u32(0x40000000));
+
+interface Frames {
+  offset: number[];
+  size: number[];
+  pts: number[];
+  key: boolean[];
+}
+
+interface Edit {
+  duration: number; // movie timescale (ms)
+  mediaTime: number; // media timescale, -1 for an empty edit
+}
+
+interface TrackOut {
+  kind: 'video' | 'audio' | 'sub';
+  id: number;
+  flags: number;
+  group: number;
+  language: string;
+  timescale: number;
+  mediaDuration: number;
+  movieDuration: number;
+  edits: Edit[];
+  entry: Bytes;
+  stts: [number, number][];
+  ctts: [number, number][];
+  stss: number[];
+  sizes: number[];
+  offsets: number[];
+  width: number;
+  height: number;
+  volume: number;
+  handler: string;
+  handlerName: string;
+  mediaHeader: Bytes;
+}
+
+function trackBox(t: TrackOut): Bytes {
+  const tkhd = full(
+    'tkhd',
+    0,
+    t.flags,
+    u32(0),
+    u32(0),
+    u32(t.id),
+    u32(0),
+    u32(t.movieDuration),
+    zeros(8),
+    u16(0),
+    u16(t.group),
+    u16(t.volume),
+    u16(0),
+    MATRIX,
+    u32(t.width * 65536),
+    u32(t.height * 65536),
+  );
+  const parts = [tkhd];
+  if (t.edits.length) {
+    const elst = full(
+      'elst',
+      0,
+      0,
+      u32(t.edits.length),
+      ...t.edits.map((e) => cat(u32(e.duration), u32(e.mediaTime >>> 0), u16(1), u16(0))),
+    );
+    parts.push(box('edts', elst));
+  }
+  const mdhd = full('mdhd', 0, 0, u32(0), u32(0), u32(t.timescale), u32(t.mediaDuration), u16(packLanguage(t.language)), u16(0));
+  const hdlr = full('hdlr', 0, 0, u32(0), ascii(t.handler), zeros(12), ascii(`${t.handlerName}\0`));
+  const dinf = box('dinf', full('dref', 0, 0, u32(1), full('url ', 0, 1)));
+  const stts = table('stts', u32(t.stts.length), t.stts.length, 8, (dv, at, i) => {
+    dv.setUint32(at, t.stts[i][0]);
+    dv.setUint32(at + 4, t.stts[i][1]);
+  });
+  const stbl = [
+    full('stsd', 0, 0, u32(1), t.entry),
+    stts,
+  ];
+  if (t.ctts.length) {
+    stbl.push(table('ctts', u32(t.ctts.length), t.ctts.length, 8, (dv, at, i) => {
+      dv.setUint32(at, t.ctts[i][0]);
+      dv.setUint32(at + 4, t.ctts[i][1]);
+    }));
+  }
+  if (t.stss.length) {
+    stbl.push(table('stss', u32(t.stss.length), t.stss.length, 4, (dv, at, i) => dv.setUint32(at, t.stss[i])));
+  }
+  stbl.push(full('stsc', 0, 0, u32(1), u32(1), u32(1), u32(1)));
+  stbl.push(table('stsz', cat(u32(0), u32(t.sizes.length)), t.sizes.length, 4, (dv, at, i) => dv.setUint32(at, t.sizes[i])));
+  stbl.push(chunkOffsetBox(t.offsets));
+  const minf = box('minf', t.mediaHeader, dinf, box('stbl', ...stbl));
+  return box('trak', ...parts, box('mdia', mdhd, hdlr, minf));
+}
+
+// One sample of a text track: a 16-bit length and the UTF-8 text (the tx3g layout).
+function textSample(text: string): Bytes {
+  const bytes = new TextEncoder().encode(text);
+  return cat(u16(bytes.length), bytes);
+}
+
+// Converts the MKV in src into MP4 parts. The first video track and the kept audio tracks are copied
+// frame by frame, text subtitles are written as tx3g samples, and moov is last.
+export async function remuxMkv(
+  src: MkvSource,
+  opts: RemuxOptions,
+  onProgress?: (done: number, total: number) => void,
+  signal?: AbortSignal,
+): Promise<{ parts: Part[]; size: number; notes: string[] }> {
+  const tracks = await readTracks(src);
+  const video = tracks.find((t) => t.type === 'video' && t.ok);
+  if (!video) {
+    const first = tracks.find((t) => t.type === 'video');
+    throw new Error(first?.reason || 'This file has no video track.');
+  }
+  const audioKept = tracks.filter((t) => t.type === 'audio' && t.ok && opts.audio.includes(t.number));
+  const subKept = tracks.filter((t) => t.type === 'subtitle' && t.ok && opts.subs.includes(t.number));
+  const notes: string[] = tracks.filter((t) => !t.ok && t.reason).map((t) => t.reason);
+
+  // Subtitle text first. It reads the file once, so the copy below reports half the progress.
+  const scaled = subKept.length > 0;
+  const lines = new Map<number, { start: number; end: number; text: string }[]>();
+  if (scaled) {
+    const scan = await scanMkv(src, (d, t) => onProgress?.(d, 2 * t), signal);
+    for (const t of subKept) {
+      const info = scan.tracks.find((x) => x.number === t.number);
+      if (!info) continue;
+      let { text } = trackFile(info, scan.cues.get(t.number) ?? [], scan.codecPrivate.get(t.number) ?? '');
+      if (info.kind === 'ass') text = assToSrt(text);
+      const captions = parse(text, 23.976, { name: info.kind === 'vtt' ? 'track.vtt' : 'track.srt' }).captions;
+      lines.set(
+        t.number,
+        captions
+          .map((c) => ({
+            start: c.start,
+            end: c.end,
+            text: c.text.replace(/<[^>]+>/g, '').replace(/\{\\[^}]*\}/g, '').trim(),
+          }))
+          .filter((c) => c.text !== ''),
+      );
+    }
+  }
+
+  // The copy walk. Every cluster is copied whole as one slice; frames keep their offset in the new file.
+  const ftyp = box('ftyp', ascii('isom'), u32(512), ascii('isom'), ascii('iso2'), ascii('avc1'), ascii('mp41'));
+  const base = ftyp.length + 16;
+  const r = new Reader(src);
+  const size = src.size;
+  const head = await r.get(0, 12);
+  if (head.length < 4 || head[0] !== 0x1a || head[1] !== 0x45 || head[2] !== 0xdf || head[3] !== 0xa3) {
+    throw new Error('This is not an MKV or WebM file.');
+  }
+  const ebml = headerAt(head, 0, 0);
+  if (!ebml || ebml.unknown) throw new Error('This is not an MKV or WebM file.');
+  const segAt = ebml.dataStart + ebml.size;
+  const seg = headerAt(await r.get(segAt, 12), 0, segAt);
+  if (!seg || seg.id !== ID.SEGMENT) throw new Error('This MKV has no Segment.');
+  if (seg.unknown) throw new Error('This file was saved while it was being recorded, so its parts have no stated size. This page cannot convert it.');
+  const segEnd = Math.min(size, seg.dataStart + seg.size);
+
+  const keep = new Map<number, Frames>();
+  for (const t of [video, ...audioKept]) keep.set(t.number, { offset: [], size: [], pts: [], key: [] });
+  let scale = 1000000;
+  const ranges: { start: number; end: number }[] = [];
+  let copied = 0;
+  let delta = 0;
+  const walkBase = scaled ? size : 0;
+  const total = scaled ? 2 * size : size;
+  let lastReport = -CHUNK;
+
+  // Reads the blocks of one cluster and records the frames of the kept tracks.
+  async function addBlock(dataStart: number, blockEnd: number, ts: number, key?: boolean): Promise<void> {
+    const b = await r.get(dataStart, Math.min(blockEnd - dataStart, 4096));
+    const tn = readVint(b, 0, false);
+    if (!tn) throw new Error('This MKV is damaged.');
+    const f = keep.get(tn.value);
+    if (!f) return;
+    const q = tn.length;
+    if (q + 3 > b.length) throw new Error('This MKV is damaged.');
+    const rr = (b[q] << 8) | b[q + 1];
+    const rel = rr >= 0x8000 ? rr - 0x10000 : rr;
+    const flags = b[q + 2];
+    const isKey = key ?? (flags & 0x80) !== 0;
+    const lacing = (flags & 0x06) >> 1;
+    let p = q + 3;
+    const starts: number[] = [];
+    const sizes: number[] = [];
+    if (lacing === 0) {
+      starts.push(dataStart + p);
+      sizes.push(blockEnd - (dataStart + p));
+    } else {
+      if (p >= b.length) throw new Error('This MKV is damaged.');
+      const count = b[p] + 1;
+      p++;
+      const lens: number[] = [];
+      if (lacing === 1) {
+        for (let i = 0; i < count - 1; i++) {
+          let s = 0;
+          let v: number;
+          do {
+            if (p >= b.length) throw new Error('This MKV is damaged.');
+            v = b[p++];
+            s += v;
+          } while (v === 255);
+          lens.push(s);
+        }
+      } else if (lacing === 2) {
+        const each = (blockEnd - (dataStart + p)) / count;
+        if (!Number.isInteger(each)) throw new Error('This MKV is damaged.');
+        for (let i = 0; i < count - 1; i++) lens.push(each);
+      } else {
+        let prev = 0;
+        for (let i = 0; i < count - 1; i++) {
+          const v = readVint(b, p, false);
+          if (!v) throw new Error('This MKV is damaged.');
+          p += v.length;
+          prev = i === 0 ? v.value : prev + (v.value - (2 ** (7 * v.length - 1) - 1));
+          lens.push(prev);
+        }
+      }
+      let cursor = dataStart + p;
+      for (const n of lens) {
+        starts.push(cursor);
+        sizes.push(n);
+        cursor += n;
+      }
+      if (cursor > blockEnd) throw new Error('This MKV is damaged.');
+      starts.push(cursor);
+      sizes.push(blockEnd - cursor);
+    }
+    const pts = ((ts + rel) * scale) / 1e6;
+    for (let i = 0; i < starts.length; i++) {
+      f.offset.push(starts[i] + delta);
+      f.size.push(sizes[i]);
+      f.pts.push(pts);
+      f.key.push(isKey);
+    }
+  }
+
+  async function readCluster(dataStart: number, end: number): Promise<void> {
+    let ts = 0;
+    let at = dataStart;
+    while (at < end) {
+      const c = headerAt(await r.get(at, 16), 0, at);
+      if (!c || c.unknown || c.dataStart + c.size > end) throw new Error('This MKV is damaged.');
+      const cEnd = c.dataStart + c.size;
+      if (c.id === ID.TIMESTAMP) {
+        ts = uintOf(await r.get(c.dataStart, c.size));
+      } else if (c.id === ID.SIMPLE_BLOCK) {
+        await addBlock(c.dataStart, cEnd, ts);
+      } else if (c.id === ID.BLOCK_GROUP) {
+        let q = c.dataStart;
+        let blk: { dataStart: number; size: number } | null = null;
+        let ref = false;
+        while (q < cEnd) {
+          const g = headerAt(await r.get(q, 16), 0, q);
+          if (!g || g.unknown || g.dataStart + g.size > cEnd) throw new Error('This MKV is damaged.');
+          if (g.id === ID.BLOCK) blk = g;
+          if (g.id === REFERENCE_BLOCK) ref = true;
+          q = g.dataStart + g.size;
+        }
+        if (blk) await addBlock(blk.dataStart, blk.dataStart + blk.size, ts, !ref);
+      }
+      at = cEnd;
+    }
+  }
+
+  let p = seg.dataStart;
+  while (p < segEnd) {
+    if (p - lastReport >= CHUNK) {
+      signal?.throwIfAborted();
+      onProgress?.(walkBase + p, total);
+      lastReport = p;
+    }
+    const h = headerAt(await r.get(p, 12), 0, p);
+    if (!h) break;
+    if (h.unknown) {
+      throw new Error('This file was saved while it was being recorded, so its parts have no stated size. This page cannot convert it.');
+    }
+    const end = h.dataStart + h.size;
+    if (end > segEnd) throw new Error('This MKV is damaged.');
+    if (h.id === ID.INFO) {
+      for (const c of children(await r.get(h.dataStart, h.size))) {
+        if (c.id === ID.TIMESTAMP_SCALE) scale = uintOf(c.data) || scale;
+      }
+    } else if (h.id === ID.CLUSTER) {
+      const last = ranges[ranges.length - 1];
+      if (!last || last.end !== p) {
+        delta = base + copied - p;
+        ranges.push({ start: p, end });
+      } else {
+        last.end = end;
+      }
+      copied += end - p;
+      await readCluster(h.dataStart, end);
+    }
+    p = end;
+  }
+
+  const vf = keep.get(video.number)!;
+  if (vf.offset.length === 0) throw new Error('This MKV has no video data.');
+
+  // Timing. t0 is the first kept frame; all times start there.
+  let t0 = Infinity;
+  for (const n of keep.keys()) {
+    for (const v of keep.get(n)!.pts) if (v < t0) t0 = v;
+  }
+
+  const out: TrackOut[] = [];
+  const subBytes: Bytes[] = [];
+
+  // Video: decode order from the presentation times.
+  const vp = vf.pts.map((v) => Math.round((v - t0) * 90));
+  const { dts, ctts, shift } = decodeOrder(vp);
+  const vdur: number[] = [];
+  for (let i = 0; i < dts.length - 1; i++) vdur.push(dts[i + 1] - dts[i]);
+  const defDur = video.defaultDuration ? Math.round((video.defaultDuration * 90) / 1e6) : 0;
+  vdur.push(defDur || (vdur.length ? vdur[vdur.length - 1] : 3754));
+  const mediaDur = vdur.reduce((a, b) => a + b, 0);
+  if (mediaDur / 90 > 0xffffffff) throw new Error('This film is too long for this page.');
+  const vEdits: Edit[] = [];
+  if (dts[0] > 0) vEdits.push({ duration: Math.round(dts[0] / 90), mediaTime: -1 });
+  vEdits.push({ duration: Math.round(mediaDur / 90), mediaTime: shift });
+  const keys: number[] = [];
+  vf.key.forEach((k, i) => {
+    if (k) keys.push(i + 1);
+  });
+  const videoEntry = box(
+    video.mp4,
+    zeros(6),
+    u16(1),
+    u16(0),
+    u16(0),
+    zeros(12),
+    u16(video.width),
+    u16(video.height),
+    u32(0x00480000),
+    u32(0x00480000),
+    u32(0),
+    u16(1),
+    zeros(32),
+    u16(0x18),
+    u16(0xffff),
+    box(video.mp4 === 'hvc1' ? 'hvcC' : 'avcC', video.priv),
+    ...(video.displayWidth && video.displayHeight && video.displayWidth * video.height !== video.displayHeight * video.width
+      ? [
+          (() => {
+            const a = video.displayWidth * video.height;
+            const b = video.displayHeight * video.width;
+            const g = gcd(a, b);
+            return box('pasp', u32(a / g), u32(b / g));
+          })(),
+        ]
+      : []),
+  );
+  const displayOn = video.displayWidth && video.displayHeight;
+  const displayW = displayOn ? Math.round((video.height * video.displayWidth) / video.displayHeight) : video.width;
+  out.push({
+    kind: 'video',
+    id: 1,
+    flags: 3,
+    group: 0,
+    language: video.language,
+    timescale: 90000,
+    mediaDuration: mediaDur,
+    movieDuration: Math.round(mediaDur / 90),
+    edits: vEdits,
+    entry: videoEntry,
+    stts: runs(vdur),
+    // ctts and stss are written only when some frame needs them.
+    ctts: ctts.some((c) => c !== 0) ? runs(ctts) : [],
+    stss: keys.length === vf.key.length ? [] : keys,
+    sizes: vf.size,
+    offsets: vf.offset,
+    width: displayW,
+    height: video.height,
+    volume: 0,
+    handler: 'vide',
+    handlerName: 'VideoHandler',
+    mediaHeader: full('vmhd', 0, 1, zeros(8)),
+  });
+
+  // Audio: one sample per frame, every frame lasts the same time.
+  let firstAudio = true;
+  for (const a of audioKept) {
+    const af = keep.get(a.number)!;
+    if (af.offset.length === 0) continue;
+    const delta = a.mp4 === 'mp3' ? (a.rate < 32000 ? 576 : 1152) : 1024;
+    const n = af.offset.length;
+    const first = Math.round(af.pts[0] - t0);
+    const durMs = Math.round((n * delta * 1000) / a.rate);
+    const edits: Edit[] = [];
+    if (first > 0) edits.push({ duration: first, mediaTime: -1 });
+    edits.push({ duration: durMs, mediaTime: 0 });
+    const timescale = Math.round(a.rate);
+    const id = out.length + 1;
+    const isMp3 = a.mp4 === 'mp3';
+    const decoder = isMp3
+      ? desc(4, u8(0x6b), u8(0x15), u24(0), u32(0), u32(0))
+      : desc(4, u8(0x40), u8(0x15), u24(0), u32(0), u32(0), desc(5, a.priv));
+    const esds = full('esds', 0, 0, desc(3, u16(id), u8(0), decoder, desc(6, u8(2))));
+    const samplesEntry = box(
+      'mp4a',
+      zeros(6),
+      u16(1),
+      zeros(8),
+      u16(a.channels),
+      u16(16),
+      u16(0),
+      u16(0),
+      u32(timescale * 65536),
+      esds,
+    );
+    // Only the first kept audio track is marked on by default unless the options name another one.
+    const on = opts.defaultAudio !== undefined ? opts.defaultAudio === a.number : firstAudio;
+    out.push({
+      kind: 'audio',
+      id,
+      flags: on ? 3 : 2,
+      group: 1,
+      language: a.language,
+      timescale,
+      mediaDuration: n * delta,
+      movieDuration: durMs + (first > 0 ? first : 0),
+      edits,
+      entry: samplesEntry,
+      stts: [[n, delta]],
+      ctts: [],
+      stss: [],
+      sizes: af.size,
+      offsets: af.offset,
+      width: 0,
+      height: 0,
+      volume: 0x0100,
+      handler: 'soun',
+      handlerName: 'SoundHandler',
+      mediaHeader: full('smhd', 0, 0, zeros(4)),
+    });
+    firstAudio = false;
+  }
+
+  // Subtitles: one tx3g sample per caption, with empty samples in the gaps.
+  let subCopied = 0;
+  for (const t of subKept) {
+    const captions = (lines.get(t.number) ?? []).map((c) => ({ start: c.start - t0, end: c.end - t0, text: c.text })).sort((a, b) => a.start - b.start);
+    const samples: { dur: number; bytes: Bytes }[] = [];
+    let cursor = 0;
+    for (let i = 0; i < captions.length; i++) {
+      const c = captions[i];
+      const nextStart = i + 1 < captions.length ? captions[i + 1].start : Infinity;
+      const start = Math.max(c.start, cursor);
+      const end = Math.min(c.end, nextStart);
+      if (end <= start) continue;
+      if (start > cursor) samples.push({ dur: start - cursor, bytes: u16(0) });
+      samples.push({ dur: end - start, bytes: textSample(c.text) });
+      cursor = end;
+    }
+    if (samples.length === 0) {
+      notes.push(`Subtitle track ${t.number} had no lines, so it was left out.`);
+      continue;
+    }
+    const bodyLen = samples.reduce((n, s) => n + s.bytes.length, 0);
+    const bodyBytes = new Uint8Array(bodyLen);
+    const sizes: number[] = [];
+    const offsets: number[] = [];
+    const durs: number[] = [];
+    let at = 0;
+    for (const s of samples) {
+      bodyBytes.set(s.bytes, at);
+      sizes.push(s.bytes.length);
+      offsets.push(base + copied + subCopied + at);
+      durs.push(s.dur);
+      at += s.bytes.length;
+    }
+    subBytes.push(bodyBytes);
+    subCopied += bodyLen;
+    const movieDur = durs.reduce((a, b) => a + b, 0);
+    const tx3g = box(
+      'tx3g',
+      zeros(6),
+      u16(1),
+      u32(0),
+      u8(1),
+      u8(0xff),
+      zeros(4),
+      zeros(8),
+      u16(0),
+      u16(0),
+      u16(1),
+      u8(0),
+      u8(18),
+      new Uint8Array([255, 255, 255, 255]),
+      box('ftab', u16(1), u16(1), u8(5), ascii('Serif')),
+    );
+    const on = opts.defaultSub !== undefined && opts.defaultSub === t.number;
+    out.push({
+      kind: 'sub',
+      id: out.length + 1,
+      flags: on ? 3 : 2,
+      group: 2,
+      language: 'und',
+      timescale: 1000,
+      mediaDuration: movieDur,
+      movieDuration: movieDur,
+      edits: [],
+      entry: tx3g,
+      stts: runs(durs),
+      ctts: [],
+      stss: [],
+      sizes,
+      offsets,
+      width: 0,
+      height: 0,
+      volume: 0,
+      handler: 'sbtl',
+      handlerName: 'SubtitleHandler',
+      mediaHeader: full('nmhd', 0, 0),
+    });
+  }
+  const nextId = out.length + 1;
+
+  const movieDuration = out.reduce((m, t) => Math.max(m, t.movieDuration), 0);
+  if (movieDuration > 0xffffffff) throw new Error('This film is too long for this page.');
+  const mvhd = full(
+    'mvhd',
+    0,
+    0,
+    u32(0),
+    u32(0),
+    u32(1000),
+    u32(movieDuration),
+    u32(0x00010000),
+    u16(0x0100),
+    zeros(10),
+    MATRIX,
+    zeros(24),
+    u32(nextId),
+  );
+  const moov = box('moov', mvhd, ...out.map((t) => trackBox(t)));
+
+  const mdatBody = copied + subCopied;
+  const parts: Part[] = [cat(ftyp, mdatHeader(mdatBody))];
+  for (const rg of ranges) parts.push({ start: rg.start, end: rg.end });
+  for (const sb of subBytes) parts.push(sb);
+  parts.push(moov);
+  const outSize = parts.reduce((n, part) => n + (part instanceof Uint8Array ? part.length : part.end - part.start), 0);
+  return { parts, size: outSize, notes };
 }

@@ -20,6 +20,7 @@ Monetization model: free tools for traffic, a paid tier on the tools that get tr
 - After he creates the product: wire Polar checkout and the license key check (Polar's public license-key validate endpoint, called from the browser), keep files client-side, and turn the flag on.
 
 ## Later
+- 11-26-2026 (CEO): MKV to MP4 without re-encoding, keeping text subtitles as mov_text (/mkv-to-mp4/), the widest phrase family our MKV and MP4 code can reach. Remux is also a Pro candidate (batch, many files) once the Pro trigger comes.
 - The same paid-tier pattern on the file-tools site once it has traffic.
 
 ## Ads (first revenue)

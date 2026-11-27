@@ -29,7 +29,7 @@ function uint64(b: Uint8Array, at: number): number {
 }
 
 // Walks the boxes inside a buffer. A size of 0 means the box runs to the end of the buffer.
-function kids(buf: Uint8Array): Box[] {
+export function kids(buf: Uint8Array): Box[] {
   const out: Box[] = [];
   let pos = 0;
   while (pos + 8 <= buf.length) {
@@ -51,7 +51,7 @@ function kids(buf: Uint8Array): Box[] {
 
 // Follows a path of box types, such as find(trak, 'mdia', 'minf', 'stbl', 'stsd'),
 // and returns the data of the last box, or null.
-function find(buf: Uint8Array, ...path: string[]): Uint8Array | null {
+export function find(buf: Uint8Array, ...path: string[]): Uint8Array | null {
   let cur: Uint8Array = buf;
   for (const name of path) {
     const hit = kids(cur).find((b) => b.type === name);
@@ -112,7 +112,7 @@ function kindOf(codec: string): MkvTrack['kind'] {
 }
 
 // The sample tables of one track, as lists: start and end in ms, byte size and file offset.
-interface Samples {
+export interface Samples {
   start: number[];
   end: number[];
   size: number[];
@@ -120,7 +120,7 @@ interface Samples {
 }
 
 // Reads the sample tables (stts, stsz, stsc, stco or co64) into per-sample lists.
-function sampleTable(stbl: Uint8Array, timescale: number): Samples | null {
+export function sampleTable(stbl: Uint8Array, timescale: number): Samples | null {
   const stts = find(stbl, 'stts');
   const stsz = find(stbl, 'stsz');
   const stsc = find(stbl, 'stsc');

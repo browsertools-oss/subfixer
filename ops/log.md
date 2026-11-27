@@ -48,3 +48,8 @@
 - Not checked: nothing has been run in a browser or on a real MKV. The build warns "Duplicate key guide" in site.ts; I did not check whether it was there before this run (my new entries don't repeat it).
 - Owed: the owner runs one real MKV through add and then remove, and plays the result in VLC, before the pages are promoted (week plan, "Not done").
 - Next: row 7 claims check if the plan stands on Sunday (already read through tonight), then backlog item 2, the `srt-numbers-out-of-order` guide.
+11-26-2026 night (boss, weekly plan, replan after the CEO's 11-26 order):
+- Weekly plan for 11-27-2026 to 11-29-2026, 5 runs plus a Sunday evening fallback. Targets: MKV to MP4 remuxer passing its tests by 11-27 evening; /mkv-to-mp4/ live by 11-28 morning; AC3 and E-AC3 kept by 11-28 evening; 32 guides by 11-29 (31 now).
+- Top three items: src/lib/mkvmp4.ts, MKV clusters copied as slices into mdat with moov last, box layout spelled out in the Remux spec (row 1); the /mkv-to-mp4/ page with an audio and subtitle track picker (row 2); AC3 and E-AC3 from the first frame (row 3).
+- Closed `qa` 30 (all six fixes checked by grep). Web check: in-browser MKV to MP4 converters exist but load the whole file and drop subtitles; ours keeps text subtitles as mov_text and copies slices.
+- Money: $26.40 spent across both ventures, $0 earned, about $5.08 of shared credit left; 120 visitors in 30 days, 0 in the last 7.

@@ -1,0 +1,43 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'TV ignores the SRT next to the MKV? Put it inside';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-28', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="TV won't show the SRT next to your MKV? Put the subtitles inside the file as a track, with no re-encoding, so the TV and Plex can find them." path="/guides/put-subtitles-inside-mkv/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">You copied the MKV and an SRT file with the same name to a USB stick, and the TV plays the film with no subtitles. The subtitle file is fine. The TV is not finding it. A subtitle track inside the MKV is the fix that travels with the file, so the TV never has to look for a second file.</p>
+
+    <h2>Why the TV skips the SRT next to the MKV</h2>
+    <p>A subtitle file that sits beside the video is called a sidecar file. A TV finds it only when the names match exactly, and the rules for that differ between brands. Many TVs read a sidecar file only from a USB drive, not over a network or from a media server. Some TVs ignore sidecar files completely, so no name would help. The <a href="/guides/tv-subtitles-not-showing-usb/">guide on TV subtitles from USB</a> covers the naming rules, so this page does not repeat them.</p>
+    <p>The problem is the second file. Every TV has its own rules for finding it, and a track inside the video needs no rules at all. A file name that is one letter out, or a folder the TV does not scan, is enough to make the subtitles invisible to it, and the TV gives no message to say why.</p>
+
+    <h2>The fix that travels with the file</h2>
+    <p>You can add the SRT to the MKV as a subtitle track. The video and the audio are copied exactly as they are, so nothing is re-encoded and the picture and sound stay the same. Only the track list and the subtitle lines change. The new file plays the subtitles from inside, and the TV shows them as a track of the film.</p>
+    <p>The <a href="/add-subtitles-to-mkv/">add subtitles to MKV page</a> on this site does this in your browser. The file is read on your device, and nothing is uploaded.</p>
+
+    <h2>Step by step on the add subtitles page</h2>
+    <ol>
+      <li>Open the <a href="/add-subtitles-to-mkv/">add subtitles to MKV page</a> and pick the MKV file. The page lists the subtitle tracks already in it.</li>
+      <li>Add the SRT file. Set the language. The page guesses it from a file name such as Movie.eng.srt, and you can change it.</li>
+      <li>Under "Turn on by default", pick the new SRT. The TV then starts with it on.</li>
+      <li>Save the new MKV. In Chrome or Edge on a computer, you choose where to save it. The new file takes the original's name and ends in .subs.mkv.</li>
+      <li>Copy the new file to the USB stick and plug it into the TV. Play it and check that the subtitles appear.</li>
+    </ol>
+    <p>Keep the original file until the new one plays well. The new file is a separate copy, so the original is not changed.</p>
+    <p>Before you copy the file to the stick, open the new MKV in VLC on a computer and turn the subtitles on from its subtitle menu. If the lines appear, the track is in the file. If the TV still shows nothing, the TV usually does not support the track's format. Check the subtitle list on the add page for the format, and use an SRT if the track is ASS.</p>
+
+    <h2>Use SRT, not ASS, for a TV</h2>
+    <p>The page accepts SRT, VTT, ASS and SSA files. An SRT or VTT file goes in as plain SRT text, which most players and many TVs read. An ASS or SSA file keeps its styles, but some TVs skip styled tracks altogether. If the TV is the target, use an SRT. A VTT file also goes in as SRT text, so you do not need to convert it first.</p>
+    <p>Before you add the file, check the letters and the numbering. The <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool corrects garbled letters. The <a href="/srt-validator/">SRT validator</a> reports problems such as numbering out of order. A file that looks fine on a laptop can still confuse a TV.</p>
+
+    <h2>Plex and Jellyfin</h2>
+    <p>Plex and Jellyfin read text tracks inside an MKV and list them in the player's menu. The naming rules for sidecar files do not apply to a track inside the file. Set the language when you add the track, because a track with no language code shows as Undetermined in the player's list. If the subtitles still do not appear, the <a href="/guides/plex-subtitles-not-showing/">Plex subtitles guide</a> covers the usual causes.</p>
+
+    <h2>The desktop route</h2>
+    <p>If you prefer a program, the free MKVToolNix can add a track from the command line. This command adds a Spanish SRT to a film and writes a new file: <code>mkvmerge -o out.mkv movie.mkv --language 0:spa movie.spa.srt</code>. Replace the file names with your own. The video and audio are copied, not re-encoded. The browser route on this site does the same job without installing anything.</p>
+
+    <h2>See also</h2>
+    <p>Subtitles inside an MP4 can have the same problem on a TV. The guide <a href="/guides/mp4-subtitles-not-showing-on-tv/">MP4 subtitles work in VLC but not on the TV? The fix</a> explains how to save them as a file the TV can load.</p>
+  </article>
+</Base>

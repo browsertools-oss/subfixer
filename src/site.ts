@@ -54,6 +54,7 @@ export const GUIDES = [
   { slug: 'mx-player-subtitle-sync', topic: 'players', title: 'MX Player subtitles out of sync? Fix the file' },
   { slug: 'mp4-subtitles-not-showing-on-tv', topic: 'devices', title: 'MP4 subtitles work in VLC but not on the TV? The fix' },
   { slug: 'join-cd1-cd2-subtitles', topic: 'file', title: 'Join CD1 and CD2 subtitles into one file' },
+  { slug: 'put-subtitles-inside-mkv', topic: 'devices', title: 'TV ignores the SRT next to the MKV? Put it inside' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
@@ -1603,6 +1604,7 @@ export const PAGES: ToolPage[] = [
     slug: 'add-subtitles-to-mkv',
     mode: 'mkvedit',
     group: 'Convert',
+    guide: 'put-subtitles-inside-mkv',
     title: 'Add subtitles to MKV online, no re-encoding or upload',
     h1: 'Add subtitles to an MKV file',
     lede: 'Put SRT, VTT or ASS subtitles inside an MKV as a track you can turn on and off. The video and audio are copied as they are, and nothing is uploaded.',

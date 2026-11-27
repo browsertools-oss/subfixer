@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Tool from './Tool.astro';
 import MkvExtract from './MkvExtract.astro';
 import MkvEdit from './MkvEdit.astro';
+import MkvToMp4 from './MkvToMp4.astro';
 import { SITE, GUIDES, HOME_GUIDES, type ToolPage } from '../site';
 import { NOINDEX } from '../noindex.mjs';
 interface Props { page: ToolPage }
@@ -31,7 +32,9 @@ const jsonld = [
     ? <MkvExtract h1={page.h1} lede={page.lede} kind={page.slug === 'extract-subtitles-from-mp4' ? 'MP4' : 'MKV'} />
     : page.mode === 'mkvedit'
       ? <MkvEdit h1={page.h1} lede={page.lede} action={page.slug === 'remove-subtitles-from-mkv' ? 'remove' : 'add'} />
-      : <Tool mode={page.mode} preset={page.preset} home={home} h1={page.h1} lede={page.lede} />}
+      : page.mode === 'remux'
+        ? <MkvToMp4 h1={page.h1} lede={page.lede} />
+        : <Tool mode={page.mode} preset={page.preset} home={home} h1={page.h1} lede={page.lede} />}
   <div class="adslot" aria-hidden="true"></div>
   {home && (
     <section class="block">

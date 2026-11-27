@@ -4,7 +4,7 @@ export const SITE = {
   url: 'https://subfixer.app',
 };
 
-export type Mode = 'shift' | 'fps' | 'sync' | 'timing' | 'encoding' | 'clean' | 'reading' | 'replace' | 'edit' | 'convert' | 'merge' | 'extract' | 'mkvedit';
+export type Mode = 'shift' | 'fps' | 'sync' | 'timing' | 'encoding' | 'clean' | 'reading' | 'replace' | 'edit' | 'convert' | 'merge' | 'extract' | 'mkvedit' | 'remux';
 export type Group = 'Timing' | 'Text' | 'Convert';
 export const GROUPS: Group[] = ['Timing', 'Text', 'Convert'];
 
@@ -1647,6 +1647,30 @@ export const PAGES: ToolPage[] = [
       { q: 'Can I keep a track as a file first?', a: 'Yes. Save it with the MKV subtitle extractor on this site, then remove it here.' },
       { q: 'Can it remove audio tracks?', a: 'No. It removes and changes subtitle tracks only.' },
       { q: 'My player still turns on the wrong track.', a: 'Players that have their own subtitle language setting, such as VLC, Plex and Jellyfin, can ignore the default flag. Set the language there too.' },
+    ],
+  },
+  {
+    slug: 'mkv-to-mp4',
+    mode: 'remux',
+    group: 'Convert',
+    title: 'MKV to MP4 without re-encoding, keep subtitles, no upload',
+    h1: 'Convert MKV to MP4 without re-encoding',
+    lede: 'Turn an MKV into an MP4 that more phones, TVs and editors open. The video and audio are copied as they are, text subtitles come along, and nothing is uploaded.',
+    description: 'Convert MKV to MP4 in your browser without re-encoding. The video and audio are copied as they are, text subtitles are kept, and nothing is uploaded.',
+    steps: [
+      'Pick the MKV file. It stays on your device.',
+      'Choose the audio and subtitle tracks to keep, and which ones play first.',
+      'Save the MP4. The video and audio are copied byte for byte, so the picture and sound do not change.',
+    ],
+    faq: [
+      { q: 'Is the video re-encoded?', a: "No. H.264 and H.265 video and AAC and MP3 audio are copied into the MP4 as they are. Saving takes about as long as copying the file." },
+      { q: 'Are the subtitles kept?', a: 'Text tracks (SRT, ASS, SSA and WebVTT) become MP4 text subtitles, which iPhones, Apple TV, VLC and many TVs can turn on. ASS styles, colors and positions are dropped; the words and times stay.' },
+      { q: 'What about Blu-ray (PGS) subtitles?', a: 'Picture subtitles cannot go into an MP4. Save the track as .sup with the MKV subtitle extractor, read it into text with SUP to SRT, add the SRT back with add subtitles to MKV, then convert here.' },
+      { q: 'Which tracks are left out?', a: 'DTS, Dolby TrueHD, AC3, E-AC3, FLAC, Opus and Vorbis audio, picture subtitles, chapters and attached fonts. The page lists each track it leaves out before you save.' },
+      { q: 'Which files can it not convert?', a: "Video in VP9, AV1, MPEG-2, DivX or Xvid has to be re-encoded for MP4, which this page does not do. It names the format when you pick the file. Files saved while they were being recorded have no stated sizes and are refused too." },
+      { q: 'Is the movie uploaded?', a: 'No. The file is read in pieces on your device, and the new file is put together from pieces of the original.' },
+      { q: 'How large a file can it handle?', a: 'In Chrome and Edge on a computer, the new file is written straight to disk piece by piece, so a full film is fine. Other browsers save it as one download, which can fail for very large files. Use Chrome or Edge on a computer for those.' },
+      { q: 'The MP4 plays on my computer but not my phone.', a: 'Check the warning under the video line. 10-bit H.264 plays on computers but not on most phones and TVs, in any container. That needs re-encoding.' },
     ],
   },
   {

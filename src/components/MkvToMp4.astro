@@ -1,0 +1,317 @@
+---
+interface Props { h1: string; lede: string }
+const { h1, lede } = Astro.props;
+---
+<section class="tool mkv" id="mkv">
+  <h1>{h1}</h1>
+  <p class="lede">{lede}</p>
+
+  <label class="drop" id="mkvDrop">
+    <input type="file" id="mkvFile" class="visually-hidden" accept=".mkv,.mks,.webm" />
+    <span class="drop-body">
+      <span class="drop-main">Drop an MKV file here</span>
+      <span class="drop-sub">A movie can be several gigabytes. Nothing leaves your device.</span>
+      <span class="drop-row">
+        <span class="drop-btn" aria-hidden="true">Choose a file</span>
+      </span>
+    </span>
+  </label>
+  <ul class="trust" aria-label="The deal"><li>Free</li><li>No upload</li><li>No sign-up</li></ul>
+  <p class="error" id="mkvError" hidden></p>
+
+  <div class="mkv-status" id="mkvStatus" aria-live="polite" hidden>
+    <p id="mkvText"></p>
+    <progress id="mkvProgress" max="1" value="0"></progress>
+  </div>
+
+  <p class="visually-hidden" id="mkvAnnounce" aria-live="polite"></p>
+  <div id="mkvVideo"></div>
+  <div id="mkvAudio"></div>
+  <div id="mkvSubs"></div>
+
+  <div id="mkvSave" hidden>
+    <p>
+      <button type="button" id="saveBtn" disabled>Save as MP4</button>
+    </p>
+    <p id="saveText" aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+  let current: any = null;
+
+  function showError(msg) {
+    const e = $('mkvError');
+    e.textContent = msg;
+    e.hidden = false;
+  }
+
+  function clearError() {
+    $('mkvError').hidden = true;
+  }
+
+  function englishName(code) {
+    const l = LANGS.find((x) => x[0] === code);
+    return l ? l[2] : 'Undetermined';
+  }
+
+  async function listed(file) {
+    clearError();
+    $('mkvVideo').replaceChildren();
+    $('mkvAudio').replaceChildren();
+    $('mkvSubs').replaceChildren();
+    $('mkvSave').hidden = true;
+    $('saveText').textContent = '';
+    current = null;
+    $('mkvStatus').hidden = false;
+    $('mkvProgress').value = 0;
+    $('mkvText').textContent = `Reading ${file.name}.`;
+    try {
+      const lib = await import('../lib/mkvmp4');
+      const { LANGS: langs } = await import('../lib/mkvwrite');
+      LANGS = langs;
+      const src = {
+        size: file.size,
+        read: (offset, length) => file.slice(offset, offset + length).arrayBuffer().then((b) => new Uint8Array(b)),
+      };
+      const tracks = await lib.listRemux(src);
+      current = { file, base: file.name.replace(/\.(mkv|mks|webm)$/i, ''), lib, src, tracks };
+
+      const video = tracks.find((t) => t.type === 'video');
+      if (!video) {
+        showError('This file has no video track.');
+        return;
+      }
+      if (!video.ok) {
+        showError(video.reason);
+        return;
+      }
+      const videoDiv = document.createElement('p');
+      videoDiv.textContent = `Video: ${video.label}, track ${video.number}`;
+      $('mkvVideo').append(videoDiv);
+      if (video.note) {
+        const note = document.createElement('p');
+        note.className = 'note';
+        note.textContent = video.note;
+        $('mkvVideo').append(note);
+      }
+
+      const audio = tracks.filter((t) => t.type === 'audio');
+      const audioDiv = document.createElement('div');
+      const audioTable = document.createElement('table');
+      const aHead = audioTable.createTHead().insertRow();
+      for (const h of ['Keep', 'Track', 'Language', 'Name', 'Format', 'Plays first']) {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.textContent = h;
+        aHead.append(th);
+      }
+      const aBody = audioTable.createTBody();
+      let firstDefaultAudio = true;
+      for (const t of audio) {
+        const r = aBody.insertRow();
+        if (t.ok) {
+          const keep = document.createElement('input');
+          keep.type = 'checkbox';
+          keep.name = 'keepAudio';
+          keep.value = String(t.number);
+          keep.checked = true;
+          r.insertCell().append(keep);
+        } else {
+          r.insertCell().textContent = '-';
+        }
+        r.insertCell().textContent = String(t.number);
+        r.insertCell().textContent = t.language;
+        r.insertCell().textContent = t.name || '-';
+        const fmt = document.createElement('td');
+        if (t.ok) {
+          fmt.textContent = t.label;
+        } else {
+          fmt.textContent = t.reason;
+          fmt.className = 'note';
+        }
+        r.append(fmt);
+        if (t.ok) {
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = 'defaultAudio';
+          radio.value = String(t.number);
+          radio.checked = firstDefaultAudio && (t.isDefault || firstDefaultAudio);
+          firstDefaultAudio = false;
+          r.insertCell().append(radio);
+        } else {
+          r.insertCell().textContent = '-';
+        }
+      }
+      audioDiv.append(audioTable);
+      $('mkvAudio').append(audioDiv);
+
+      const subs = tracks.filter((t) => t.type === 'subtitle');
+      const subDiv = document.createElement('div');
+      const subTable = document.createElement('table');
+      const sHead = subTable.createTHead().insertRow();
+      for (const h of ['Keep', 'Track', 'Language', 'Name', 'Format', 'Turn on by default']) {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.textContent = h;
+        sHead.append(th);
+      }
+      const sBody = subTable.createTBody();
+      const subOptions: { value: string; label: string }[] = [['none', 'None']];
+      for (const t of subs) {
+        const r = sBody.insertRow();
+        if (t.ok) {
+          const keep = document.createElement('input');
+          keep.type = 'checkbox';
+          keep.name = 'keepSub';
+          keep.value = String(t.number);
+          keep.checked = true;
+          r.insertCell().append(keep);
+        } else {
+          r.insertCell().textContent = '-';
+        }
+        r.insertCell().textContent = String(t.number);
+        r.insertCell().textContent = t.language;
+        r.insertCell().textContent = t.name || '-';
+        const fmt = document.createElement('td');
+        if (t.ok) {
+          fmt.textContent = t.label;
+        } else {
+          if (t.codec === 'S_HDMV/PGS') {
+            const link = document.createElement('a');
+            link.href = '/extract-subtitles-from-mkv/';
+            link.textContent = t.reason.replace('MKV subtitle extractor', '');
+            fmt.append('Picture subtitles cannot go into an MP4. Save this track as .sup with the ');
+            fmt.append(link);
+            fmt.append(', then read it into text with SUP to SRT.');
+          } else {
+            fmt.textContent = t.reason;
+          }
+          fmt.className = 'note';
+        }
+        r.append(fmt);
+        if (t.ok) {
+          subOptions.push([String(t.number), `Track ${t.number}${t.language ? ` (${t.language})` : ''}${t.name ? `, ${t.name}` : ''}`]);
+          r.insertCell().textContent = '-';
+        } else {
+          r.insertCell().textContent = '-';
+        }
+      }
+      const radioDiv = document.createElement('div');
+      subOptions.forEach(([value, label], i) => {
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'defaultSub';
+        input.value = value;
+        input.checked = i === 0;
+        const wrap = document.createElement('label');
+        wrap.append(input, ' ', label);
+        radioDiv.append(wrap);
+      });
+      subDiv.append(subTable);
+      subDiv.append(radioDiv);
+      $('mkvSubs').append(subDiv);
+
+      $('mkvSave').hidden = false;
+      $('mkvAnnounce').textContent = `Found ${audio.filter((t) => t.ok).length} audio and ${subs.filter((t) => t.ok).length} subtitle ${subs.filter((t) => t.ok).length === 1 ? 'track' : 'tracks'} that can be kept.`;
+    } catch (err) {
+      showError(err.message || 'This file could not be read.');
+    } finally {
+      $('mkvStatus').hidden = true;
+    }
+  }
+
+  function keepAudio() {
+    return Array.from(document.querySelectorAll('input[name=keepAudio]:checked')).map((i) => Number(i.value));
+  }
+
+  function keepSubs() {
+    return Array.from(document.querySelectorAll('input[name=keepSub]:checked')).map((i) => Number(i.value));
+  }
+
+  function defaultAudio() {
+    return document.querySelector('input[name=defaultAudio]:checked')?.value ? Number(document.querySelector('input[name=defaultAudio]:checked')?.value) : undefined;
+  }
+
+  function defaultSub() {
+    const v = document.querySelector('input[name=defaultSub]:checked')?.value;
+    return v === 'none' ? null : v ? Number(v) : null;
+  }
+
+  function updateSave() {
+    const btn = $('saveBtn');
+    if (!btn || !current) return;
+    const video = current.tracks.find((t) => t.type === 'video');
+    btn.disabled = !video || !video.ok;
+  }
+
+  async function save() {
+    if (!current) return;
+    const { lib, src, file, base } = current;
+    const audio = keepAudio();
+    const subs = keepSubs();
+    const da = defaultAudio();
+    const ds = defaultSub();
+
+    const saveText = $('saveText');
+    saveText.textContent = 'Copying the video and audio as they are: 0%';
+    $('saveBtn').disabled = true;
+    try {
+      const { parts, notes } = await lib.remuxMkv(src, { audio, subs, defaultAudio: da, defaultSub: ds }, (done, total) => {
+        saveText.textContent = `Copying the video and audio as they are: ${total ? Math.round((done / total) * 100) : 0}%`;
+      });
+      const suggestedName = `${base}.mp4`;
+      const picker = (window as any).showSaveFilePicker;
+      if (picker) {
+        const handle = await picker({
+          suggestedName,
+          types: [{ description: 'MP4 video', accept: { 'video/mp4': ['.mp4'] } }],
+        });
+        const writable = await handle.createWritable();
+        for (const part of parts) {
+          await writable.write(part instanceof Uint8Array ? part : file.slice(part.start, part.end));
+        }
+        await writable.close();
+      } else {
+        const blob = new Blob(
+          parts.map((part) => (part instanceof Uint8Array ? part : file.slice(part.start, part.end))),
+          { type: 'video/mp4' },
+        );
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = suggestedName;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      }
+      let msg = 'Saved. The video and audio were copied as they are, so the picture and sound did not change.';
+      if (notes.length) msg += '\n' + notes.join('\n');
+      saveText.textContent = msg;
+    } catch (err) {
+      const aborted = err instanceof DOMException && err.name === 'AbortError';
+      saveText.textContent = aborted ? 'Save cancelled.' : err.message || 'The new file could not be saved.';
+    } finally {
+      updateSave();
+    }
+  }
+
+  $('mkvFile').addEventListener('change', () => {
+    const file = $('mkvFile').files?.[0];
+    if (file) listed(file);
+  });
+
+  const drop = $('mkvDrop');
+  drop.addEventListener('dragover', (e) => e.preventDefault());
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    if (file) listed(file);
+  });
+
+  $('saveBtn').addEventListener('click', () => save());
+</script>
+
+<style>
+  .note { color: var(--stock-soft); font-size: 0.9em; }
+</style>

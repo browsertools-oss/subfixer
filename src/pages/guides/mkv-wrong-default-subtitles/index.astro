@@ -1,0 +1,55 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'MKV starts with the wrong subtitles? Change the default';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-29', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="MKV opens with foreign, forced or SDH subtitles on? Change the default subtitle track or remove the ones you never use, without re-encoding." path="/guides/mkv-wrong-default-subtitles/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">You press play and the film starts with subtitles in the wrong language, or with a forced track that shows signs and a few lines of dialogue. The file is not broken. Each subtitle track in an MKV carries a default flag, and the player uses that flag to decide what to turn on. Changing the flag, or removing the tracks you never use, fixes the problem without touching the video.</p>
+
+    <h2>How a player picks a subtitle track</h2>
+    <p>Most players choose in a fixed order. First comes the choice you make yourself during playback. If you have not chosen, the player looks at its own language setting, and picks the first track in your language. Only when neither applies does it fall back to the default flag inside the file.</p>
+    <p>That order explains a lot of surprises. A player with a preferred subtitle language can ignore the default flag altogether, so changing the flag does nothing there. A forced track is a different case. Forced tracks are meant for foreign-language lines and signs only, and many players show them even when subtitles are off.</p>
+
+    <h2>Find out which track is the default</h2>
+    <p>Open the MKV on the <a href="/remove-subtitles-from-mkv/">remove subtitles from MKV page</a> or on the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>. Both pages list every subtitle track with its language and name. A track marked "(default)" is the one the file asks the player to turn on. A track marked "(forced)" holds only the lines that the picture needs.</p>
+    <p>The remove page reads only the track list, not the film, so a long file opens quickly. Nothing is uploaded.</p>
+
+    <h2>Change the default track</h2>
+    <p>The remove subtitles page can also change the default, without removing anything. Follow these steps.</p>
+    <ol>
+      <li>Open the <a href="/remove-subtitles-from-mkv/">remove subtitles from MKV page</a> and pick the MKV file. The file stays on your device.</li>
+      <li>In the track table, find the "Turn on by default" choice. Pick the track you want the player to start with, such as the full English track instead of the forced one.</li>
+      <li>To make no track the default, pick "No default track". The player then starts with subtitles off unless you turn them on.</li>
+      <li>Leave "Keep as it is" selected if you only want to remove tracks.</li>
+      <li>Save the new MKV. In Chrome or Edge on a computer, you choose where to save it. The video and audio are copied as they are, so the picture and sound do not change.</li>
+    </ol>
+    <p>Play the new file once in the player you use most. If the right track starts, the default flag was the problem. If it does not, the player is choosing by its own settings, and the section on player settings below is the place to look.</p>
+
+    <h2>Remove the tracks you never use</h2>
+    <p>Some MKV files carry extra tracks, such as forced or SDH tracks, and other languages you will never watch. Each extra track adds to the menu, and a player may pick the wrong one from that list. Removing the tracks you never use makes the list short and the default easy to find.</p>
+    <ol>
+      <li>Keep a copy of any track you might want later. Open the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, pick the file and save the track as SRT.</li>
+      <li>Open the <a href="/remove-subtitles-from-mkv/">remove subtitles from MKV page</a> and pick the same file.</li>
+      <li>Tick the box beside each track you want to remove, then pick the default track in the same table.</li>
+      <li>Save the new MKV, and play it to check the list.</li>
+    </ol>
+    <p>The removed tracks are gone from the new file, but the original file is not changed. If you change your mind, keep the original until you are happy with the copy.</p>
+
+    <h2>When the player still ignores the default</h2>
+    <p>Some players keep their own subtitle settings, and those settings win over the flag in the file. Change them once, and the player will follow them for every film.</p>
+    <ul>
+      <li>VLC: open Preferences, go to Subtitles / OSD, and set the preferred subtitle language.</li>
+      <li>Plex: open the account language settings, then the subtitle mode for your account.</li>
+      <li>Jellyfin: open the user settings, then the subtitle mode.</li>
+    </ul>
+    <p>Set the language in the player as well as the default in the file. The two settings work together, and a player that uses its own language setting will not read the flag.</p>
+
+    <h2>Hearing-impaired lines without removing the track</h2>
+    <p>An SDH track has the words for people who cannot hear the sound, with notes such as door slams and music. If you want the dialogue but not those notes, you do not need to remove the track. The <a href="/remove-hearing-impaired-subtitles/">remove hearing-impaired subtitles</a> tool takes those notes out of an SRT file. You can then add the cleaned file back to the MKV with the <a href="/add-subtitles-to-mkv/">add subtitles to MKV page</a>.</p>
+
+    <h2>See also</h2>
+    <p>For saving the right track in the first place, read <a href="/guides/extract-subtitles-from-mkv-without-software/">Forced, SDH or PGS? Which MKV subtitle track to save</a>. It explains each track type and how to save it in your browser.</p>
+  </article>
+</Base>

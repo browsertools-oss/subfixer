@@ -55,6 +55,7 @@ export const GUIDES = [
   { slug: 'mp4-subtitles-not-showing-on-tv', topic: 'devices', title: 'MP4 subtitles work in VLC but not on the TV? The fix' },
   { slug: 'join-cd1-cd2-subtitles', topic: 'file', title: 'Join CD1 and CD2 subtitles into one file' },
   { slug: 'put-subtitles-inside-mkv', topic: 'devices', title: 'TV ignores the SRT next to the MKV? Put it inside' },
+  { slug: 'mkv-wrong-default-subtitles', topic: 'players', title: 'MKV starts with the wrong subtitles? Change the default' },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
@@ -1628,6 +1629,7 @@ export const PAGES: ToolPage[] = [
     slug: 'remove-subtitles-from-mkv',
     mode: 'mkvedit',
     group: 'Convert',
+    guide: 'mkv-wrong-default-subtitles',
     title: 'Remove subtitles from MKV online, no re-encoding',
     h1: 'Remove subtitle tracks from an MKV file',
     lede: 'Pick the subtitle tracks you don\'t want, or change which one turns on by default. The video and audio are copied as they are, and nothing is uploaded.',

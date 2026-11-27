@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { scanMkv, headerAt } from '../src/lib/mkv.ts';
 import { recordingSource } from './mkv-fixture.ts';
-import { editMkv, textTrack, guessLanguage } from '../src/lib/mkvwrite.ts';
+import { editMkv, textTrack, guessLanguage, listTracks } from '../src/lib/mkvwrite.ts';
 import { sampleMkv, knownMkv } from './mkv-fixture.ts';
 
 function join(parts: (Uint8Array | { start: number; end: number })[], bytes: Uint8Array): Uint8Array {
@@ -90,7 +90,7 @@ test('mkvwrite: defaultExisting picks a default', async () => {
   const src = sampleMkv();
   const { parts } = await editMkv(recordingSrc(src, []), { add: [], remove: [5], defaultExisting: 3 });
   const out = join(parts, src);
-  const { tracks } = await scan(out);
+  const tracks = await listTracks(recordingSrc(out, []));
   const def = tracks.filter((t) => t.type === 17).map((t) => ({ n: t.number, def: t.isDefault }));
   const def2 = def.find((d) => d.n === 2);
   const def3 = def.find((d) => d.n === 3);
@@ -107,7 +107,7 @@ test('mkvwrite: added track with isDefault true', async () => {
     remove: [],
   });
   const out = join(parts, src);
-  const { tracks } = await scan(out);
+  const tracks = await listTracks(recordingSrc(out, []));
   const sub = tracks.filter((t) => t.type === 17);
   const newOne = sub.find((t) => t.name === 'Default');
   assert.ok(newOne);
@@ -166,7 +166,7 @@ test('mkvwrite: knownMkv SeekHead and Cues positions', async () => {
   let p = segStart;
   let seg: ReturnType<typeof headerAt> | null = null;
   while (p < out.length) {
-    const h2 = headerAt(out, p, p);
+    const h2 = headerAt(out, p, 0);
     if (!h2) break;
     if (h2.id === 0x18538067) { seg = h2; break; }
     if (h2.unknown) break;

@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
 import { listRemux, aacConfig, remuxMkv, decodeOrder, mdatHeader, chunkOffsetBox, dac3, dec3 } from '../src/lib/mkvmp4.ts';
 import { kids, find } from '../src/lib/mp4.ts';
 import { avMkv, recordingSource } from './mkv-fixture.ts';
@@ -166,4 +167,19 @@ test('an AC3 track in avMkv gets an ac-3 entry with 1536-sample stts', async () 
   const stts = find(stbl, 'stts')!;
   assert.equal(u32At(stts, 8), 1);
   assert.equal(u32At(stts, 12), 1536);
+});
+
+// An independent check: a separate MP4 box reader (mp4-box-encoding, a dev-only dependency that
+// src/ never imports) decodes the moov the remuxer wrote and must count the same samples.
+const boxes = createRequire(import.meta.url)('mp4-box-encoding');
+
+test('mp4-box-encoding reads the remuxed moov and counts 6 video and 9 audio samples', async () => {
+  const { out } = await remux(avMkv(), { audio: [2], subs: [3] });
+  const moovPayload = find(out, 'moov');
+  assertFound(moovPayload);
+  // moov is the last top-level box, so its 8-byte header sits just before its payload.
+  const moov = boxes.decode(Buffer.from(out.subarray(out.length - moovPayload.length - 8)));
+  const trackFor = (handler: string) => moov.traks.find((t: any) => t.mdia.hdlr.handlerType === handler);
+  assert.equal(trackFor('vide').mdia.minf.stbl.stsz.entries.length, 6);
+  assert.equal(trackFor('soun').mdia.minf.stbl.stsz.entries.length, 9);
 });

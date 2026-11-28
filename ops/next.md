@@ -1,5 +1,5 @@
-- Row 4 (Sat 11-28 morning): Write guide `mkv-not-playing-on-iphone-or-tv` ("MKV won't play on iPhone or TV? Remux it to MP4") with 6 sections per Guide facts 1; link from /mkv-to-mp4/ page via `guide` field
-- Row 5 (Sun 11-29 morning): Three small edits in one commit: (1) add MKV-to-MP4 FAQ to extract-subtitles-from-mkv entry; (2) link /mkv-to-mp4/ from mp4-subtitles-not-showing-on-tv guide; (3) delete duplicate `guide: 'sup-to-srt-guide'` key in sup-to-srt PAGES entry
-- Backlog item 2 (test-only): add mp4-box-encoding@1.4.1 devDependency; decode remuxed fixture's moov and verify video/audio sample counts against its stsz
-- Backlog item 3: Guide `srt-numbers-out-of-order` ("SRT numbers skipped or out of order? Renumber it") with /renumber-srt/ and validator's order check
-- Backlog item 4: One-sentence links to /add-subtitles-to-mkv/ from tv-subtitles-not-showing-usb and plex-subtitles-not-showing guides at the sidecar-not-found point
+- Backlog item 3: Guide `srt-numbers-out-of-order` ("SRT numbers skipped or out of order? Renumber it") with /renumber-srt/ and the validator's `order` check; link the Premiere and YouTube guides
+- Backlog item 6: Claims check on src/pages/guides/srt-vtt-ass/index.astro (row 6 method: each sentence backed by code)
+- Backlog item 7: Claims check on src/pages/guides/vlc-subtitles-not-showing/index.astro
+- Backlog item 8: Claims check on src/pages/guides/jellyfin-subtitles-fix/index.astro
+- Row 5 (Sun 11-29 morning): three small edits if the plan still stands; otherwise row 6 (Sunday evening fallback) — claims check of the mkv-to-mp4 page

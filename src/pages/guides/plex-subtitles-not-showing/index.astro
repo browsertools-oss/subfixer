@@ -10,7 +10,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>1. The file name has to match exactly</h2>
     <p>Plex matches an external subtitle to a video by name. The subtitle file must start with the exact name of the video file, then a language code, then <code>.srt</code>. For a video named <code>Movie (2020).mkv</code>, the subtitle should be <code>Movie (2020).en.srt</code>. The language code (<code>.en</code>, <code>.es</code>, <code>.fr</code>) is required for the track to show its language in the menu; without it, the track appears as "Undefined" and is easy to miss.</p>
-    <p>Extra text in the file name stops the match. A file named <code>Movie (2020).BluRay.1080p.en.srt</code> will not attach, because Plex expects the base name to be exactly the video name plus the language code. Rename the file to the plain video name plus the language code.</p>
+    <p>Extra text in the file name stops the match. A file named <code>Movie (2020).BluRay.1080p.en.srt</code> will not attach, because Plex expects the base name to be exactly the video name plus the language code. Rename the file to the plain video name plus the language code. If the video is an MKV, you can put the subtitles inside it as a track with <a href="/add-subtitles-to-mkv/">add subtitles to MKV</a>, so Plex reads the track instead of matching a second file.</p>
 
     <div class="table-wrap">
       <table>

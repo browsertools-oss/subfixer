@@ -40,6 +40,7 @@ const { h1, lede } = Astro.props;
 <script>
   const $ = (id: string) => document.getElementById(id) as HTMLElement;
   let current: any = null;
+  let LANGS: [string, string, string][] = [];
 
   function showError(msg) {
     const e = $('mkvError');
@@ -49,11 +50,6 @@ const { h1, lede } = Astro.props;
 
   function clearError() {
     $('mkvError').hidden = true;
-  }
-
-  function englishName(code) {
-    const l = LANGS.find((x) => x[0] === code);
-    return l ? l[2] : 'Undetermined';
   }
 
   async function listed(file) {
@@ -151,7 +147,7 @@ const { h1, lede } = Astro.props;
       const subDiv = document.createElement('div');
       const subTable = document.createElement('table');
       const sHead = subTable.createTHead().insertRow();
-      for (const h of ['Keep', 'Track', 'Language', 'Name', 'Format', 'Turn on by default']) {
+      for (const h of ['Keep', 'Track', 'Language', 'Name', 'Format']) {
         const th = document.createElement('th');
         th.scope = 'col';
         th.textContent = h;
@@ -181,7 +177,7 @@ const { h1, lede } = Astro.props;
           if (t.codec === 'S_HDMV/PGS') {
             const link = document.createElement('a');
             link.href = '/extract-subtitles-from-mkv/';
-            link.textContent = t.reason.replace('MKV subtitle extractor', '');
+            link.textContent = 'MKV subtitle extractor';
             fmt.append('Picture subtitles cannot go into an MP4. Save this track as .sup with the ');
             fmt.append(link);
             fmt.append(', then read it into text with SUP to SRT.');
@@ -193,9 +189,6 @@ const { h1, lede } = Astro.props;
         r.append(fmt);
         if (t.ok) {
           subOptions.push([String(t.number), `Track ${t.number}${t.language ? ` (${t.language})` : ''}${t.name ? `, ${t.name}` : ''}`]);
-          r.insertCell().textContent = '-';
-        } else {
-          r.insertCell().textContent = '-';
         }
       }
       const radioDiv = document.createElement('div');

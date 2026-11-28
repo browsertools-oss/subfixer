@@ -1576,6 +1576,7 @@ export const PAGES: ToolPage[] = [
       { q: 'Does it work with MP4 files?', a: 'Yes. Drop the MP4 here, or use the MP4 subtitle extractor. It reads MP4, M4V and MOV files as well as MKV and WebM.' },
       { q: 'Does it transcribe the audio?', a: 'No. It copies the subtitle text already stored in the file, so the words and timing match the release exactly. If the file has no text track, nothing is invented.' },
       { q: 'Can I put a fixed track back into the MKV?', a: 'Yes. After you fix the SRT, add it back with the add subtitles to MKV page on this site. The video is not re-encoded.' },
+      { q: 'Can I turn the MKV into an MP4 and keep the subtitles?', a: 'Yes. The MKV to MP4 page on this site copies the video and audio as they are and keeps text subtitle tracks as MP4 subtitles.' },
     ],
   },
   {
@@ -1822,7 +1823,6 @@ export const PAGES: ToolPage[] = [
     h1: 'Merge two subtitle files into one',
     lede: 'Show two languages at once for learning or watching together, or join CD1 and CD2 subtitles into one file for a single video.',
     description: 'Merge two SRT files into dual-language subtitles, or join split CD1 and CD2 subtitles with the right offset. Free, and it runs in your browser.',
-    guide: 'join-cd1-cd2-subtitles',
     steps: [
       'Drop in both files at once, or add the second with "Add files".',
       'Pick two languages on screen together, or parts one after another.',

@@ -22,11 +22,11 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>4. Is the file really SRT, and is it UTF-8?</h2>
     <p>Open the file in a plain text editor. A real SRT starts with a number, then a time line with an arrow, then the text. If the first line says <code>WEBVTT</code> or <code>[Script Info]</code>, the file is VTT or ASS with an .srt name. Rename it to .vtt or .ass, or convert it with the <a href="/vtt-to-srt/">VTT to SRT</a> tool or the <a href="/ass-to-srt/">ASS to SRT</a> tool.</p>
-    <p>If the file is SRT but accents show as strange pairs of letters (for example, <code>Ã©</code> for <code>é</code>), the encoding is not UTF-8. The <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool reads the file in its original encoding and saves it as UTF-8. A file that is not UTF-8 can fail to load or show wrong letters in VLC.</p>
-    <p>If the track loads but some lines are wrong, run the file through the <a href="/srt-validator/">SRT validator</a>. It flags blank lines in the wrong place and times written with dots, and it gives the line for each one.</p>
+    <p>If the file is SRT but accents show as strange pairs of letters (for example, <code>Ã©</code> for <code>é</code>), the encoding is not UTF-8. The <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool shows the likely readings of the file, lets you pick the one that reads correctly, and saves it as UTF-8. A file that is not UTF-8 can fail to load or show wrong letters in VLC.</p>
+    <p>If the track loads but some lines are wrong, run the file through the <a href="/srt-validator/">SRT validator</a>. It flags times written with dots, numbers out of order and captions with no text, and it names the line for each one.</p>
 
     <h2>5. A renamed VTT or ASS file</h2>
-    <p>Our tools read the real format from the file's content, not its name, so a VTT or ASS file with an .srt name converts without you knowing its original format. The <a href="/guides/plex-subtitles-not-showing/">Plex guide</a> has the full version of this check.</p>
+    <p>Our tools read the real format from the file's content, not its name, so a VTT or ASS file with an .srt name converts with no extra step. The <a href="/guides/plex-subtitles-not-showing/">Plex guide</a> has the full version of this check.</p>
 
     <h2>If none of the five works</h2>
     <p>Play a subtitle file you know works, such as one that came with a disc or a file you have used before. Load it with Subtitle > Add Subtitle File. If that file shows, the problem is in the file you were testing, so run it through the checks in steps 4 and 5 again. If the known good file also fails, the problem is the setup, not the file. Check that the video plays with sound and that VLC is up to date. If no subtitle track appears in the menu at all, VLC has not picked up the file, so steps 2 and 3 are the ones to repeat.</p>

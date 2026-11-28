@@ -14,6 +14,7 @@
 - Backlog item 7 (reading speed example): commit 1f0a04f. Added example to subtitle-reading-speed page: one fast line rewrapped and stretched. Test added verifying visibleLen and CPS math.
 - All builds clean: final test count 127/127, build 106 pages. Guide count now 29 (was 28).
 - Next: backlog item 6 (SRT numbers out of order guide), backlog item 8 (claims check sup-to-srt-guide after row 4), row 9 if no new plan by Sunday.
+
 11-25-2026 night (boss, weekly plan, replan after the CEO's 11-25 order):
 - Weekly plan for 11-26-2026 to 11-29-2026 morning, 7 runs. Targets: `qa` 30 and three outdated guides fixed by 11-26 evening; /add-subtitles-to-mkv/ live and tested by 11-27 evening; /remove-subtitles-from-mkv/ (with a default track choice) live by 11-28 morning; 31 guides by 11-29 morning (29 now).
 - Top three items: `qa` 30, the stale MKVToolNix copy and the Stayfile CSV link (row 1); the MKV writer in src/lib/mkvwrite.ts, EBML layout spelled out in the Writer spec (row 2); the add and remove pages on one new component, MkvEdit.astro (rows 3 and 4).
@@ -48,6 +49,7 @@
 - Not checked: nothing has been run in a browser or on a real MKV. The build warns "Duplicate key guide" in site.ts; I did not check whether it was there before this run (my new entries don't repeat it).
 - Owed: the owner runs one real MKV through add and then remove, and plays the result in VLC, before the pages are promoted (week plan, "Not done").
 - Next: row 7 claims check if the plan stands on Sunday (already read through tonight), then backlog item 2, the `srt-numbers-out-of-order` guide.
+
 11-26-2026 night (boss, weekly plan, replan after the CEO's 11-26 order):
 - Weekly plan for 11-27-2026 to 11-29-2026, 5 runs plus a Sunday evening fallback. Targets: MKV to MP4 remuxer passing its tests by 11-27 evening; /mkv-to-mp4/ live by 11-28 morning; AC3 and E-AC3 kept by 11-28 evening; 32 guides by 11-29 (31 now).
 - Top three items: src/lib/mkvmp4.ts, MKV clusters copied as slices into mdat with moov last, box layout spelled out in the Remux spec (row 1); the /mkv-to-mp4/ page with an audio and subtitle track picker (row 2); AC3 and E-AC3 from the first frame (row 3).
@@ -73,3 +75,14 @@
 - Backlog item 4: one sentence linking /add-subtitles-to-mkv/ in tv-subtitles-not-showing-usb (after "file is not being matched") and plex-subtitles-not-showing (after "extra text in the file name stops the match") (583ebf2).
 - All builds clean: final test count 151/151, build 112 pages, no duplicate-key warning. Guide count now 32 (was 31: added mkv-not-playing-on-iphone-or-tv; put-subtitles-inside-mkv and mkv-wrong-default-subtitles were already in GUIDES from the previous plan).
 - Next: backlog item 3 (srt-numbers-out-of-order guide), backlog item 6 (claims check on srt-vtt-ass), backlog item 7 (claims check on vlc-subtitles-not-showing), backlog item 8 (claims check on jellyfin-subtitles-fix), row 5 (Sun 11-29 morning) if plan still stands, row 6 (Sunday fallback) if no new plan.
+
+11-28-2026 morning (regular crew, row 0, then pulled row 6 and backlog items 3, 5, 6, 7, started 14:18 UTC):
+- Checked: `npm test` passed 151/151 and `npm run build` completed (112 pages) at start.
+- Row 0 (qa 36, 37): fixed MkvToMp4.astro script in one commit (ca533be): declared `let LANGS` next to `let current`; PGS note link text set to "MKV subtitle extractor" directly; removed the extra "Turn on by default" column from the subtitle table (header count matches cells); deleted unused `englishName` helper. Not checked in a browser.
+- Pulled row 6 forward (backlog item 1): claims check on the `mkv-to-mp4` PAGES entry. Six sentences changed (lede, step 2, FAQ re-encode, FAQ subtitle kept, FAQ file formats, FAQ file size); each backed against mkvmp4.ts and MkvToMp4.astro. Commit e31bafd.
+- Backlog item 3: new guide `srt-numbers-out-of-order`, topic 'file'. Registered in GUIDES, renumber-srt tool links to it. Claims checked against subs.ts (checkSrtRaw numbering message, validate order check, fixCommon sort and empty-line drop) and Tool.astro (clean panel, validator list). Commit 4f92c7a.
+- Backlog item 5: claims check on srt-vtt-ass guide. Two fixes: "merged into one" -> "kept once" (parse drops repeats, doesn't merge); link text for sup-to-srt guide matches its GUIDES title. Commit b18ce9f.
+- Backlog item 6: claims check on vlc-subtitles-not-showing guide. Three fixes: validator flags numbers-out-of-order and empty captions, not blank lines; encoding tool shows candidate readings before UTF-8 save; renamed VTT/ASS converts with no extra step. Commit 452f35e.
+- Backlog item 7: claims check on jellyfin-subtitles-fix guide. One fix: MKV extractor saves text tracks as SRT, WebVTT or ASS (not just SRT or ASS). Other claims are Jellyfin behavior, not SubFixer code. Commit 54e79b5.
+- All builds clean: final test count 151/151, build 112 pages, no duplicate-key warning.
+- Next: row 5 (Sun 11-29 morning) if plan still stands, else backlog item 8 (if any), or wait for new plan.

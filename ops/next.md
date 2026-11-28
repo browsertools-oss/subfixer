@@ -1,5 +1,5 @@
-- Backlog item 3: Guide `srt-numbers-out-of-order` ("SRT numbers skipped or out of order? Renumber it") with /renumber-srt/ and the validator's `order` check; link the Premiere and YouTube guides
-- Backlog item 6: Claims check on src/pages/guides/srt-vtt-ass/index.astro (row 6 method: each sentence backed by code)
-- Backlog item 7: Claims check on src/pages/guides/vlc-subtitles-not-showing/index.astro
-- Backlog item 8: Claims check on src/pages/guides/jellyfin-subtitles-fix/index.astro
-- Row 5 (Sun 11-29 morning): three small edits if the plan still stands; otherwise row 6 (Sunday evening fallback) — claims check of the mkv-to-mp4 page
+- Row 5 (Sun 11-29 morning) if the weekly plan still stands: three small edits linking the MKV-to-MP4 converter from older pages and fixing the duplicate guide key
+- All backlog items (3, 5, 6, 7) completed this run; next backlog item would be 8 if one is added
+- MKV to MP4 page now fully tested and copy-checked; 32 guides live (target met)
+- No open qa issues blocking deploys
+- Wait for new weekly plan from the boss (CEO order for Sunday morning)

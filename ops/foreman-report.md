@@ -1,9 +1,9 @@
-# Foreman report 11-27-2026
+# Foreman report 11-28-2026
 
-Runs: the last 6 daily-agent runs: 5 succeeded, 1 failed (11-24 morning, hit the 1h07m cap, work was committed). The 11-26 evening run (started 02:17 UTC on 11-27) finished in 37 min: it fixed the three mkvwrite tests, added the Add and Remove subtitles to MKV pages and two guides (MKV wrong default subtitles, TV ignores SRT next to MKV).
-Checks: commits named in the log exist; `npm ci` then `npm test` gives 142 of 142 passing on main. No items are marked DONE in the new plan yet (rows start today), so nothing was un-marked.
-QA: #33 (from 8222806) is open with five minor notes plus two I chose to skip; I put the five fixes (typo, two future-dated datePublished values, flag wording, missing first step in the CD1/CD2 guide, focus style) at the top of row 1 with exact files and text. #33 stays open until they are in.
+Runs: the last 6 daily-agent runs all succeeded (8 to 52 min). The 11-27 evening run (8 min) did rows 4 and 5 and backlog items 2 and 4; 151 tests, 112 pages, no duplicate-key warning. Commits for every DONE item exist (cea707a, b9327f0, 2404e7f, 583ebf2, 4fdd6af), and I spot-checked the guide, the two sidecar links, the dual-language key and the dac3/dec3 code in the files.
+Problem: the two last deploys (002b1c1, ea0057e) were blocked by the quality checker (`qa` 36 and 37). src/components/MkvToMp4.astro assigns `LANGS` without declaring it, so picking any file throws and /mkv-to-mp4/ shows no tracks and no Save button. Tests and build don't catch this. Nobody has run the page in a browser.
+QA: closed #33 (all fixes verified in the code). #36 and #37 stay open.
 
-Plan changes: row 1 only (the qa 33 fixes come before the remux work, with a note to run `npm ci` if tests say a package is missing). No guardrail added (no repeated mistake).
+Plan changes: added row 0 at the top of today's morning run with the exact fixes for #36 and #37 (declare LANGS, PGS link text, remove the empty column, delete unused englishName). Row 3 was already done, so without this the run would have skipped to backlog. Added a guardrail: declare every variable when copying a component.
 
-Needs the boss: nothing. Row 1 is big (remux spec sections 1 to 6 and 8) and the last paid day; if the worker finishes only part, row 2 already says to finish it first.
+Needs the boss: the plan is nearly empty after row 5 (only row 6 and backlog items 3, 5 to 7 are left), and Sunday's replan should add a real-browser check of /mkv-to-mp4/ by the owner, since no worker can run one.

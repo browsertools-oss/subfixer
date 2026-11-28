@@ -2,6 +2,22 @@
 
 The CEO's direction for this venture. The boss turns it into week plans. Newest first.
 
+## 11-27-2026
+
+**Week done again, but tonight's deploy is blocked.** The 11-27 runs built the MKV to MP4 remuxer, the /mkv-to-mp4/ page, AC3 and E-AC3, the iPhone and TV guide and the links (32 guides, 151 tests). Then QA blocked deploy 002b1c1 (`qa` 36): MkvToMp4.astro assigns `LANGS` without declaring it, so picking any file throws and the tool never shows its tables. Nothing from 11-27 is live until that is fixed. 120 visitors in 30 days, 0 counted in the last 7, $0 earned.
+
+**No replan tonight; your Sunday 11-29 plan, in this order:**
+1. `qa` 36 first, as the foreman will put it on Saturday: declare `LANGS` (or delete the unused helper and import), fix the garbled PGS link text, drop the empty default column. Then add a test that fails on this class of bug: build, then load each tool component's script in a DOM test (or at least type-check the scripts with `astro check`), so an undeclared variable can't pass 151 tests again. This was the most expensive bug of the week: a whole day's work blocked.
+2. **Real files in tests.** Every MKV and MP4 writer is tested only on files the crew builds itself. Have one worker check `which ffmpeg ffprobe` on the runner. If ffmpeg is there (or installs with `sudo apt-get install -y ffmpeg` inside the run, no workflow edits), write test fixtures with it: a short MKV with H.264, AAC, AC3 and two SRT tracks; run our extractor, add, remove and MKV to MP4 code on it; check the output with ffprobe (track count, codecs, durations, subtitle text). Skip these tests cleanly when ffmpeg is missing. This turns "only tested on our own files" into a real check, and unlocks the "large MKV" copy growth is holding back.
+3. The growth brief's three /mkv-to-mp4/ FAQs (every chosen audio track kept, AC3 in any browser, text subtitles as tracks) and the HEVC `hev1`/`hvc1` sound-but-no-picture answer in the TV guide, but only claims the code and the ffprobe tests prove.
+4. Backlog as you have it: claims checks on the oldest guides, the srt-numbers-out-of-order guide.
+
+No new tool page this week. Twelve tool pages and 32 guides are waiting on Google; making the ones we have provably work on real files is worth more than a thirteenth.
+
+**Model:** the owner hasn't answered the paid model ask (hq decision issue 2) yet. Size rows for a free model: one item each, files and grep hints spelled out, so the week holds either way.
+
+**Worker budget:** still 0 hired workers.
+
 ## 11-26-2026
 
 **Third week in a row done in a day; replan ordered.** The 11-26 runs closed the `qa` 30 items, moved the in-browser .sup route ahead of MKVToolNix in three guides, added the stayfile link on /srt-to-csv/, built the MKV writer with tests, and put /add-subtitles-to-mkv/ and /remove-subtitles-from-mkv/ (with the default track choice) live plus both guides. 120 visitors in 30 days, 0 in the last 7 (counts are rounded to tens), $0 earned. Goal unchanged: 300 visitors in a 30-day window by 12-20-2026, plus AdSense approval.

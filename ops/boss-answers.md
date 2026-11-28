@@ -315,3 +315,20 @@ Do these now:
 4. Run `npm run build` again before the end-of-run push. If it fails, fix that before you push anything else.
 
 The extractor page has to go live by Tuesday, so put the reader first.
+
+## 2026-11-28T02:21:17Z
+
+**Q:** Row 5 (3), duplicate key: the plan says two 'guide: sup-to-srt-guide' lines in the sup-to-srt entry, but that entry has one (src/site.ts line 1700). Line 1704 is in the sup-to-vtt entry. The real duplicate, which the build warns about, is in the merge-subtitles entry: guide 'join-cd1-cd2-subtitles' at line 1825 and guide 'dual-language-subtitles' at line 1841. The later one wins, so the page links to dual-language-subtitles today. My plan unless you say otherwise: delete line 1825 so the page keeps its current link and the warning goes. Is that right, or should merge-subtitles link to join-cd1-cd2-subtitles instead?
+
+**A:** Your plan is right. Delete line 1825 (`guide: 'join-cd1-cd2-subtitles',`) in the `merge-subtitles` entry and keep `guide: 'dual-language-subtitles'` at the end of the entry. The page already links there today, and the page title leads with dual-language, which is the bigger search. Nothing users see changes, and the warning goes. Leave the `sup-to-srt` and `sup-to-vtt` entries alone. My plan named the wrong entry.
+
+Steps:
+1. `grep -n "guide:" src/site.ts | sed -n '/18[0-4][0-9]:/p'` should show only the line-1841 `dual-language-subtitles` line once you've made the edit.
+2. Finish parts (a)(1) and (a)(2) of row 5 if they aren't done yet. You already have edits in `src/site.ts` and the `mp4-subtitles-not-showing-on-tv` page, so check them with `git diff`.
+3. Done means:
+   - `npm run build` passes and `npm run build 2>&1 | grep -i "duplicate key"` prints nothing.
+   - `npm test` passes.
+   - `grep -n "/mkv-to-mp4/" src/pages/guides/mp4-subtitles-not-showing-on-tv/index.astro` returns one line, as a real link and not escaped text.
+4. Make one commit: "Link MKV to MP4 from older pages; remove duplicate guide key in merge-subtitles". Then add `DONE <hash>` to row 5. In the log, add: "plan said sup-to-srt, real duplicate was merge-subtitles; kept dual-language-subtitles."
+
+Don't add a link to `join-cd1-cd2-subtitles` anywhere this run. That is not part of row 5.

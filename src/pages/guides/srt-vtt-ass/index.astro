@@ -10,7 +10,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
 
     <h2>SRT (SubRip)</h2>
     <p>The simplest and most widely supported. Each line has a number, a start and end time like <code>00:01:02,500 --&gt; 00:01:04,000</code>, and the text. Italic, bold and underline tags work in most players. There is no reliable way to position text or set colors.</p>
-    <p>Use it for TVs, media servers like Plex and Jellyfin, VLC, and most video editors. If you are unsure, SRT is the safe choice. If your subtitles are pictures instead of text, like a Blu-ray SUP track, see <a href="/guides/sup-to-srt-guide/">How to convert Blu-ray SUP subtitles to SRT for free</a>.</p>
+    <p>Use it for TVs, media servers like Plex and Jellyfin, VLC, and most video editors. If you are unsure, SRT is the safe choice. If your subtitles are pictures instead of text, like a Blu-ray SUP track, see <a href="/guides/sup-to-srt-guide/">PGS subtitles won't show? Convert them to SRT</a>.</p>
 
     <h2>VTT (WebVTT)</h2>
     <p>The web version of SRT. The file starts with <code>WEBVTT</code>, times use a dot before the milliseconds, and line numbers are optional. It adds settings for position and alignment, voice tags for speakers, and styling through CSS.</p>
@@ -42,7 +42,7 @@ const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline
     <h2>What survives a conversion</h2>
     <ul class="plainlist spaced">
       <li>SRT to VTT and VTT to SRT: text, timing, italics and bold carry over. VTT position settings are dropped going to SRT.</li>
-      <li>ASS to SRT or VTT: text, timing, line breaks, italics and bold carry over. Fonts, colors, positions and effects are dropped. The same line stacked on several layers is merged into one.</li>
+      <li>ASS to SRT or VTT: text, timing, line breaks, italics and bold carry over. Fonts, colors, positions and effects are dropped. A line stacked on several layers, with the same times and text, is kept once.</li>
       <li>ASS to SSA: text, timing, line breaks, italics, bold and underline carry over. The file is written with one default style, and positioned signs lose their placement.</li>
       <li>SSA to ASS: the same story in the other direction, written as v4.00+ with one default style.</li>
       <li>SRT or VTT to ASS: you get a plain ASS file with one default style. Italics and bold become ASS tags. SRT or VTT to SSA works the same way, written as v4.00 for older players.</li>

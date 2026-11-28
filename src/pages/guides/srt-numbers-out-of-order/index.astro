@@ -1,0 +1,34 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = 'SRT numbers skipped or out of order? Renumber it';
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-28', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Each SRT caption has a number. If the numbers skip or run out of order, renumber the file. The captions are sorted by time and counted again from 1." path="/guides/srt-numbers-out-of-order/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">An SRT file counts its captions 1, 2, 3 and so on. When the count has a gap or runs out of order, most players still show the captions. The file still fails the check, though, and some editors and upload forms refuse it. Renumbering fixes the count and puts the captions back in time order.</p>
+
+    <h2>What the numbers do</h2>
+    <p>The number above each caption is a label. The time line under it decides when the text appears on screen. Many players go by the time line, so a wrong number often does not change what the viewer sees. A broken count still matters to the tools that check the file, and it is the first thing they report.</p>
+
+    <h2>Find the numbering problem</h2>
+    <p>Open the file in the <a href="/srt-validator/">SRT validator</a>. A number that breaks the count is listed with its line in the file, in the form "Numbered 10, expected 3". The validator also reports a caption that starts before the one above it. That is a timing problem rather than a numbering one, and renumbering fixes it too, because the captions are sorted by start time first.</p>
+
+    <h2>Renumber the file</h2>
+    <ol>
+      <li>Drop the .srt file into the <a href="/renumber-srt/">renumber SRT tool</a>.</li>
+      <li>To start at a number other than 1, change the number next to Save as. Use this when the file is the second part of a longer film and the count should carry on from the first part.</li>
+      <li>Download the file.</li>
+    </ol>
+    <p>The tool sorts the captions by time and counts them again. Lines with no text are dropped. The words and the times stay as they are.</p>
+
+    <h2>When the order is wrong, not just the numbers</h2>
+    <p>If two captions overlap as well as sitting in the wrong order, renumbering is not enough. Turn on the overlap fix in the clean-up tool, and read the <a href="/guides/subtitles-overlapping-lines/">overlapping lines guide</a> for what the fix changes.</p>
+
+    <h2>Check the saved copy</h2>
+    <p>Run the saved file through the validator again. The numbering list should be empty. If a number is still reported, look at the lines just above it. A blank line inside a caption can split it into two blocks, and the second block then starts with a number the count does not expect. Join the two parts, save the file and check again.</p>
+
+    <h2>When the file still will not import</h2>
+    <p>A numbering fault is one of several things that stop an SRT file from loading into an editor or uploading to a video site. The <a href="/guides/premiere-pro-srt-import-error/">Premiere Pro import guide</a> and the <a href="/guides/youtube-subtitle-upload-error/">YouTube upload guide</a> list the other causes and how to check each one.</p>
+  </article>
+</Base>

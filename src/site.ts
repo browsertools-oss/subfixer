@@ -27,6 +27,7 @@ export interface ToolPage {
 export const GUIDES = [
   { slug: 'subtitles-out-of-sync', topic: 'file', title: 'Why subtitles go out of sync, and which fix to use' },
   { slug: 'srt-vtt-ass', topic: 'file', title: 'SRT, VTT and ASS: what is the difference?' },
+  { slug: 'srt-numbers-out-of-order', topic: 'file', title: 'SRT numbers skipped or out of order? Renumber it' },
   { slug: 'sup-to-srt-guide', topic: 'file', title: "PGS subtitles won't show? Convert them to SRT" },
   { slug: 'vlc-subtitles-not-showing', topic: 'players', title: 'VLC not showing subtitles? Check these five things' },
   { slug: 'plex-subtitles-not-showing', topic: 'players', title: "Plex not finding your SRT? Fix the name and the file" },
@@ -851,6 +852,7 @@ export const PAGES: ToolPage[] = [
     mode: 'clean',
     group: 'Text',
     preset: { clean: 'renumber', out: 'srt' },
+    guide: 'srt-numbers-out-of-order',
     title: 'Renumber SRT subtitles: sort lines and fix the numbering',
     h1: 'Renumber an SRT file',
     lede: 'Numbers out of order, skipped or repeated? The lines are sorted by time and numbered again, starting from 1 or any number you choose.',

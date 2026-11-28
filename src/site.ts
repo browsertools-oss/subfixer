@@ -56,6 +56,7 @@ export const GUIDES = [
   { slug: 'join-cd1-cd2-subtitles', topic: 'file', title: 'Join CD1 and CD2 subtitles into one file' },
   { slug: 'put-subtitles-inside-mkv', topic: 'devices', title: 'TV ignores the SRT next to the MKV? Put it inside' },
   { slug: 'mkv-wrong-default-subtitles', topic: 'players', title: 'MKV starts with the wrong subtitles? Change the default' },
+  { slug: 'mkv-not-playing-on-iphone-or-tv', topic: 'devices', title: "MKV won't play on iPhone or TV? Remux it to MP4" },
 ];
 
 // Guides shown under "Fix a common problem" on the home page. Each slug must be in GUIDES.
@@ -1653,6 +1654,7 @@ export const PAGES: ToolPage[] = [
     slug: 'mkv-to-mp4',
     mode: 'remux',
     group: 'Convert',
+    guide: 'mkv-not-playing-on-iphone-or-tv',
     title: 'MKV to MP4 without re-encoding, keep subtitles, no upload',
     h1: 'Convert MKV to MP4 without re-encoding',
     lede: 'Turn an MKV into an MP4 that more phones, TVs and editors open. The video and audio are copied as they are, text subtitles come along, and nothing is uploaded.',

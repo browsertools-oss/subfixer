@@ -1,0 +1,43 @@
+---
+import Base from '../../../layouts/Base.astro';
+const title = "MKV won't play on iPhone or TV? Remux it to MP4";
+const jsonld = [{ '@context': 'https://schema.org', '@type': 'Article', headline: title, datePublished: '2026-11-27', author: { '@type': 'Organization', name: 'SubFixer' } }];
+---
+<Base title={`${title} | SubFixer`} description="Your MKV plays on the computer but not on the iPhone, Apple TV or smart TV? Change the container to MP4 without re-encoding and keep the subtitles." path="/guides/mkv-not-playing-on-iphone-or-tv/" jsonld={jsonld} ogType="article">
+  <article class="guide">
+    <h1>{title}</h1>
+    <p class="lede">The film plays on your computer, but it shows nothing on an iPhone, an Apple TV or a TV, or the device refuses the file. The file itself is fine. Those devices open MP4 files, and the change from MKV to MP4 takes about as long as copying the file. The picture, the sound and the subtitles can all come along.</p>
+
+    <h2>Why it plays on the computer and not on the phone or TV</h2>
+    <p>MKV is a container, a box that holds the video, the audio and the subtitles together. Most computer players open MKV files without any help. Phones and TVs are pickier. The Files app on an iPhone and the Apple TV app do not play MKV at all, even when the video inside is H.264, which those devices already play. Many TVs play MKV only from a USB stick.</p>
+    <p>The video inside is usually H.264 or H.265, and the same devices play both of those in an MP4. The problem is the box, not the picture. Changing the box is often enough.</p>
+
+    <h2>Remux, not convert</h2>
+    <p>Changing the box without touching the video or audio is called remuxing. The streams are moved into an MP4 without being decoded, so the picture and the sound stay the same. Converting is different. The video is decoded and compressed again, which takes far longer and loses some quality. Remuxing works as long as the video is H.264 or H.265 and the audio is AAC, MP3, AC3 or E-AC3.</p>
+
+    <h2>Step by step on the MKV to MP4 page</h2>
+    <ol>
+      <li>Open the <a href="/mkv-to-mp4/">MKV to MP4 page</a> and pick the MKV file. The file stays on your device.</li>
+      <li>In the audio list, keep the track in your language and choose which one plays first.</li>
+      <li>In the subtitle list, keep a text track. Under "Turn on by default", pick it if you want the subtitles on when the film starts.</li>
+      <li>Save the MP4. In Chrome or Edge on a computer, you choose where the new file goes.</li>
+      <li>Copy the MP4 to the phone, the Apple TV or the USB stick, and play it.</li>
+    </ol>
+
+    <h2>What does not come along</h2>
+    <p>The page lists the tracks it leaves out before you save, so you know what the new file will not have. Picture subtitles, such as the Blu-ray PGS kind, cannot go into an MP4 as they are. Save the track as a .sup file with the <a href="/extract-subtitles-from-mkv/">MKV subtitle extractor</a>, read it into text with <a href="/sup-to-srt/">SUP to SRT</a>, put the SRT back into the MKV with <a href="/add-subtitles-to-mkv/">add subtitles to MKV</a>, and then convert it here.</p>
+    <p>DTS and Dolby TrueHD audio are left out too. If the film has another audio track, such as an AC3 or AAC one, keep that instead. Subtitle styles from ASS files are dropped, but the words and the times stay. Chapters and attached fonts are not copied.</p>
+
+    <h2>Sound but no picture on an Apple device</h2>
+    <p>Sometimes the sound plays and the picture stays black on an Apple device. The usual cause is an H.265 video tagged hev1, which Apple devices need as hvc1. This page writes hvc1, so a file made here does not have that problem. If another tool made your MP4 and the picture is black, make it again from the MKV with this page.</p>
+    <p>10-bit H.264, which anime releases often use, plays on computers but not on most phones and TVs, in any container. A film like that needs re-encoding, and this page does not re-encode.</p>
+
+    <h2>Other ways to play the file</h2>
+    <p>VLC for iPhone plays MKV files directly, so you may not need to change the file at all. On a computer, this ffmpeg command makes the same change:</p>
+    <p><code>ffmpeg -i movie.mkv -map 0:v:0 -map 0:a -map 0:s? -c copy -c:s mov_text movie.mp4</code></p>
+    <p>The command fails if the film has picture subtitles, so drop <code>-map 0:s?</code> from it in that case. If the letters in the subtitles look wrong after the change, the <a href="/fix-subtitle-encoding/">fix subtitle encoding</a> tool can correct them.</p>
+
+    <h2>See also</h2>
+    <p>If the MP4 plays but its subtitles do not show on the TV, read <a href="/guides/mp4-subtitles-not-showing-on-tv/">MP4 subtitles work in VLC but not on the TV? The fix</a>.</p>
+  </article>
+</Base>
